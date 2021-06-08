@@ -115,10 +115,30 @@ export default {
         })
         .catch((err) => {
           this.loading = false;
-        //   this.error = err.response.data;
-          console.log(err);
+          this.error = err.response.data;
+          this.errorMessage('danger', this.error);
         });
-    }
+    },
+    errorMessage(variant = null, error) {
+      this.$bvToast.toast(
+        error.password
+          ? "Password: " + error.password
+          : error.username
+          ? "Username: " + error.username
+          : error.detail
+          ? "Detail: " + error.detail
+          : error.email
+          ? "Email: " + error.email
+          : error.non_field_errors
+          ? error.non_field_errors
+          : error,
+        {
+          title: `Error`,
+          variant: variant,
+          solid: true,
+        }
+      );
+    },
   }
 };
 </script>

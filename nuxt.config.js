@@ -56,8 +56,13 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    'bootstrap-vue/nuxt',
   ],
+  bootstrapVue: {
+    // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)
+    icons: true
+  },
   /*
   ** Axios module configuration
   */
