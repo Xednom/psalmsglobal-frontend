@@ -1,6 +1,6 @@
 <template>
   <div>
-    <base-header class="pb-6">
+    <!-- <base-header class="pb-6">
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">Default</h6>
@@ -13,7 +13,6 @@
           <base-button size="sm" type="neutral">Filters</base-button>
         </div>
       </div>
-      <!-- Card stats -->
       <div class="row">
         <div class="col-xl-3 col-md-6">
           <stats-card title="Total traffic"
@@ -65,10 +64,10 @@
           </stats-card>
         </div>
       </div>
-    </base-header>
+    </base-header> -->
 
     <!--Charts-->
-    <div class="container-fluid mt--6">
+    <!-- <div class="container-fluid mt--6">
       <div class="row">
         <div class="col-xl-8">
           <card type="default" header-classes="bg-transparent">
@@ -128,11 +127,11 @@
             </bar-chart>
           </card>
         </div>
-      </div>
+      </div> -->
       <!-- End charts-->
 
       <!--Lists-->
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-xl-4">
           <card>
             <h5 class="h3 mb-0" slot="header">Team members</h5>
@@ -156,11 +155,11 @@
             <progress-track-list></progress-track-list>
           </card>
         </div>
-      </div>
+      </div> -->
       <!--End lists-->
 
       <!--Widgets-->
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-xl-5">
           <activity-feed></activity-feed>
         </div>
@@ -226,20 +225,18 @@
             </card>
           </div>
         </div>
-      </div>
+      </div> -->
       <!--End Widgets-->
 
-      <!--Tables-->
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-xl-8">
           <page-visits-table></page-visits-table>
         </div>
         <div class="col-xl-4">
           <social-traffic-table></social-traffic-table>
         </div>
-      </div>
-      <!--End tables-->
-    </div>
+      </div> -->
+    <!-- </div> -->
 
   </div>
 </template>
