@@ -6,7 +6,7 @@
     <div class="scrollbar-inner" ref="sidebarScrollArea">
       <div class="sidenav-header d-flex align-items-center">
         <a class="navbar-brand" href="#">
-          <img :src="logo" class="navbar-brand-img" alt="Sidebar logo">
+          <img src="~/static/img/icons/company_logo/logo_callme.png" class="navbar-brand-img" alt="Sidebar logo">
         </a>
         <div class="ml-auto">
           <!-- Sidenav toggler -->
@@ -60,7 +60,7 @@ export default {
     },
     logo: {
       type: String,
-      default: 'https://demos.creative-tim.com/nuxt-argon-dashboard-pro/img/brand/green.png',
+      default: '~/static/img/icons/company_logo/logo_callme.png',
       description: 'Sidebar app logo'
     },
     backgroundColor: {
