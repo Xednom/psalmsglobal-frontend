@@ -46,9 +46,10 @@
             <div class="row">
               <div class="col-md-6">
                 <base-input
+                  label="Company owner name"
                   alternative
                   class="mb-3"
-                  placeholder="Company owner names"
+                  placeholder="Company owner name"
                   prepend-icon="ni ni-user-run"
                   v-model="company.company_owner_name"
                 >
@@ -58,6 +59,7 @@
               <div class="col-md-6">
                 <base-input
                   alternative
+                  label="Company name"
                   placeholder="Company name"
                   prepend-icon="ni ni-badge"
                   v-model="company.company_name"
@@ -67,6 +69,7 @@
               <div class="col-md-6">
                 <base-input
                   alternative
+                  label="Business type"
                   placeholder="Business type"
                   prepend-icon="ni ni-ungroup"
                   v-model="company.business_type"
@@ -77,6 +80,7 @@
               <div class="col-md-6">
                 <base-input
                   alternative
+                  label="Company phone"
                   placeholder="Company phone"
                   prepend-icon="ni ni-mobile-button"
                   v-model="company.company_phone"
@@ -86,6 +90,7 @@
               <div class="col-md-6">
                 <base-input
                   alternative
+                  label="Company email"
                   placeholder="Company email"
                   prepend-icon="ni ni-email-83"
                   v-model="company.company_email"
@@ -95,6 +100,7 @@
               <div class="col-md-6">
                 <base-input
                   alternative
+                  label="Company forwarding email"
                   placeholder="Company forwarding email"
                   prepend-icon="ni ni-email-83"
                   v-model="company.company_forwarding_email"
@@ -104,6 +110,7 @@
               <div class="col-md-6">
                 <base-input
                   alternative
+                  label="Paypal email"
                   placeholder="Paypal email"
                   prepend-icon="ni ni-email-83"
                   v-model="company.paypal_email"
