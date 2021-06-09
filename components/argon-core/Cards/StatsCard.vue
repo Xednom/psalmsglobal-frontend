@@ -39,6 +39,12 @@
         type: String,
         default: 'primary'
       },
+      title: {
+        type: String
+      },
+      subTitle: {
+        type: String
+      },
       icon: String,
       title: String,
       subTitle: String,
