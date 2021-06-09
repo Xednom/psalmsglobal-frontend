@@ -8,14 +8,14 @@ module.exports = {
   */
   head: {
     mode: 'universal',
-    title: 'Nuxt Argon Dashboard PRO by Creative Tim',
+    title: 'CallMe',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'Nuxt Argon Dashboard PRO - Premium Admin Nuxt.js & Bootstrap 4 Dashboard' }
     ],
     link: [
-      { rel: 'icon', type: 'image/png', href: 'favicon.png' },
+      { rel: 'icon', type: 'image/png', href: 'callme.png' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'},
       { rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.6.3/css/all.css', integrity: "sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", crossorigin: "anonymous"}
     ]
