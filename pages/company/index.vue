@@ -9,8 +9,9 @@
           </nav>
         </div>
         <div class="col-lg-6 col-5 text-right">
-          <base-button size="md" type="neutral"></base-button>
-          <nuxt-link to="/company/create" size="md" type="neutral">Create a company</nuxt-link>
+          <nuxt-link to="/company/create" size="md" type="neutral">
+            <base-button size="md" type="neutral">Create a company</base-button>
+          </nuxt-link>
         </div>
       </div>
     </base-header>
