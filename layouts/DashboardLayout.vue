@@ -24,6 +24,9 @@
           <sidebar-item
             :link="{ name: 'CRM', path: '/crm' }"
           />
+          <sidebar-item
+            :link="{ name: 'Phone system', path: '/phone-system' }"
+          />
         </sidebar-item>
         <sidebar-item
           :link="{
