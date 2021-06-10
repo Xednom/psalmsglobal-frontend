@@ -81,7 +81,7 @@
               <b-icon icon="check-circle-fill" variant="success"></b-icon>
             </div>
             <div v-else>
-              <b-icon icon="check-circle-fill" variant="danger"></b-icon>
+              <b-icon icon="x-circle-fill" variant="danger"></b-icon>
             </div>
           </template>
 
