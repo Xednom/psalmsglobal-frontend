@@ -21,6 +21,9 @@
           <sidebar-item
             :link="{ name: 'Company', path: '/company' }"
           />
+          <sidebar-item
+            :link="{ name: 'CRM', path: '/crm' }"
+          />
         </sidebar-item>
         <sidebar-item
           :link="{
