@@ -7,7 +7,11 @@
             <h3 class="mb-0">Add new Phone system for a Company</h3>
           </div>
           <div class="col-4 text-right">
-            <base-button type="info" @click="save">Save</base-button>
+            <nuxt-link to="/phone-system/">
+              <base-button type="info"
+                >Back to Phone list</base-button
+              ></nuxt-link
+            >
           </div>
         </div>
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
@@ -19,11 +23,7 @@
             <div class="pl-lg-4">
               <div class="row">
                 <div class="col-lg-3">
-                  <base-input
-                    label="Company"
-                    name="Company"
-                    rules="required"
-                  >
+                  <base-input label="Company" name="Company" rules="required">
                     <el-select
                       v-model="company"
                       filterable
@@ -128,7 +128,16 @@
                 </div>
               </div>
             </div>
-            <base-button type="primary" native-type="submit">Submit</base-button>
+            <base-button
+              type="primary"
+              native-type="submit"
+              loading
+              v-if="saving"
+              >Submit</base-button
+            >
+            <base-button type="primary" native-type="submit" v-else
+              >Submit</base-button
+            >
           </form>
         </validation-observer>
       </card>
@@ -216,7 +225,6 @@ export default {
   },
   data() {
     return {
-      validated: false,
       clientUser: {},
       isBusy: false,
       saving: false,
@@ -262,43 +270,45 @@ export default {
       }
     },
     async save() {
-      const phonePayload = {
-        company: this.company,
-        sub_number: this.sub_number,
-        caller_id_detail: this.caller_id_detail,
-        vodaconnect_plan: this.vodaconnect_plan,
-        original_line: this.original_line,
-        call_forwarding_number: this.call_forwarding_number,
-        vodaconnect_line_type: this.vodaconnect_line_type
-      };
+      let isValidForm = this.$refs.formValidator.validate();
+      if (isValidForm) {
+        const phonePayload = {
+          company: this.company,
+          sub_number: this.sub_number,
+          caller_id_detail: this.caller_id_detail,
+          vodaconnect_plan: this.vodaconnect_plan,
+          original_line: this.original_line,
+          call_forwarding_number: this.call_forwarding_number,
+          vodaconnect_line_type: this.vodaconnect_line_type
+        };
 
-      if (
-        this.$auth.user.designation_category == "current_client" ||
-        this.$auth.user.designation_category == "new_client" ||
-        this.$auth.user.designation_category == "affiliate_partner"
-      ) {
-        try {
-          this.saving = true;
-          await this.savePhone(phonePayload)
-            .then(() => {
-              this.validated = true;
-              this.saving = false;
-              this.reset();
-              this.$refs.formValidator.reset();
-              this.successMessage("success");
-            })
-            .catch(e => {
-              this.saving = false;
-              this.error = e.response.data;
-              this.errorMessage("danger", this.error);
-            });
-        } catch (e) {
-          this.saving = false;
-          this.error = e.response.data;
-          this.errorMessage("danger", this.error);
+        if (
+          this.$auth.user.designation_category == "current_client" ||
+          this.$auth.user.designation_category == "new_client" ||
+          this.$auth.user.designation_category == "affiliate_partner"
+        ) {
+          try {
+            this.saving = true;
+            await this.savePhone(phonePayload)
+              .then(() => {
+                this.saving = false;
+                this.reset();
+                this.$refs.formValidator.reset();
+                this.successMessage("success");
+              })
+              .catch(e => {
+                this.saving = false;
+                this.error = e.response.data;
+                this.errorMessage("danger", this.error);
+              });
+          } catch (e) {
+            this.saving = false;
+            this.error = e.response.data;
+            this.errorMessage("danger", this.error);
+          }
         }
+        this.saving = false;
       }
-      this.saving = false;
     },
     successMessage(variant = null) {
       this.$bvToast.toast("Successfully added a Phone system information!", {
@@ -328,7 +338,6 @@ export default {
     this.fetchCompanies();
     this.fetchPlans();
     this.fetchLineTypes();
-    this.$refs.formValidator.validate()
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||
