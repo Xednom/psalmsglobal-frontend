@@ -27,6 +27,7 @@ export const getters = {
   sub_number: state => state.sub_number,
   caller_id_detail: state => state.caller_id_detail,
   vodaconnect_plan: state => state.vodaconnect_plan,
+  vodaconnect_line_type: state => state.vodaconnect_line_type,
   original_line: state => state.original_line,
   call_forwarding_number: state => state.call_forwarding_number,
   phoneSystemsPagination: state => state.phoneSystemsPagination,
@@ -41,6 +42,9 @@ export const getters = {
 export const mutations = {
   setPhoneSystem(state, payload) {
     state.phoneSystem = payload.phoneSystem;
+  },
+  setPhoneSystems(state, payload) {
+    state.phoneSystems = payload.phoneSystems;
   },
   setVodaConnectLineTypes(state, payload) {
     state.vodaConnectLineTypes = payload.vodaConnectLineTypes;

@@ -61,6 +61,7 @@
           :current-page="currentPage"
           :per-page="perPage"
           :filter="filter"
+          :busy="isBusy"
           :filter-included-fields="filterOn"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
@@ -72,16 +73,16 @@
         >
           <template #cell(company)="row">
             <i class="ni ni-building"></i>
-            <nuxt-link :to="'/crm/' + row.item.id">{{
+            <nuxt-link :to="'/phone-system/' + row.item.id">{{
               row.item.company
             }}</nuxt-link>
           </template>
-          <template #cell(crm)="row">
-            <div v-if="row.item.crm">
+          <template #cell(sub_number)="row">
+            <div v-if="row.item.sub_number">
               <b-icon icon="check-circle-fill" variant="success"></b-icon>
             </div>
             <div v-else>
-              <b-icon icon="check-circle-fill" variant="danger"></b-icon>
+              <b-icon icon="x-circle-fill" variant="danger"></b-icon>
             </div>
           </template>
 
