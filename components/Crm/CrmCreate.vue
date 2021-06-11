@@ -7,84 +7,99 @@
             <h3 class="mb-0">Add new CRM for a Company</h3>
           </div>
           <div class="col-4 text-right">
-            <base-button type="info" @click="save">Save</base-button>
+            <nuxt-link to="/crm/">
+              <base-button type="info">Back to CRM list</base-button></nuxt-link
+            >
           </div>
         </div>
+        <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
+          <form @submit.prevent="handleSubmit(save)">
+            <h6 class="heading-small text-muted mb-4">
+              CRM information
+            </h6>
 
-        <form>
-          <h6 class="heading-small text-muted mb-4">
-            CRM information
-          </h6>
-
-          <div class="pl-lg-4">
-            <div class="row">
-              <div class="col-lg-3">
-                <base-input label="Company">
-                  <el-select
-                    v-model="company"
-                    filterable
-                    placeholder="Choose a Company"
-                  >
-                    <el-option
-                      v-for="option in companies"
-                      :key="option.id"
-                      :label="option.company"
-                      :value="option.company_name"
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-3">
+                  <base-input label="Company">
+                    <el-select
+                      v-model="company"
+                      filterable
+                      placeholder="Choose a Company"
+                      rules="required"
                     >
-                    </el-option>
-                  </el-select>
-                </base-input>
+                      <el-option
+                        v-for="option in companies"
+                        :key="option.id"
+                        :label="option.company"
+                        :value="option.company_name"
+                      >
+                      </el-option>
+                    </el-select>
+                  </base-input>
+                </div>
+                <div class="col-lg-1 mt-4">
+                  <base-checkbox v-model="crm" class="mb-3">
+                    CRM
+                  </base-checkbox>
+                </div>
+                <div class="col-lg-8">
+                  <base-input
+                    type="text"
+                    label="CRM URL"
+                    placeholder="CRM URL"
+                    name="CRM URL"
+                    v-model="crm_url"
+                    rules="required"
+                  >
+                  </base-input>
+                </div>
               </div>
-              <div class="col-lg-1 mt-4">
-                <base-checkbox v-model="crm" class="mb-3">
-                  CRM
-                </base-checkbox>
-              </div>
-              <div class="col-lg-8">
-                <base-input
-                  type="text"
-                  label="CRM URL"
-                  placeholder="CRM URL"
-                  name="CRM URL"
-                  v-model="crm_url"
-                >
-                </base-input>
+              <div class="row">
+                <div class="col-lg-4">
+                  <base-input label="Type of CRM">
+                    <textarea
+                      class="form-control"
+                      id="typeOfCrm"
+                      rows="3"
+                      v-model="type_of_crm"
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-4">
+                  <base-input label="CRM Login">
+                    <textarea
+                      class="form-control"
+                      id="crmLogin"
+                      rows="3"
+                      v-model="crm_login"
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-4">
+                  <base-input label="Notes">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="notes"
+                    ></textarea>
+                  </base-input>
+                </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-lg-4">
-                <base-input label="Type of CRM">
-                  <textarea
-                    class="form-control"
-                    id="typeOfCrm"
-                    rows="3"
-                    v-model="type_of_crm"
-                  ></textarea>
-                </base-input>
-              </div>
-              <div class="col-lg-4">
-                <base-input label="CRM Login">
-                  <textarea
-                    class="form-control"
-                    id="crmLogin"
-                    rows="3"
-                    v-model="crm_login"
-                  ></textarea>
-                </base-input>
-              </div>
-              <div class="col-lg-4">
-                <base-input label="Notes">
-                  <textarea
-                    class="form-control"
-                    id="notes"
-                    rows="3"
-                    v-model="notes"
-                  ></textarea>
-                </base-input>
-              </div>
-            </div>
-          </div>
-        </form>
+            <base-button
+              type="primary"
+              native-type="submit"
+              loading
+              v-if="saving"
+              >Submit</base-button
+            >
+            <base-button type="primary" native-type="submit" v-else
+              >Submit</base-button
+            >
+          </form>
+        </validation-observer>
       </card>
     </div>
   </div>

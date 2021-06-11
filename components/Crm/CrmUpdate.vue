@@ -7,11 +7,15 @@
             <h3 class="mb-0">Update CRM for a Company</h3>
           </div>
           <div class="col-4 text-right">
-            <base-button type="info" @click="save">Save</base-button>
+            <nuxt-link to="/crm/"
+              ><base-button type="info"
+                >Back to CRM list</base-button
+              ></nuxt-link
+            >
           </div>
         </div>
-
-        <form>
+      <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
+        <form @submit.prevent="handleSubmit(save)">
           <h6 class="heading-small text-muted mb-4">
             CRM information
           </h6>
@@ -84,7 +88,14 @@
               </div>
             </div>
           </div>
+          <base-button type="primary" native-type="submit" loading v-if="saving"
+            >Submit</base-button
+          >
+          <base-button type="primary" native-type="submit" v-else
+            >Submit</base-button
+          >
         </form>
+        </validation-observer>
       </card>
     </div>
   </div>
@@ -177,11 +188,11 @@ export default {
       let endpoint = `/api/v1/crm/${payload}/`;
       return await this.$axios
         .get(endpoint)
-        .then((res) => {
+        .then(res => {
           this.loading = false;
           this.crm = res.data;
         })
-        .catch((e) => {
+        .catch(e => {
           this.loading = false;
           console.log(e);
           throw e;
