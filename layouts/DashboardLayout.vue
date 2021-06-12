@@ -18,14 +18,16 @@
             icon: 'ni ni-ui-04 text-info'
           }"
         >
-          <sidebar-item
-            :link="{ name: 'Company', path: '/company' }"
-          />
-          <sidebar-item
-            :link="{ name: 'CRM', path: '/crm' }"
-          />
+          <sidebar-item :link="{ name: 'Company', path: '/company' }" />
+          <sidebar-item :link="{ name: 'CRM', path: '/crm' }" />
           <sidebar-item
             :link="{ name: 'Phone system', path: '/phone-system' }"
+          />
+          <sidebar-item
+            :link="{
+              name: 'Scripts',
+              path: '/script'
+            }"
           />
         </sidebar-item>
         <sidebar-item
@@ -34,13 +36,6 @@
             icon: 'ni ni-single-copy-04 text-pink'
           }"
         >
-          <sidebar-item :link="{ name: 'Elements', path: '/forms/elements' }" />
-          <sidebar-item
-            :link="{ name: 'Components', path: '/forms/components' }"
-          />
-          <sidebar-item
-            :link="{ name: 'Validation', path: '/forms/validation' }"
-          />
         </sidebar-item>
 
         <sidebar-item
@@ -49,13 +44,6 @@
             icon: 'ni ni-align-left-2 text-default'
           }"
         >
-          <sidebar-item :link="{ name: 'Tables', path: '/tables/regular' }" />
-          <sidebar-item
-            :link="{ name: 'Sortable', path: '/tables/sortable' }"
-          />
-          <sidebar-item
-            :link="{ name: 'Paginated Tables', path: '/tables/paginated' }"
-          />
         </sidebar-item>
       </template>
     </side-bar>
