@@ -29,6 +29,12 @@
               path: '/script'
             }"
           />
+          <sidebar-item
+            :link="{
+              name: 'Forms',
+              path: '/form'
+            }"
+          />
         </sidebar-item>
         <sidebar-item
           :link="{
