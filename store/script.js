@@ -12,6 +12,7 @@ const blankState = {
   
   export const state = () => ({
     ...blankState,
+    forms: [],
     scripts: [],
     script: {},
     scriptsPagination: {
@@ -31,6 +32,7 @@ const blankState = {
     value_text: state => state.value_text,
     value_question: state => state.value_question,
     status: state => state.status,
+    forms: state => state.forms,
     scriptsPagination: state => state.scriptsPagination,
     scripts: state => state.scripts,
     script: state => {
@@ -39,6 +41,9 @@ const blankState = {
   };
   
   export const mutations = {
+    setForms(state, payload) {
+      state.forms = payload.forms;
+    },
     setScript(state, payload) {
       state.script = payload.script;
     },
@@ -65,6 +70,24 @@ const blankState = {
   }
   
   export const actions = {
+    async fetchForms({ commit, dispatch }, params) {
+      return await this.$axios
+        .get("/api/v1/form/", { params: params })
+        .then(res => {
+          commit("setForms", { forms: res.data.results });
+          const offset = getOffset(res.data.previous);
+          commit("setFormsPagination", {
+            offset: offset,
+            count: res.data.count,
+            showing: res.data.results.length,
+            currentPage: offset / 12 + 1
+          });
+          return res;
+        })
+        .catch(e => {
+          throw e;
+        });
+    },
     async fetchScripts({ commit, dispatch }, params) {
       return await this.$axios
         .get("/api/v1/script/", { params: params })
