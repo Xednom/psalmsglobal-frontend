@@ -12,16 +12,8 @@ const blankState = {
   
   export const state = () => ({
     ...blankState,
-    forms: [],
     scripts: [],
     script: {},
-    form: {},
-    formsPagination: {
-      offset: 0,
-      count: 0,
-      showing: 0,
-      currentPage: 1
-    },
     scriptsPagination: {
       offset: 0,
       count: 0,
@@ -31,7 +23,6 @@ const blankState = {
   });
   
   export const getters = {
-    form_title: state => state.form_title,
     company: state => state.company,
     company_address: state => state.company_address,
     form: state => state.form,
@@ -40,11 +31,6 @@ const blankState = {
     value_text: state => state.value_text,
     value_question: state => state.value_question,
     status: state => state.status,
-    formsPagination: state => state.formsPagination,
-    forms: state => state.forms,
-    form: state => {
-        return state.form
-    },
     scriptsPagination: state => state.scriptsPagination,
     scripts: state => state.scripts,
     script: state => {
@@ -53,15 +39,6 @@ const blankState = {
   };
   
   export const mutations = {
-    setForm(state, payload) {
-      state.form = payload.form;
-    },
-    setForms(state, payload) {
-      state.forms = payload.forms;
-    },
-    setFormsPagination(state, payload) {
-      state.formsPagination = payload;
-    },
     setScript(state, payload) {
       state.script = payload.script;
     },
@@ -88,24 +65,6 @@ const blankState = {
   }
   
   export const actions = {
-    async fetchForms({ commit, dispatch }, params) {
-      return await this.$axios
-        .get("/api/v1/form/", { params: params })
-        .then(res => {
-          commit("setForms", { forms: res.data.results });
-          const offset = getOffset(res.data.previous);
-          commit("setFormsPagination", {
-            offset: offset,
-            count: res.data.count,
-            showing: res.data.results.length,
-            currentPage: offset / 12 + 1
-          });
-          return res;
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
     async fetchScripts({ commit, dispatch }, params) {
       return await this.$axios
         .get("/api/v1/script/", { params: params })
@@ -131,17 +90,6 @@ const blankState = {
         .then(res => {
           commit("setUser", { user: res.data });
           return res;
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    async fetchForm({ commit, dispatch }, payload) {
-      let endpoint = `/api/v1/form/${payload}/`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          commit("setForm", { form: res.data });
         })
         .catch(e => {
           throw e;
