@@ -246,7 +246,7 @@ export default {
       this.saving = false;
     },
     successMessage(variant = null) {
-      this.$bvToast.toast("Successfully added a CRM information!", {
+      this.$bvToast.toast("Successfully updated a CRM information!", {
         title: `Successful`,
         variant: variant,
         solid: true

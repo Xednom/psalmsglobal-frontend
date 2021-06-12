@@ -288,7 +288,7 @@ export default {
       this.saving = false;
     },
     successMessage(variant = null) {
-      this.$bvToast.toast("Successfully updated the Company information!", {
+      this.$bvToast.toast("Successfully added a Company information!", {
         title: `Successful`,
         variant: variant,
         solid: true
