@@ -8,7 +8,7 @@ module.exports = {
   */
   head: {
     mode: 'universal',
-    title: 'CallMe',
+    title: 'Psalms Global',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
