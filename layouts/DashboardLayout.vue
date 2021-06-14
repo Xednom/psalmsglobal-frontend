@@ -14,14 +14,14 @@
 
         <sidebar-item
           :link="{
-            name: 'Account informations',
+            name: 'Company account information',
             icon: 'ni ni-ui-04 text-info'
           }"
         >
-          <sidebar-item :link="{ name: 'Company', path: '/company' }" />
-          <sidebar-item :link="{ name: 'CRM', path: '/crm' }" />
+          <sidebar-item :link="{ name: 'List of Companies', path: '/company' }" />
+          <sidebar-item :link="{ name: 'List of CRM/s', path: '/crm' }" />
           <sidebar-item
-            :link="{ name: 'Phone system', path: '/phone-system' }"
+            :link="{ name: 'Phone system set up', path: '/phone-system' }"
           />
           <sidebar-item
             :link="{

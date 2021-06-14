@@ -7,7 +7,7 @@
             <h3 class="mb-0">Update Form attribute for a Company</h3>
           </div>
           <div class="col-4 text-right">
-            <nuxt-link to="/script/">
+            <nuxt-link to="/form/">
               <base-button type="info"
                 >Back to Form list</base-button
               ></nuxt-link

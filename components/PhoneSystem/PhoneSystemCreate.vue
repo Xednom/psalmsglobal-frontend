@@ -117,7 +117,7 @@
               </div>
               <div class="row">
                 <div class="col-lg-12">
-                  <base-input label="Caller ID Detail">
+                  <base-input label="Caller ID name under vodaconnect system">
                     <textarea
                       class="form-control"
                       id="callerIdDetail"

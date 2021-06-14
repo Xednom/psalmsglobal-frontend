@@ -36,12 +36,20 @@
                 </base-input>
               </div>
               <div class="col-lg-3">
-                <base-input
-                  type="text"
-                  label="Business Type"
-                  placeholder="Business Type"
-                  v-model="business_type"
-                >
+                <base-input label="Business type">
+                  <el-select
+                    v-model="business_type"
+                    filterable
+                    placeholder="Choose a business type"
+                  >
+                    <el-option
+                      v-for="option in businessTypeOptions"
+                      :key="option.label"
+                      :label="option.label"
+                      :value="option.value"
+                    >
+                    </el-option>
+                  </el-select>
                 </base-input>
               </div>
               <div class="col-lg-3">
@@ -76,8 +84,8 @@
               <div class="col-lg-4">
                 <base-input
                   type="text"
-                  label="Company phone"
-                  placeholder="Company phone"
+                  label="Company paypal email for billing purposes"
+                  placeholder="Company paypal email"
                   v-model="paypal_email"
                 >
                 </base-input>
@@ -113,6 +121,8 @@
 </template>
 
 <script>
+import { Select, Option } from "element-ui";
+
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import { mapGetters, mapActions } from "vuex";
 
@@ -122,7 +132,9 @@ export default {
   name: "company_list",
   mixins: [CreateCompanyMixin],
   components: {
-    StatsCard
+    StatsCard,
+    [Select.name]: Select,
+    [Option.name]: Option
   },
   computed: {
     ...mapGetters({
@@ -212,7 +224,14 @@ export default {
       saving: false,
       modals: {
         form: false
-      }
+      },
+      businessTypeOptions: [
+        { value: "individual", label: "Individual" },
+        { value: "partnership", label: "Partnership" },
+        { value: "corporation", label: "Corporation" },
+        { value: "llcs", label: "LLCs" },
+        { value: "others", label: "Others" }
+      ]
     };
   },
   methods: {

@@ -181,10 +181,14 @@ export default {
         content: ""
       },
       fields: [
+        { key: "client_code", sortable: true },
         { key: "company", sortable: true },
         { key: "sub_number", sortable: true },
         { key: "vodaconnect_plan", sortable: true },
-        { key: "vodaconnect_line_type", sortable: true }
+        { key: "vodaconnect_line_type", sortable: true },
+        { key: "original_line", sortable: true },
+        { key: "call_forwarding", sortable: true },
+        { key: "caller_id_detail", sortable: true },
       ]
     };
   },

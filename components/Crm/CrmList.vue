@@ -70,6 +70,9 @@
           small
           @filtered="onFiltered"
         >
+        <template #cell(client)="row">
+          <i class="ni ni-circle-08"></i> {{ row.item.client_code }}
+        </template>
           <template #cell(company)="row">
             <i class="ni ni-building"></i>
             <nuxt-link :to="'/crm/' + row.item.id">{{
@@ -180,6 +183,7 @@ export default {
         content: ""
       },
       fields: [
+        { key: "client", label: "Client code", sortable: true },
         { key: "company", sortable: true },
         { key: "crm", sortable: true },
         { key: "crm_login", sortable: true }

@@ -10,7 +10,7 @@
     >
       <div slot="brand" class="navbar-wrapper">
         <nuxt-link class="navbar-brand" to="/">
-          <img src="~/static/img/icons/company_logo/logo_callme.png" alt="Logo white">
+          <img src="~/static/img/icons/company_logo/logo_pg.png" alt="Logo white">
         </nuxt-link>
       </div>
 
