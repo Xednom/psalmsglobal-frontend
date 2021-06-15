@@ -69,6 +69,7 @@
           show-empty
           small
           @filtered="onFiltered"
+          responsive
         >
           <template #cell(company)="row">
             <i class="ni ni-building"></i>
@@ -78,6 +79,15 @@
           </template>
           <template #cell(from)="row">
             {{ row.item.form_scripts }}
+          </template>
+
+          <template #cell(status)="row">
+            <div v-if="row.item.status">
+              <b-icon icon="check-circle-fill" variant="success"></b-icon>
+            </div>
+            <div v-else>
+              <b-icon icon="x-circle-fill" variant="danger"></b-icon>
+            </div>
           </template>
 
           <template #cell(actions)="row">
@@ -176,7 +186,8 @@ export default {
       },
       fields: [
         { key: "company", sortable: true },
-        { key: "form", sortable: true }
+        { key: "form", sortable: true },
+        { key: "status", sortable: true },
       ]
     };
   },

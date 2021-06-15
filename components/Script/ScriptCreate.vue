@@ -40,6 +40,24 @@
                     </el-select>
                   </base-input>
                 </div>
+                <div class="col-lg-3">
+                  <base-input label="Forms">
+                    <el-select
+                      v-model="form"
+                      filterable
+                      placeholder="Choose a form"
+                      rules="required"
+                    >
+                      <el-option
+                        v-for="option in forms"
+                        :key="option.id"
+                        :label="option.form"
+                        :value="option.form_title"
+                      >
+                      </el-option>
+                    </el-select>
+                  </base-input>
+                </div>
                 <div class="col-lg-4">
                   <label for="tags-separators">Mailing Lists</label>
                   <b-form-tags
@@ -94,6 +112,7 @@ export default {
   computed: {
     ...mapGetters({
       companies: "company/companies",
+      forms: "form/forms",
       pagination: "company/companiesPagination",
       user: "user/user",
       client: "user/company"
@@ -159,6 +178,14 @@ export default {
           this.isBusy = false;
         });
     },
+    async fetchForms() {
+      this.isBusy = true;
+      await this.$store
+        .dispatch("form/fetchForms", this.pagination)
+        .then(() => {
+          this.isBusy = false;
+        });
+    },
     async fetchClient(id) {
       let endpoint = `/api/auth/client/${id}/`;
       try {
@@ -173,6 +200,7 @@ export default {
       const scriptPayload = {
         company: this.company,
         status: this.status,
+        form: this.form,
         mailing_lists: String(this.mailing_lists),
       };
       console.log(String(this.mailing_lists));
@@ -188,6 +216,7 @@ export default {
             .then(() => {
               this.saving = false;
               this.reset();
+              this.$refs.formValidator.reset();
               this.successMessage("success");
             })
             .catch(e => {
@@ -229,6 +258,7 @@ export default {
   },
   mounted() {
     this.fetchCompanies();
+    this.fetchForms();
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||
