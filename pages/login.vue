@@ -10,7 +10,7 @@
     <div class="container mt--8 pb-5">
       <div class="row justify-content-center">
         <div class="col-lg-5 col-md-7">
-          <div class="card bg-secondary border-0 mb-0">
+          <div class="card bg-lighter border-0 mb-0">
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
                 <small>Sign in with credentials</small>
@@ -57,12 +57,12 @@
           </div>
           <div class="row mt-3">
             <div class="col-6">
-              <router-link to="/forgot-password" class="text-light"
+              <router-link to="/forgot-password" class="text-dark"
                 ><small>Forgot password?</small></router-link
               >
             </div>
             <div class="col-6 text-right">
-              <router-link to="/register" class="text-light"
+              <router-link to="/register" class="text-dark"
                 ><small>Create new account</small></router-link
               >
             </div>
