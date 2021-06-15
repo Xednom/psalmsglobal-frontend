@@ -4,7 +4,7 @@
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">
-            Your {{ $route.name }}
+            Email Connected to Forms
           </h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
             <route-breadcrumb />
@@ -12,7 +12,7 @@
         </div>
         <div class="col-lg-6 col-5 text-right">
           <nuxt-link to="/script/create" size="md" type="neutral">
-            <base-button size="md" type="neutral">Create a Script</base-button>
+            <base-button size="md" type="neutral">Create a form mailing list</base-button>
           </nuxt-link>
         </div>
       </div>

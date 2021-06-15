@@ -12,7 +12,7 @@
         </div>
         <div class="col-lg-6 col-5 text-right">
           <nuxt-link to="/form/create" size="md" type="neutral">
-            <base-button size="md" type="neutral">Create a Form</base-button>
+            <base-button size="md" type="neutral">Create a Script</base-button>
           </nuxt-link>
         </div>
       </div>

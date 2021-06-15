@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header bg-transparent border-0">
-        <h3 class="mb-0">Form List</h3>
+        <h3 class="mb-0">Scripts connected to Company/s</h3>
       </div>
       <b-container fluid>
         <!-- User Interface controls -->

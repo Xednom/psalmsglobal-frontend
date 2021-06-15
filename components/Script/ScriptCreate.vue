@@ -9,7 +9,7 @@
           <div class="col-4 text-right">
             <nuxt-link to="/script/">
               <base-button type="info"
-                >Back to Script list</base-button
+                >Back to Forms Mailing List</base-button
               ></nuxt-link
             >
           </div>

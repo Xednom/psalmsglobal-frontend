@@ -25,13 +25,13 @@
           />
           <sidebar-item
             :link="{
-              name: 'Scripts',
+              name: 'Forms Mailing list',
               path: '/script'
             }"
           />
           <sidebar-item
             :link="{
-              name: 'Forms',
+              name: 'List of Scripts',
               path: '/form'
             }"
           />

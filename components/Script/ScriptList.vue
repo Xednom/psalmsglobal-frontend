@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header bg-transparent border-0">
-        <h3 class="mb-0">Script List</h3>
+        <h3 class="mb-0">Forms Mailing List</h3>
       </div>
       <b-container fluid>
         <!-- User Interface controls -->

@@ -187,7 +187,7 @@ export default {
         { key: "vodaconnect_plan", sortable: true },
         { key: "vodaconnect_line_type", sortable: true },
         { key: "original_line", sortable: true },
-        { key: "call_forwarding", sortable: true },
+        { key: "call_forwarding_number", sortable: true },
         { key: "caller_id_detail", sortable: true },
       ]
     };
