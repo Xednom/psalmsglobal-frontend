@@ -70,6 +70,7 @@
           show-empty
           small
           @filtered="onFiltered"
+          responsive
         >
           <template #cell(company)="row">
             <i class="ni ni-building"></i>

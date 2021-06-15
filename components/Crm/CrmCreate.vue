@@ -225,6 +225,7 @@ export default {
             .then(() => {
               this.saving = false;
               this.reset();
+              this.$refs.formValidator.reset();
               this.successMessage("success");
             })
             .catch(e => {

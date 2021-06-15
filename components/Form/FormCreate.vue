@@ -63,6 +63,17 @@
                 <div class="col-lg-12">
                   <div v-for="(item, index) in attribute_forms" :key="index">
                     <div class="row">
+                      <div class="col-xs-1">
+                        <button
+                          class="btn btn-link"
+                          @click="deleteRow($event, item.id)"
+                        >
+                          <b-icon
+                            icon="x-circle-fill"
+                            variant="danger"
+                          ></b-icon>
+                        </button>
+                      </div>
                       <div class="col-sm-12 col-md-2">
                         <base-input label="Data Type">
                           <el-select
@@ -91,14 +102,7 @@
                         >
                         </base-input>
                       </div>
-                      <!-- <div class="col-xs-1">
-                        <button
-                          class="btn btn-link"
-                          @click="deleteRow($event, item.id)"
-                        >
-                          <i class="tim-icons icon-simple-remove"></i>
-                        </button>
-                      </div> -->
+
                       <div
                         class="col-sm-12 col-md-12"
                         v-if="item.data_type == 'question'"
@@ -131,7 +135,7 @@
                         class="btn btn-success mt-4 mb-4"
                         @click="addRow"
                       >
-                        Add
+                        Add form attribute
                       </button>
                     </div>
                   </div>
@@ -244,6 +248,7 @@ export default {
             .then(() => {
               this.saving = false;
               this.reset();
+              this.$refs.formValidator.reset();
               this.successMessage("success");
             })
             .catch(e => {
@@ -288,6 +293,15 @@ export default {
         value_text: "",
         value_question: ""
       });
+    },
+    deleteRow: function(e, item) {
+      e.preventDefault();
+      var index = this.attribute_forms
+        .map(function(item) {
+          return item.id;
+        })
+        .indexOf(item);
+      this.attribute_forms.splice(index, 1);
     }
   },
   mounted() {
