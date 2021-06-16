@@ -18,7 +18,9 @@
             icon: 'ni ni-ui-04 text-info'
           }"
         >
-          <sidebar-item :link="{ name: 'List of Companies', path: '/company' }" />
+          <sidebar-item
+            :link="{ name: 'List of Companies', path: '/company' }"
+          />
           <sidebar-item :link="{ name: 'List of CRM/s', path: '/crm' }" />
           <sidebar-item
             :link="{ name: 'Phone system set up', path: '/phone-system' }"
@@ -42,6 +44,12 @@
             icon: 'ni ni-single-copy-04 text-pink'
           }"
         >
+          <sidebar-item
+            :link="{
+              name: 'List of Interaction',
+              path: '/post-paid/customer-interaction'
+            }"
+          />
         </sidebar-item>
 
         <sidebar-item
