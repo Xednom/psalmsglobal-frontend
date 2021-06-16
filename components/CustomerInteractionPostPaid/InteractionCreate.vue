@@ -95,7 +95,11 @@
                   </base-input>
                 </div>
                 <div class="col-lg-3">
-                  <base-input label="Leads transferred CRM">
+                  <base-input
+                    label="Leads transferred CRM"
+                    name="Leads transferred CRM"
+                    rules="required"
+                  >
                     <el-select
                       v-model="leads_transferred_crm"
                       filterable
@@ -112,12 +116,15 @@
                   </base-input>
                 </div>
                 <div class="col-lg-3">
-                  <base-input label="General Call">
+                  <base-input
+                    label="General Call"
+                    name="General call"
+                    rules="required"
+                  >
                     <el-select
                       v-model="general_call"
                       filterable
                       placeholder="Choose"
-                      rules="required"
                     >
                       <el-option
                         v-for="option in generalCalls"
@@ -132,12 +139,15 @@
               </div>
               <div class="row">
                 <div class="col-lg-4">
-                  <base-input label="Interested to Buy">
+                  <base-input
+                    label="Interested to Buy"
+                    name="Interested to Buy"
+                    rules="required"
+                  >
                     <el-select
                       v-model="interested_to_buy"
                       filterable
                       placeholder="Choose"
-                      rules="required"
                     >
                       <el-option
                         v-for="option in interestedToBuys"
@@ -150,12 +160,15 @@
                   </base-input>
                 </div>
                 <div class="col-lg-4">
-                  <base-input label="Interested to Sell">
+                  <base-input
+                    label="Interested to Sell"
+                    name="Interested to Sell"
+                    rules="required"
+                  >
                     <el-select
                       v-model="interested_to_sell"
                       filterable
                       placeholder="Choose"
-                      rules="required"
                     >
                       <el-option
                         v-for="option in interestedToSells"
@@ -169,11 +182,11 @@
                 </div>
                 <div class="col-lg-4">
                   <base-input
-                    type="text"
                     label="Total minutes"
+                    v-model="total_minutes"
                     placeholder="Total minutes"
                     name="Total minutes"
-                    v-model="total_minutes"
+                    :rules="{ required: true}"
                   >
                   </base-input>
                 </div>
@@ -436,9 +449,9 @@ export default {
             });
         } catch (e) {
           this.saving = false;
-        //   this.error = e.response.data;
+          //   this.error = e.response.data;
           console.log(e);
-        //   console.error(e.response.data);
+          //   console.error(e.response.data);
           this.errorMessage("danger", this.error);
         }
         this.saving = false;
