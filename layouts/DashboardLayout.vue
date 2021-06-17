@@ -5,7 +5,7 @@
       <template slot-scope="props" slot="links">
         <sidebar-item
           :link="{
-            name: 'Dashboards',
+            name: 'Dashboard',
             icon: 'ni ni-shop text-primary',
             path: '/'
           }"
