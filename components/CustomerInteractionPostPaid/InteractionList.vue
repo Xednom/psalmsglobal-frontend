@@ -61,6 +61,7 @@
           :current-page="currentPage"
           :per-page="perPage"
           :filter="filter"
+          :busy="isBusy"
           :filter-included-fields="filterOn"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
@@ -71,22 +72,21 @@
           @filtered="onFiltered"
           responsive
         >
+          <template #table-busy>
+            <div class="text-center text-default my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template #cell(ticket_number)="row">
-            <nuxt-link :to="'/post-paid/customer-interaction/' + row.item.ticket_number">{{
-              row.item.ticket_number
-            }}</nuxt-link>
+            <nuxt-link
+              :to="'/post-paid/customer-interaction/' + row.item.ticket_number"
+              >{{ row.item.ticket_number }}</nuxt-link
+            >
           </template>
           <template #cell(company)="row">
             <i class="ni ni-building"></i>
-            {{row.item.company}}
-          </template>
-          <template #cell(crm)="row">
-            <div v-if="row.item.crm">
-              <b-icon icon="check-circle-fill" variant="success"></b-icon>
-            </div>
-            <div v-else>
-              <b-icon icon="x-circle-fill" variant="danger"></b-icon>
-            </div>
+            {{ row.item.company }}
           </template>
 
           <template #cell(actions)="row">
@@ -100,16 +100,6 @@
             <b-button size="sm" @click="row.toggleDetails">
               {{ row.detailsShowing ? "Hide" : "Show" }} Details
             </b-button>
-          </template>
-
-          <template #row-details="row">
-            <b-card>
-              <ul>
-                <li v-for="(value, key) in row.item" :key="key">
-                  {{ key }}: {{ value }}
-                </li>
-              </ul>
-            </b-card>
           </template>
         </b-table>
 

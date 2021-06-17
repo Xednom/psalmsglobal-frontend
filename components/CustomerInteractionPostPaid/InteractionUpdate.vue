@@ -7,6 +7,9 @@
             <h3 class="mb-0">Add new Interaction</h3>
           </div>
           <div class="col-4 text-right">
+            <base-button @click="modals.classic = true" type="primary"
+              >Comments</base-button
+            >
             <nuxt-link to="/post-paid/customer-interaction/">
               <base-button type="info"
                 >Back to Interaction list</base-button
@@ -23,21 +26,20 @@
             <div class="pl-lg-4">
               <div class="row">
                 <div class="col-lg-3">
-                  <base-input label="Company" name="Company" rules="required">
-                    <el-select
-                      v-model="interaction.company"
-                      filterable
-                      placeholder="Choose a Company"
-                    >
-                      <el-option
-                        v-for="option in companies"
-                        :key="option.id"
-                        :label="option.company"
-                        :value="option.company_name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
+                  <label>Company</label>
+                  <vue-typeahead-bootstrap
+                    class="mb-4"
+                    v-model="interaction.company"
+                    :ieCloseFix="false"
+                    :data="companies"
+                    :serializer="item => item.company_name"
+                    @hit="selectedCompany = $event"
+                    :disabledValues="
+                      selectedCompany ? [selectedCompany.company_name] : []
+                    "
+                    placeholder="Search a Company"
+                    @input="getCompany"
+                  />
                 </div>
                 <div class="col-lg-3">
                   <base-input
@@ -83,7 +85,11 @@
                 </div>
                 <div class="col-lg-3">
                   <base-input label="CRM" name="CRM" rules="required">
-                    <el-select v-model="interaction.crm" filterable placeholder="Choose">
+                    <el-select
+                      v-model="interaction.crm"
+                      filterable
+                      placeholder="Choose"
+                    >
                       <el-option
                         v-for="option in crmOptions"
                         :key="option.label"
@@ -205,6 +211,14 @@
         </validation-observer>
       </card>
     </div>
+    <!--Classic modal-->
+    <modal size="lg" :show.sync="modals.classic">
+      <h6 slot="header" class="modal-title">Comment Section for ticket {{ interaction.ticket_number}}</h6>
+      <interaction-comment
+        :interaction="interaction"
+        
+      ></interaction-comment>
+    </modal>
   </div>
 </template>
 
@@ -212,9 +226,13 @@
 import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
+import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
+
 import { mapGetters, mapActions } from "vuex";
 
 import CreateCustomerInteractionMixin from "@/mixins/CreatePostPaidInteractionMixin.js";
+import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
+import { debounce } from "lodash";
 
 export default {
   name: "customer_interaction_create",
@@ -222,27 +240,31 @@ export default {
   components: {
     StatsCard,
     [Select.name]: Select,
-    [Option.name]: Option
+    [Option.name]: Option,
+    VueTypeaheadBootstrap,
+    InteractionComment
   },
   computed: {
     ...mapGetters({
-      companies: "company/companies",
       interestedToBuys: "postPaidCustomerInteraction/interestedToBuys",
       interestedToSells: "postPaidCustomerInteraction/interestedToSells",
       generalCalls: "postPaidCustomerInteraction/generalCalls",
       user: "user/user",
       client: "user/company"
-    }),
+    })
   },
   data() {
     return {
+      query: "",
+      companies: [],
+      selectedCompany: null,
       error: "",
       interaction: {},
       clientUser: {},
       isBusy: false,
       saving: false,
       modals: {
-        form: false
+        classic: false
       },
       crmOptions: [
         { value: "yes", label: "Yes" },
@@ -259,7 +281,20 @@ export default {
     };
   },
   methods: {
-    ...mapActions("postPaidCustomerInteraction", ["reset", "updateInteraction"]),
+    ...mapActions("postPaidCustomerInteraction", [
+      "reset",
+      "updateInteraction"
+    ]),
+    getCompany: debounce(function() {
+      this.$axios
+        .get(`/api/v1/company/?search=${this.interaction.company}`)
+        .then(res => {
+          this.companies = res.data.results;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }, 700),
     async fetchInteraction(payload) {
       this.loading = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${payload}/`;
@@ -307,7 +342,7 @@ export default {
     },
     async save() {
       const interactionPayload = {
-          ticket_number: this.interaction.ticket_number,
+        ticket_number: this.interaction.ticket_number,
         company: this.interaction.company,
         apn: this.interaction.apn,
         caller_full_name: this.interaction.caller_full_name,
@@ -338,9 +373,9 @@ export default {
             });
         } catch (e) {
           this.saving = false;
-        //   this.error = e.response.data;
+          //   this.error = e.response.data;
           console.log(e);
-        //   console.error(e.response.data);
+          //   console.error(e.response.data);
           this.errorMessage("danger", this.error);
         }
         this.saving = false;
@@ -377,7 +412,7 @@ export default {
     this.fetchInterestedToSell();
     this.fetchInterestedToBuy();
     this.fetchGeneralCalls();
-    this.fetchInteraction(this.$route.params.id)
+    this.fetchInteraction(this.$route.params.id);
   }
 };
 </script>

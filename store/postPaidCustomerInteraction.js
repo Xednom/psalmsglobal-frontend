@@ -11,7 +11,8 @@ const blankState = {
   general_call: null,
   total_minutes: 0,
   crm: "",
-  leads_transferred_crm: ""
+  leads_transferred_crm: "",
+  comment: ""
 };
 
 export const state = () => ({
@@ -50,7 +51,8 @@ export const getters = {
   interactions: state => state.interactions,
   interaction: state => {
     return state.interaction;
-  }
+  },
+  comment: state => state.comment,
 };
 
 export const mutations = {

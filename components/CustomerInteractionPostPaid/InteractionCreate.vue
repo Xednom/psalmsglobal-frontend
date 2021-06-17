@@ -23,21 +23,20 @@
             <div class="pl-lg-4">
               <div class="row">
                 <div class="col-lg-3">
-                  <base-input label="Company" name="Company" rules="required">
-                    <el-select
-                      v-model="company"
-                      filterable
-                      placeholder="Choose a Company"
-                    >
-                      <el-option
-                        v-for="option in companies"
-                        :key="option.id"
-                        :label="option.company"
-                        :value="option.company_name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
+                  <label>Company</label>
+                  <vue-typeahead-bootstrap
+                    class="mb-4"
+                    v-model="company"
+                    :ieCloseFix="false"
+                    :data="companies"
+                    :serializer="item => item.company_name"
+                    @hit="selectedCompany = $event"
+                    :disabledValues="
+                      selectedCompany ? [selectedCompany.company_name] : []
+                    "
+                    placeholder="Search a Company"
+                    @input="getCompany"
+                  />
                 </div>
                 <div class="col-lg-3">
                   <base-input
@@ -186,7 +185,7 @@
                     v-model="total_minutes"
                     placeholder="Total minutes"
                     name="Total minutes"
-                    :rules="{ required: true}"
+                    :rules="{ required: true }"
                   >
                   </base-input>
                 </div>
@@ -228,6 +227,8 @@ import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import { mapGetters, mapActions } from "vuex";
 
 import CreateCustomerInteractionMixin from "@/mixins/CreatePostPaidInteractionMixin.js";
+import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
+import { debounce } from "lodash";
 
 export default {
   name: "customer_interaction_create",
@@ -235,7 +236,8 @@ export default {
   components: {
     StatsCard,
     [Select.name]: Select,
-    [Option.name]: Option
+    [Option.name]: Option,
+    VueTypeaheadBootstrap
   },
   computed: {
     ...mapGetters({
@@ -363,6 +365,9 @@ export default {
   },
   data() {
     return {
+      query: "",
+      companies: [],
+      selectedCompany: null,
       error: "",
       interaction: {},
       clientUser: {},
@@ -387,6 +392,16 @@ export default {
   },
   methods: {
     ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
+    getCompany: debounce(function() {
+      this.$axios
+        .get(`/api/v1/company/?search=${this.company}`)
+        .then((res) => {
+          this.companies = res.data.results;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, 700),
     async fetchCompanies() {
       this.isBusy = true;
       await this.$store.dispatch("company/fetchCompanies").then(() => {
