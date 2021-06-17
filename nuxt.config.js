@@ -126,7 +126,8 @@ module.exports = {
   */
   build: {
     transpile: [
-      'vee-validate/dist/rules'
+      'vee-validate/dist/rules',
+      ({ isServer }) => 'vue-typeahead-bootstrap'
     ],
     /*
     ** You can extend webpack config here
