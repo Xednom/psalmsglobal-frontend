@@ -48,6 +48,15 @@
                       type="primary"
                       native-type="submit"
                       class="my-4"
+                      loading
+                      v-if="loading"
+                      >Signing in</base-button
+                    >
+                    <base-button
+                      type="primary"
+                      native-type="submit"
+                      class="my-4"
+                      v-else
                       >Sign in</base-button
                     >
                   </div>
@@ -77,6 +86,7 @@ export default {
   layout: 'AuthLayout',
   data() {
     return {
+      loading: false,
       loginData: {
         username: '',
         password: '',
