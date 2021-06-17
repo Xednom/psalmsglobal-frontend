@@ -66,6 +66,17 @@
                     :key="index"
                   >
                     <div class="row">
+                      <div class="col-xs-1">
+                        <button
+                          class="btn btn-link"
+                          @click="deleteRow($event, item.id)"
+                        >
+                          <b-icon
+                            icon="x-circle-fill"
+                            variant="danger"
+                          ></b-icon>
+                        </button>
+                      </div>
                       <div class="col-sm-12 col-md-2">
                         <base-input label="Data Type">
                           <el-select
@@ -94,14 +105,6 @@
                         >
                         </base-input>
                       </div>
-                      <!-- <div class="col-xs-1">
-                        <button
-                          class="btn btn-link"
-                          @click="deleteRow($event, item.id)"
-                        >
-                          <i class="tim-icons icon-simple-remove"></i>
-                        </button>
-                      </div> -->
                       <div
                         class="col-sm-12 col-md-12"
                         v-if="item.data_type == 'question'"
@@ -118,17 +121,6 @@
                   </div>
                   <div class="row">
                     <div class="col-xs-12">
-                      <!-- <button
-                        v-if="!saving"
-                        @click="saveUser"
-                        type="submit"
-                        class="btn btn-info"
-                      >
-                        Submit
-                      </button>
-                      <button v-else class="btn btn-info" disabled>
-                        Saving...
-                      </button> -->
                       <button
                         type="button"
                         class="btn btn-success mt-4 mb-4"
@@ -264,11 +256,14 @@ export default {
       this.saving = false;
     },
     successMessage(variant = null) {
-      this.$bvToast.toast("Successfully updated a Form attribute information!", {
-        title: `Successful`,
-        variant: variant,
-        solid: true
-      });
+      this.$bvToast.toast(
+        "Successfully updated a Form attribute information!",
+        {
+          title: `Successful`,
+          variant: variant,
+          solid: true
+        }
+      );
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
@@ -292,6 +287,15 @@ export default {
         value_text: "",
         value_question: ""
       });
+    },
+    deleteRow: function(e, item) {
+      e.preventDefault();
+      var index = this.form.attribute_forms
+        .map(function(item) {
+          return item.id;
+        })
+        .indexOf(item);
+      this.attribute_forms.splice(index, 1);
     }
   },
   mounted() {

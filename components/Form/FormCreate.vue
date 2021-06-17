@@ -23,22 +23,20 @@
             <div class="pl-lg-4">
               <div class="row">
                 <div class="col-lg-3">
-                  <base-input label="Company">
-                    <el-select
-                      v-model="company"
-                      filterable
-                      placeholder="Choose a Company"
-                      rules="required"
-                    >
-                      <el-option
-                        v-for="option in companies"
-                        :key="option.id"
-                        :label="option.company"
-                        :value="option.company_name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
+                  <label>Company</label>
+                  <vue-typeahead-bootstrap
+                    class="mb-4"
+                    v-model="company"
+                    :ieCloseFix="false"
+                    :data="companies"
+                    :serializer="item => item.company_name"
+                    @hit="selectedCompany = $event"
+                    :disabledValues="
+                      selectedCompany ? [selectedCompany.company_name] : []
+                    "
+                    placeholder="Search a Company"
+                    @input="getCompany"
+                  />
                 </div>
                 <div class="col-lg-4">
                   <base-input
@@ -92,15 +90,17 @@
                           </el-select>
                         </base-input>
                       </div>
-                      <div class="col-xs-12 col-md-7">
-                        <base-input
-                          type="text"
-                          label="Text"
-                          placeholder="Text"
+                      <div
+                        class="col-xs-12 col-md-12"
+                        v-if="item.data_type == 'text'"
+                      >
+                        <label>Text</label>
+                        <textarea
+                          class="form-control"
+                          id="question"
+                          rows="4"
                           v-model="item.value_text"
-                          v-if="item.data_type == 'text'"
-                        >
-                        </base-input>
+                        ></textarea>
                       </div>
 
                       <div
@@ -111,7 +111,7 @@
                         <textarea
                           class="form-control"
                           id="question"
-                          rows="3"
+                          rows="4"
                           v-model="item.value_question"
                         ></textarea>
                       </div>
@@ -119,17 +119,6 @@
                   </div>
                   <div class="row">
                     <div class="col-xs-12">
-                      <!-- <button
-                        v-if="!saving"
-                        @click="saveUser"
-                        type="submit"
-                        class="btn btn-info"
-                      >
-                        Submit
-                      </button>
-                      <button v-else class="btn btn-info" disabled>
-                        Saving...
-                      </button> -->
                       <button
                         type="button"
                         class="btn btn-success mt-4 mb-4"
@@ -164,17 +153,20 @@ import { Select, Option } from "element-ui";
 import { mapGetters, mapActions } from "vuex";
 
 import CreateFormMixin from "@/mixins/CreateFormMixin.js";
+import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
+import { debounce } from "lodash";
 
 export default {
   name: "crm_list",
   mixins: [CreateFormMixin],
   components: {
     [Select.name]: Select,
-    [Option.name]: Option
+    [Option.name]: Option,
+    VueTypeaheadBootstrap
   },
   computed: {
     ...mapGetters({
-      companies: "company/companies",
+      // companies: "company/companies",
       pagination: "company/companiesPagination",
       user: "user/user",
       client: "user/company"
@@ -198,6 +190,9 @@ export default {
   },
   data() {
     return {
+      query: "",
+      companies: [],
+      selectedCompany: null,
       isBusy: false,
       saving: false,
       modals: {
@@ -212,14 +207,16 @@ export default {
   },
   methods: {
     ...mapActions("form", ["reset", "saveForm"]),
-    async fetchCompanies() {
-      this.isBusy = true;
-      await this.$store
-        .dispatch("company/fetchCompanies", this.pagination)
-        .then(() => {
-          this.isBusy = false;
+    getCompany: debounce(function() {
+      this.$axios
+        .get(`/api/v1/company/?search=${this.company}`)
+        .then((res) => {
+          this.companies = res.data.results;
+        })
+        .catch((err) => {
+          console.log(err);
         });
-    },
+    }, 700),
     async fetchClient(id) {
       let endpoint = `/api/auth/client/${id}/`;
       try {
@@ -305,7 +302,6 @@ export default {
     }
   },
   mounted() {
-    this.fetchCompanies();
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||
