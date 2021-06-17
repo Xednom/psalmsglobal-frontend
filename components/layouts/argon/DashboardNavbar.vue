@@ -66,10 +66,12 @@
             <span>My profile</span>
           </nuxt-link>
           <div class="dropdown-divider"></div>
-          <a href="#!" class="dropdown-item" @click="logout">
-            <i class="ni ni-user-run"></i>
-            <span>Logout</span>
-          </a>
+          <button
+            class="dropdown-item"
+            native-type="submit"
+            @click="logout"
+            ><i class="ni ni-user-run"></i> <span>Logout</span>
+          </button>
         </template>
       </base-dropdown>
     </ul>
