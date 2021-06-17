@@ -4,7 +4,7 @@
       <card>
         <div slot="header" class="row align-items-center">
           <div class="col-8">
-            <h3 class="mb-0">Add new Interaction</h3>
+            <h3 class="mb-0">Update Interaction for ticket number: <strong>{{ interaction.ticket_number }}</strong></h3>
           </div>
           <div class="col-4 text-right">
             <base-button @click="modals.classic = true" type="primary"
