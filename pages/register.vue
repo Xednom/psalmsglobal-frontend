@@ -71,7 +71,7 @@
                     placeholder="password"
                     type="password"
                     name="Password"
-                    :rules="{ required: true, min: 6 }"
+                    :rules="{ required: true, min: 8 }"
                     v-model="register.password"
                   >
                   </base-input>
@@ -82,7 +82,7 @@
                     placeholder="Confirm Password"
                     type="password"
                     name="Confirm Password"
-                    :rules="{ required: true, min: 6 }"
+                    :rules="{ required: true, min: 8 }"
                     v-model="register.re_password"
                   >
                   </base-input>
