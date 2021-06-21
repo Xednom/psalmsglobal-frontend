@@ -215,7 +215,7 @@
                 disabled
               >
                 <el-option
-                  v-for="option in stautsOptions"
+                  v-for="option in statusOptions"
                   :key="option.label"
                   :label="option.label"
                   :value="option.value"
