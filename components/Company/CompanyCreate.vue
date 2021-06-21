@@ -301,8 +301,6 @@ export default {
             });
         } catch (e) {
           this.saving = false;
-          this.error = e.response.data;
-          this.errorMessage("danger", this.error);
         }
       }
       this.saving = false;
