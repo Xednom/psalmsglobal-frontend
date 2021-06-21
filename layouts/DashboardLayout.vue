@@ -17,6 +17,11 @@
             name: 'Company account information',
             icon: 'ni ni-ui-04 text-info'
           }"
+          v-if="
+            $auth.user.designation_category == 'new_client' ||
+              $auth.user.designation_category == 'current_client' ||
+              $auth.user.designation_category == 'affiliate_partner'
+          "
         >
           <sidebar-item
             :link="{ name: 'List of Companies', path: '/company' }"
@@ -39,20 +44,31 @@
           />
         </sidebar-item>
         <sidebar-item
+          v-if="$auth.user.designation_category == 'staff'"
+          :link="{
+            name: 'List of Interaction',
+            path: '/post-paid/customer-interaction'
+          }"
+        />
+        <sidebar-item
+          v-if="
+            $auth.user.designation_category == 'new_client' ||
+              $auth.user.designation_category == 'current_client' ||
+              $auth.user.designation_category == 'affiliate_partner'
+          "
           :link="{
             name: 'Postpaid',
             icon: 'ni ni-single-copy-04 text-pink'
           }"
         >
-          <sidebar-item
-            :link="{
-              name: 'List of Interaction',
-              path: '/post-paid/customer-interaction'
-            }"
-          />
         </sidebar-item>
 
         <sidebar-item
+          v-if="
+            $auth.user.designation_category == 'new_client' ||
+              $auth.user.designation_category == 'current_client' ||
+              $auth.user.designation_category == 'affiliate_partner'
+          "
           :link="{
             name: 'Prepaid',
             icon: 'ni ni-align-left-2 text-default'

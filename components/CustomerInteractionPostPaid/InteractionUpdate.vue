@@ -4,7 +4,10 @@
       <card>
         <div slot="header" class="row align-items-center">
           <div class="col-8">
-            <h3 class="mb-0">Update Interaction for ticket number: <strong>{{ interaction.ticket_number }}</strong></h3>
+            <h3 class="mb-0">
+              Update Interaction for ticket number:
+              <strong>{{ interaction.ticket_number }}</strong>
+            </h3>
           </div>
           <div class="col-4 text-right">
             <base-button @click="modals.classic = true" type="primary"
@@ -17,207 +20,222 @@
             >
           </div>
         </div>
-        <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
-          <form @submit.prevent="handleSubmit(save)">
-            <h6 class="heading-small text-muted mb-4">
-              Customer Interaction information
-            </h6>
+        <b-card no-body>
+          <b-tabs card>
+            <b-tab title="Customer Interaction info" active>
+              <validation-observer
+                v-slot="{ handleSubmit }"
+                ref="formValidator"
+              >
+                <form @submit.prevent="handleSubmit(save)">
+                  <h6 class="heading-small text-muted mb-4">
+                    Customer Interaction information
+                  </h6>
 
-            <div class="pl-lg-4">
-              <div class="row">
-                <div class="col-lg-3">
-                  <label>Company</label>
-                  <vue-typeahead-bootstrap
-                    class="mb-4"
-                    v-model="interaction.company"
-                    :ieCloseFix="false"
-                    :data="companies"
-                    :serializer="item => item.company_name"
-                    @hit="selectedCompany = $event"
-                    :disabledValues="
-                      selectedCompany ? [selectedCompany.company_name] : []
-                    "
-                    placeholder="Search a Company"
-                    @input="getCompany"
-                  />
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    type="text"
-                    label="apn"
-                    placeholder="APN"
-                    v-model="interaction.apn"
-                    name="APN"
-                    rules="required"
+                  <div class="pl-lg-4">
+                    <div class="row">
+                      <div class="col-lg-3">
+                        <label>Company</label>
+                        <vue-typeahead-bootstrap
+                          class="mb-4"
+                          v-model="interaction.company"
+                          :ieCloseFix="false"
+                          :data="companies"
+                          :serializer="item => item.company_name"
+                          @hit="selectedCompany = $event"
+                          :disabledValues="
+                            selectedCompany
+                              ? [selectedCompany.company_name]
+                              : []
+                          "
+                          placeholder="Search a Company"
+                          @input="getCompany"
+                        />
+                      </div>
+                      <div class="col-lg-3">
+                        <base-input
+                          type="text"
+                          label="apn"
+                          placeholder="APN"
+                          v-model="interaction.apn"
+                          name="APN"
+                          rules="required"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-lg-3">
+                        <base-input
+                          label="Caller full name"
+                          placeholder="Caller full name"
+                          v-model="interaction.caller_full_name"
+                          name="Caller full name"
+                          rules="required"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-lg-3">
+                        <base-input
+                          label="Caller phone"
+                          placeholder="Caller phone"
+                          v-model="interaction.caller_phone"
+                          name="Caller phone"
+                          rules="required"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-lg-3">
+                        <base-input
+                          type="text"
+                          label="Email"
+                          placeholder="Email"
+                          name="Email"
+                          v-model="interaction.email"
+                          :rules="{ required: true, email: true }"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-lg-3">
+                        <base-input label="CRM" name="CRM" rules="required">
+                          <el-select
+                            v-model="interaction.crm"
+                            filterable
+                            placeholder="Choose"
+                          >
+                            <el-option
+                              v-for="option in crmOptions"
+                              :key="option.label"
+                              :label="option.label"
+                              :value="option.value"
+                            >
+                            </el-option>
+                          </el-select>
+                        </base-input>
+                      </div>
+                      <div class="col-lg-3">
+                        <base-input label="Leads transferred CRM">
+                          <el-select
+                            v-model="interaction.leads_transferred_crm"
+                            filterable
+                            placeholder="Choose"
+                          >
+                            <el-option
+                              v-for="option in leadsCrmOptions"
+                              :key="option.label"
+                              :label="option.label"
+                              :value="option.value"
+                            >
+                            </el-option>
+                          </el-select>
+                        </base-input>
+                      </div>
+                      <div class="col-lg-3">
+                        <base-input label="General Call">
+                          <el-select
+                            v-model="interaction.general_call"
+                            filterable
+                            placeholder="Choose"
+                            rules="required"
+                          >
+                            <el-option
+                              v-for="option in generalCalls"
+                              :key="option.id"
+                              :label="option.name"
+                              :value="option.name"
+                            >
+                            </el-option>
+                          </el-select>
+                        </base-input>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <base-input label="Interested to Buy">
+                          <el-select
+                            v-model="interaction.interested_to_buy"
+                            filterable
+                            placeholder="Choose"
+                            rules="required"
+                          >
+                            <el-option
+                              v-for="option in interestedToBuys"
+                              :key="option.id"
+                              :label="option.name"
+                              :value="option.name"
+                            >
+                            </el-option>
+                          </el-select>
+                        </base-input>
+                      </div>
+                      <div class="col-lg-4">
+                        <base-input label="Interested to Sell">
+                          <el-select
+                            v-model="interaction.interested_to_sell"
+                            filterable
+                            placeholder="Choose"
+                            rules="required"
+                          >
+                            <el-option
+                              v-for="option in interestedToSells"
+                              :key="option.id"
+                              :label="option.name"
+                              :value="option.name"
+                            >
+                            </el-option>
+                          </el-select>
+                        </base-input>
+                      </div>
+                      <div class="col-lg-4">
+                        <base-input
+                          type="text"
+                          label="Total minutes"
+                          placeholder="Total minutes"
+                          name="Total minutes"
+                          v-model="interaction.total_minutes"
+                        >
+                        </base-input>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <base-input label="Reason of the call">
+                          <textarea
+                            class="form-control"
+                            id="notes"
+                            rows="3"
+                            v-model="interaction.reason_of_the_call"
+                          ></textarea>
+                        </base-input>
+                      </div>
+                    </div>
+                  </div>
+                  <base-button
+                    type="primary"
+                    native-type="submit"
+                    loading
+                    v-if="saving"
+                    >Submit</base-button
                   >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Caller full name"
-                    placeholder="Caller full name"
-                    v-model="interaction.caller_full_name"
-                    name="Caller full name"
-                    rules="required"
+                  <base-button type="primary" native-type="submit" v-else
+                    >Submit</base-button
                   >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Caller phone"
-                    placeholder="Caller phone"
-                    v-model="interaction.caller_phone"
-                    name="Caller phone"
-                    rules="required"
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    type="text"
-                    label="Email"
-                    placeholder="Email"
-                    name="Email"
-                    v-model="interaction.email"
-                    :rules="{ required: true, email: true }"
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input label="CRM" name="CRM" rules="required">
-                    <el-select
-                      v-model="interaction.crm"
-                      filterable
-                      placeholder="Choose"
-                    >
-                      <el-option
-                        v-for="option in crmOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input label="Leads transferred CRM">
-                    <el-select
-                      v-model="interaction.leads_transferred_crm"
-                      filterable
-                      placeholder="Choose"
-                    >
-                      <el-option
-                        v-for="option in leadsCrmOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input label="General Call">
-                    <el-select
-                      v-model="interaction.general_call"
-                      filterable
-                      placeholder="Choose"
-                      rules="required"
-                    >
-                      <el-option
-                        v-for="option in generalCalls"
-                        :key="option.id"
-                        :label="option.name"
-                        :value="option.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4">
-                  <base-input label="Interested to Buy">
-                    <el-select
-                      v-model="interaction.interested_to_buy"
-                      filterable
-                      placeholder="Choose"
-                      rules="required"
-                    >
-                      <el-option
-                        v-for="option in interestedToBuys"
-                        :key="option.id"
-                        :label="option.name"
-                        :value="option.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-lg-4">
-                  <base-input label="Interested to Sell">
-                    <el-select
-                      v-model="interaction.interested_to_sell"
-                      filterable
-                      placeholder="Choose"
-                      rules="required"
-                    >
-                      <el-option
-                        v-for="option in interestedToSells"
-                        :key="option.id"
-                        :label="option.name"
-                        :value="option.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-lg-4">
-                  <base-input
-                    type="text"
-                    label="Total minutes"
-                    placeholder="Total minutes"
-                    name="Total minutes"
-                    v-model="interaction.total_minutes"
-                  >
-                  </base-input>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12">
-                  <base-input label="Reason of the call">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="interaction.reason_of_the_call"
-                    ></textarea>
-                  </base-input>
-                </div>
-              </div>
-            </div>
-            <base-button
-              type="primary"
-              native-type="submit"
-              loading
-              v-if="saving"
-              >Submit</base-button
-            >
-            <base-button type="primary" native-type="submit" v-else
-              >Submit</base-button
-            >
-          </form>
-        </validation-observer>
+                </form>
+              </validation-observer>
+            </b-tab>
+            <b-tab lazy title="Interaction Record">
+              <interaction-record-list
+                :interactionRecord="interaction"
+              ></interaction-record-list>
+            </b-tab>
+          </b-tabs>
+        </b-card>
       </card>
     </div>
     <!--Classic modal-->
     <modal size="lg" :show.sync="modals.classic">
-      <h6 slot="header" class="modal-title">Comment Section for ticket {{ interaction.ticket_number}}</h6>
-      <interaction-comment
-        :interaction="interaction"
-        
-      ></interaction-comment>
+      <h6 slot="header" class="modal-title">
+        Comment Section for ticket {{ interaction.ticket_number }}
+      </h6>
+      <interaction-comment :interaction="interaction"></interaction-comment>
     </modal>
   </div>
 </template>
@@ -227,6 +245,7 @@ import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
+import InteractionRecordList from "@/components/InteractionRecord/RecordList";
 
 import { mapGetters, mapActions } from "vuex";
 
@@ -242,7 +261,8 @@ export default {
     [Select.name]: Select,
     [Option.name]: Option,
     VueTypeaheadBootstrap,
-    InteractionComment
+    InteractionComment,
+    InteractionRecordList
   },
   computed: {
     ...mapGetters({
