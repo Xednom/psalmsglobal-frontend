@@ -4,7 +4,7 @@
       <div class="col-12">
         <card card-body-classes="table-full-width">
           <div>
-            <b-button variant="success" @click="modals.create = true"
+            <b-button variant="success" @click="modals.create = true" v-if="$auth.user.designation_category == 'staff'"
               >Add interaction record</b-button
             >
             <b-container fluid>

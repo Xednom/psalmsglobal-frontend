@@ -61,6 +61,12 @@
             icon: 'ni ni-single-copy-04 text-pink'
           }"
         >
+        <sidebar-item
+          :link="{
+            name: 'List of Interaction',
+            path: '/post-paid/customer-interaction'
+          }"
+        />
         </sidebar-item>
 
         <sidebar-item

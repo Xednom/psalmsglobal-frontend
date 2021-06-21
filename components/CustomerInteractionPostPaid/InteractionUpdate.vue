@@ -50,6 +50,7 @@
                           "
                           placeholder="Search a Company"
                           @input="getCompany"
+                          :disabled="clientDisable"
                         />
                       </div>
                       <div class="col-lg-3">
@@ -60,6 +61,7 @@
                           v-model="interaction.apn"
                           name="APN"
                           rules="required"
+                          :disabled="clientDisable"
                         >
                         </base-input>
                       </div>
@@ -70,6 +72,7 @@
                           v-model="interaction.caller_full_name"
                           name="Caller full name"
                           rules="required"
+                          :disabled="clientDisable"
                         >
                         </base-input>
                       </div>
@@ -80,6 +83,7 @@
                           v-model="interaction.caller_phone"
                           name="Caller phone"
                           rules="required"
+                          :disabled="clientDisable"
                         >
                         </base-input>
                       </div>
@@ -91,6 +95,7 @@
                           name="Email"
                           v-model="interaction.email"
                           :rules="{ required: true, email: true }"
+                          :disabled="clientDisable"
                         >
                         </base-input>
                       </div>
@@ -100,6 +105,7 @@
                             v-model="interaction.crm"
                             filterable
                             placeholder="Choose"
+                            :disabled="clientDisable"
                           >
                             <el-option
                               v-for="option in crmOptions"
@@ -117,6 +123,7 @@
                             v-model="interaction.leads_transferred_crm"
                             filterable
                             placeholder="Choose"
+                            :disabled="clientDisable"
                           >
                             <el-option
                               v-for="option in leadsCrmOptions"
@@ -135,6 +142,7 @@
                             filterable
                             placeholder="Choose"
                             rules="required"
+                            :disabled="clientDisable"
                           >
                             <el-option
                               v-for="option in generalCalls"
@@ -155,6 +163,7 @@
                             filterable
                             placeholder="Choose"
                             rules="required"
+                            :disabled="clientDisable"
                           >
                             <el-option
                               v-for="option in interestedToBuys"
@@ -173,6 +182,7 @@
                             filterable
                             placeholder="Choose"
                             rules="required"
+                            :disabled="clientDisable"
                           >
                             <el-option
                               v-for="option in interestedToSells"
@@ -191,6 +201,7 @@
                           placeholder="Total minutes"
                           name="Total minutes"
                           v-model="interaction.total_minutes"
+                          :disabled="clientDisable"
                         >
                         </base-input>
                       </div>
@@ -203,6 +214,7 @@
                             id="notes"
                             rows="3"
                             v-model="interaction.reason_of_the_call"
+                            :disabled="clientDisable"
                           ></textarea>
                         </base-input>
                       </div>
@@ -215,7 +227,10 @@
                     v-if="saving"
                     >Submit</base-button
                   >
-                  <base-button type="primary" native-type="submit" v-else
+                  <base-button
+                    type="primary"
+                    native-type="submit"
+                    v-else-if="!saving && $auth.user.designation_category == 'staff'"
                     >Submit</base-button
                   >
                 </form>
@@ -271,7 +286,14 @@ export default {
       generalCalls: "postPaidCustomerInteraction/generalCalls",
       user: "user/user",
       client: "user/company"
-    })
+    }),
+    clientDisable() {
+      if (this.$auth.user.designation_category == "staff") {
+        return false;
+      } else {
+        return true;
+      }
+    }
   },
   data() {
     return {
