@@ -2,7 +2,6 @@
   <div id="comment-section">
     <div class="col-md-12">
       <form @submit.prevent="save">
-
         <div class="form-row">
           <div class="col-sm-12 col-md-12">
             <textarea
@@ -46,11 +45,16 @@
         >
           <template slot-scope="{ row }">
             <td>
-              <p class="title">"{{ row.comment }}"</p>
-              <p class="text-muted comment">{{ row.commenter }} said</p>
-              <p class="text-muted comment">
-                commented at <strong>{{ row.created_at }} </strong>
-              </p>
+              <blockquote class="blockquote">
+                <p class="mb-0">
+                  {{ row.comment }}
+                </p>
+                <footer class="blockquote-footer">
+                  {{ row.commenter }}
+                  commented at <strong>{{ row.created_at }}</strong>
+                  
+                </footer>
+              </blockquote>
             </td>
           </template>
         </base-table>
