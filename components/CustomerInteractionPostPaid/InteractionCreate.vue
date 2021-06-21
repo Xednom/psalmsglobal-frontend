@@ -179,16 +179,6 @@
                     </el-select>
                   </base-input>
                 </div>
-                <div class="col-lg-4">
-                  <base-input
-                    label="Total minutes"
-                    v-model="total_minutes"
-                    placeholder="Total minutes"
-                    name="Total minutes"
-                    :rules="{ required: true }"
-                  >
-                  </base-input>
-                </div>
               </div>
               <div class="row">
                 <div class="col-lg-12">
@@ -443,7 +433,6 @@ export default {
         interested_to_sell: this.interested_to_sell,
         interested_to_buy: this.interested_to_buy,
         general_call: this.general_call,
-        total_minutes: this.total_minutes,
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm
       };
@@ -485,8 +474,6 @@ export default {
           ? "Company: " + error.company
           : error.detail
           ? "Detail: " + error.detail
-          : error.total_minutes
-          ? "Total minutes: " + error.total_minutes
           : error.non_field_errors
           ? error.non_field_errors
           : error,

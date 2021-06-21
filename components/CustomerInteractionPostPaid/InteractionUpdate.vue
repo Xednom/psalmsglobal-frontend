@@ -194,17 +194,6 @@
                           </el-select>
                         </base-input>
                       </div>
-                      <div class="col-lg-4">
-                        <base-input
-                          type="text"
-                          label="Total minutes"
-                          placeholder="Total minutes"
-                          name="Total minutes"
-                          v-model="interaction.total_minutes"
-                          :disabled="clientDisable"
-                        >
-                        </base-input>
-                      </div>
                     </div>
                     <div class="row">
                       <div class="col-lg-12">
@@ -436,8 +425,6 @@ export default {
           ? "Company: " + error.company
           : error.detail
           ? "Detail: " + error.detail
-          : error.total_minutes
-          ? "Total minutes: " + error.total_minutes
           : error.non_field_errors
           ? error.non_field_errors
           : error,
