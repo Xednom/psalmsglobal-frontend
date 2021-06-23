@@ -40,6 +40,7 @@
                 <b-form-input
                   id="filter-input"
                   v-model="filter"
+                  :input="fetchInteractions"
                   type="search"
                   placeholder="Type to Search"
                 ></b-form-input>
@@ -56,6 +57,7 @@
 
         <!-- Main table element -->
         <b-table
+        v-if="filter"
           :items="interactions"
           :fields="fields"
           :current-page="currentPage"
@@ -145,15 +147,29 @@ export default {
   },
   computed: {
     ...mapGetters({
-      interactions: "postPaidCustomerInteraction/interactions",
+      // interactions: "postPaidCustomerInteraction/interactions",
       pagination: "postPaidCustomerInteraction/interactionsPagination",
       user: "user/user",
       client: "user/clientUser"
-    })
+    }),
+    async fetchInteractions() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          this.isBusy = false;
+        })
+        .catch(e => {
+          throw e;
+        });
+    }
   },
   data() {
     return {
       interaction: {},
+      interactions: [],
       isBusy: false,
       saving: false,
       modals: {
@@ -193,17 +209,6 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetchInteractions() {
-      this.isBusy = true;
-      await this.$store
-        .dispatch(
-          "postPaidCustomerInteraction/fetchInteractions",
-          this.pagination
-        )
-        .then(() => {
-          this.isBusy = false;
-        });
-    },
     async fetchInteraction(id) {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${id}`;
       return await this.$axios
@@ -234,7 +239,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchInteractions();
+    // this.fetchInteractions();
     this.totalRows = this.interactions.length;
   }
 };

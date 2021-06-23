@@ -12,6 +12,7 @@ const blankState = {
   total_minutes: 0,
   crm: "",
   leads_transferred_crm: "",
+  script_answer: "",
   comment: ""
 };
 
@@ -44,6 +45,7 @@ export const getters = {
   total_minutes: state => state.total_minutes,
   crm: state => state.crm,
   leads_transferred_crm: state => state.leads_transferred_crm,
+  script_answer: state => state.script_answer,
   interactionsPagination: state => state.interactionsPagination,
   interestedToBuys: state => state.interestedToBuys,
   interestedToSells: state => state.interestedToSells,

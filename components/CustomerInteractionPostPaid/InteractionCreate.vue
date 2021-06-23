@@ -192,6 +192,21 @@
                   </base-input>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-lg-12 mb-3">
+                  <section class="container">
+                    <div
+                      class="quill-editor"
+                      :content="script_answer"
+                      @change="onEditorChange($event)"
+                      @blur="onEditorBlur($event)"
+                      @focus="onEditorFocus($event)"
+                      @ready="onEditorReady($event)"
+                      v-quill:myQuillEditor="editorOption"
+                    ></div>
+                  </section>
+                </div>
+              </div>
             </div>
             <base-button
               type="primary"
@@ -351,6 +366,14 @@ export default {
       set(value) {
         this.setBasicStoreValue("leads_transferred_crm", value);
       }
+    },
+    script_answer: {
+      get() {
+        return this.$store.getters["postPaidCustomerInteraction/script_answer"];
+      },
+      set(value) {
+        this.setBasicStoreValue("script_answer", value);
+      }
     }
   },
   data() {
@@ -377,18 +400,32 @@ export default {
         { value: "needs_transferred", label: "Needs transferred" },
         { value: "transfer_complete", label: "Transfer complete" },
         { value: "na", label: "N/A" }
-      ]
+      ],
+      editorOption: [["bold", "italic", "underline", "strike"]]
     };
   },
   methods: {
     ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
+    onEditorBlur(editor) {
+      console.log("editor blur!", editor);
+    },
+    onEditorFocus(editor) {
+      console.log("editor focus!", editor);
+    },
+    onEditorReady(editor) {
+      console.log("editor ready!", editor);
+    },
+    onEditorChange({ editor, html, text }) {
+      console.log("editor change!", editor, html, text);
+      this.script_answer = html;
+    },
     getCompany: debounce(function() {
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
-        .then((res) => {
+        .then(res => {
           this.companies = res.data.results;
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }, 700),
@@ -434,7 +471,8 @@ export default {
         interested_to_buy: this.interested_to_buy,
         general_call: this.general_call,
         crm: this.crm,
-        leads_transferred_crm: this.leads_transferred_crm
+        leads_transferred_crm: this.leads_transferred_crm,
+        script_answer: this.script_answer
       };
 
       if (this.$auth.user.designation_category == "staff") {

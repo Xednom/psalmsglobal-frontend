@@ -14,7 +14,7 @@
               >Comments</base-button
             >
             <nuxt-link to="/post-paid/customer-interaction/">
-              <base-button type="info"
+              <base-button type="danger"
                 >Back to Interaction list</base-button
               ></nuxt-link
             >
@@ -208,6 +208,22 @@
                         </base-input>
                       </div>
                     </div>
+                    <div class="row">
+                      <div class="col-lg-12 mb-3">
+                        <label>Script answer</label>
+                        <section class="container">
+                          <div
+                            class="quill-editor"
+                            :content="interaction.script_answer"
+                            @change="onEditorChange($event)"
+                            @blur="onEditorBlur($event)"
+                            @focus="onEditorFocus($event)"
+                            @ready="onEditorReady($event)"
+                            v-quill:myQuillEditor="editorOption"
+                          ></div>
+                        </section>
+                      </div>
+                    </div>
                   </div>
                   <base-button
                     type="primary"
@@ -219,7 +235,9 @@
                   <base-button
                     type="primary"
                     native-type="submit"
-                    v-else-if="!saving && $auth.user.designation_category == 'staff'"
+                    v-else-if="
+                      !saving && $auth.user.designation_category == 'staff'
+                    "
                     >Submit</base-button
                   >
                 </form>
@@ -253,6 +271,8 @@ import InteractionRecordList from "@/components/InteractionRecord/RecordList";
 
 import { mapGetters, mapActions } from "vuex";
 
+import HtmlEditor from "@/components/argon-core/Inputs/HtmlEditor";
+
 import CreateCustomerInteractionMixin from "@/mixins/CreatePostPaidInteractionMixin.js";
 import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 import { debounce } from "lodash";
@@ -266,7 +286,8 @@ export default {
     [Option.name]: Option,
     VueTypeaheadBootstrap,
     InteractionComment,
-    InteractionRecordList
+    InteractionRecordList,
+    HtmlEditor
   },
   computed: {
     ...mapGetters({
@@ -308,7 +329,8 @@ export default {
         { value: "needs_transferred", label: "Needs transferred" },
         { value: "transfer_complete", label: "Transfer complete" },
         { value: "na", label: "N/A" }
-      ]
+      ],
+      editorOption: [["bold", "italic", "underline", "strike"]]
     };
   },
   methods: {
@@ -316,6 +338,19 @@ export default {
       "reset",
       "updateInteraction"
     ]),
+    onEditorBlur(editor) {
+      console.log("editor blur!", editor);
+    },
+    onEditorFocus(editor) {
+      console.log("editor focus!", editor);
+    },
+    onEditorReady(editor) {
+      console.log("editor ready!", editor);
+    },
+    onEditorChange({ editor, html, text }) {
+      console.log("editor change!", editor, html, text);
+      this.interaction.script_answer = html;
+    },
     getCompany: debounce(function() {
       this.$axios
         .get(`/api/v1/company/?search=${this.interaction.company}`)
@@ -385,7 +420,8 @@ export default {
         general_call: this.interaction.general_call,
         total_minutes: this.interaction.total_minutes,
         crm: this.interaction.crm,
-        leads_transferred_crm: this.interaction.leads_transferred_crm
+        leads_transferred_crm: this.interaction.leads_transferred_crm,
+        script_answer: this.interaction.script_answer
       };
 
       if (this.$auth.user.designation_category == "staff") {
@@ -446,7 +482,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .company-info {
   float: right;
 }

@@ -37,7 +37,10 @@ module.exports = {
   */
   css: [
     'assets/css/nucleo/css/nucleo.css',
-    'assets/sass/argon.scss'
+    'assets/sass/argon.scss',
+    'quill/dist/quill.snow.css',
+    'quill/dist/quill.bubble.css',
+    'quill/dist/quill.core.css'
   ],
 
   /*
@@ -47,6 +50,7 @@ module.exports = {
     '~/plugins/dashboard/dashboard-plugin',
     {src: '~/plugins/dashboard/full-calendar', ssr: false },
     {src: '~/plugins/dashboard/world-map', ssr: false },
+    { src: "~plugins/vue-quill-editor.js", ssr: false },
   ],
 
   /*
