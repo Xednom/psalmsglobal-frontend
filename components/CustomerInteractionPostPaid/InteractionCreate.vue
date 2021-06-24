@@ -207,6 +207,11 @@
                   </section>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <form-view-list :filter="company"></form-view-list>
+                </div>
+              </div>
             </div>
             <base-button
               type="primary"
@@ -229,6 +234,7 @@
 import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
+import FormViewList from "@/components/Form/FormViewList";
 import { mapGetters, mapActions } from "vuex";
 
 import CreateCustomerInteractionMixin from "@/mixins/CreatePostPaidInteractionMixin.js";
@@ -242,11 +248,11 @@ export default {
     StatsCard,
     [Select.name]: Select,
     [Option.name]: Option,
-    VueTypeaheadBootstrap
+    VueTypeaheadBootstrap,
+    FormViewList
   },
   computed: {
     ...mapGetters({
-      companies: "company/companies",
       interestedToBuys: "postPaidCustomerInteraction/interestedToBuys",
       interestedToSells: "postPaidCustomerInteraction/interestedToSells",
       generalCalls: "postPaidCustomerInteraction/generalCalls",
