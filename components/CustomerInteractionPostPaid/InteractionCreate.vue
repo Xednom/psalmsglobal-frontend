@@ -493,7 +493,6 @@ export default {
         this.company_crm = item.company_crm;
         this.crmOptions.forEach(item => {
           if (this.company_crm == "true") {
-            item.value = "yes";
             this.crm = "yes";
             this.leads_transferred_crm = "needs_transferred";
           } else if (this.company_crm == "false") {
