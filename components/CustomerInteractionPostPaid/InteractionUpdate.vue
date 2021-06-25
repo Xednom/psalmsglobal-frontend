@@ -31,7 +31,9 @@
                   <h6 class="heading-small text-muted mb-4">
                     Customer Interaction information
                   </h6>
-
+                  <div v-if="interaction.company_crm == 'true'">
+                    {{ interaction.company_crm }}
+                  </div>
                   <div class="pl-lg-4">
                     <div class="row">
                       <div class="col-lg-3">
@@ -53,18 +55,26 @@
                           :disabled="clientDisable"
                         />
                       </div>
-                      <div class="col-lg-3">
-                        <base-input
-                          type="text"
-                          label="apn"
-                          placeholder="APN"
-                          v-model="interaction.apn"
-                          name="APN"
-                          rules="required"
-                          :disabled="clientDisable"
-                        >
-                        </base-input>
-                      </div>
+                    </div>
+                    <hr class="my-4" />
+                    <h6 class="heading-small text-muted mb-4">Property Data</h6>
+                    <div class="col-lg-3">
+                      <base-input
+                        type="text"
+                        label="apn"
+                        placeholder="APN"
+                        v-model="interaction.apn"
+                        name="APN"
+                        rules="required"
+                        :disabled="clientDisable"
+                      >
+                      </base-input>
+                    </div>
+                    <hr class="my-4" />
+                    <h6 class="heading-small text-muted mb-4">
+                      Customer's Data
+                    </h6>
+                    <div class="row">
                       <div class="col-lg-3">
                         <base-input
                           label="Caller full name"
@@ -99,6 +109,12 @@
                         >
                         </base-input>
                       </div>
+                    </div>
+                    <hr class="my-4" />
+                    <h6 class="heading-small text-muted mb-4">
+                      CRM Data
+                    </h6>
+                    <div class="row">
                       <div class="col-lg-3">
                         <base-input label="CRM" name="CRM" rules="required">
                           <el-select
@@ -135,6 +151,12 @@
                           </el-select>
                         </base-input>
                       </div>
+                    </div>
+                    <hr class="my-4" />
+                    <h6 class="heading-small text-muted mb-4">
+                      Call type
+                    </h6>
+                    <div class="row">
                       <div class="col-lg-3">
                         <base-input label="General Call">
                           <el-select
@@ -155,6 +177,10 @@
                         </base-input>
                       </div>
                     </div>
+                    <hr class="my-4" />
+                    <h6 class="heading-small text-muted mb-4">
+                      Callers category
+                    </h6>
                     <div class="row">
                       <div class="col-lg-4">
                         <base-input label="Interested to Buy">
@@ -195,6 +221,8 @@
                         </base-input>
                       </div>
                     </div>
+                    <hr class="my-4" />
+                    <h6 class="heading-small text-muted mb-4">Call memo</h6>
                     <div class="row">
                       <div class="col-lg-12">
                         <base-input label="Reason of the call">

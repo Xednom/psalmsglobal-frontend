@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-xl-12 col-md-12 col-sm-12">
-      <card>
+      <card class="container">
         <div slot="header" class="row align-items-center">
           <div class="col-8">
             <h3 class="mb-0">Add new Interaction</h3>
@@ -15,215 +15,266 @@
           </div>
         </div>
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
-          <form @submit.prevent="handleSubmit(save)">
-            <h6 class="heading-small text-muted mb-4">
-              Customer Interaction information
-            </h6>
-
-            <div class="pl-lg-4">
-              <div class="row">
-                <div class="col-lg-3">
-                  <label>Company</label>
-                  <vue-typeahead-bootstrap
-                    class="mb-4"
-                    v-model="company"
-                    :ieCloseFix="false"
-                    :data="companies"
-                    :serializer="item => item.company_name"
-                    @hit="selectedCompany = $event"
-                    :disabledValues="
-                      selectedCompany ? [selectedCompany.company_name] : []
-                    "
-                    placeholder="Search a Company"
-                    @input="getCompany"
-                  />
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    type="text"
-                    label="apn"
-                    placeholder="APN"
-                    v-model="apn"
-                    name="APN"
-                    rules="required"
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Caller full name"
-                    placeholder="Caller full name"
-                    v-model="caller_full_name"
-                    name="Caller full name"
-                    rules="required"
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Caller phone"
-                    placeholder="Caller phone"
-                    v-model="caller_phone"
-                    name="Caller phone"
-                    rules="required"
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    type="text"
-                    label="Email"
-                    placeholder="Email"
-                    name="Email"
-                    v-model="email"
-                    :rules="{ required: true, email: true }"
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input label="CRM" name="CRM" rules="required">
-                    <el-select v-model="crm" filterable placeholder="Choose">
-                      <el-option
-                        v-for="option in crmOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
+          <b-tabs content-class="mt-3">
+            <form @submit.prevent="handleSubmit(save)">
+              <b-tab title="Customer Interaction information" active>
+                <h6 class="heading-small text-muted mb-4">
+                  Customer Interaction information
+                </h6>
+                <hr class="my-4" />
+                <div class="pl-lg-4">
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <h6 class="heading-small text-muted mb-4">Company</h6>
+                      <div class="col-lg-12">
+                        <label>Company name</label>
+                        <vue-typeahead-bootstrap
+                          class="mb-4"
+                          v-model="company"
+                          :ieCloseFix="false"
+                          :data="companies"
+                          :serializer="item => item.company_name"
+                          @hit="selectedCompany = $event"
+                          :disabledValues="
+                            selectedCompany
+                              ? [selectedCompany.company_name]
+                              : []
+                          "
+                          placeholder="Search a Company"
+                          @input="getCompany"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <hr class="my-4" />
+                  <h6 class="heading-small text-muted mb-4">Property Data</h6>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <base-input
+                        type="text"
+                        label="apn"
+                        placeholder="APN"
+                        v-model="apn"
+                        name="APN"
+                        rules="required"
                       >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Leads transferred CRM"
-                    name="Leads transferred CRM"
-                    rules="required"
-                  >
-                    <el-select
-                      v-model="leads_transferred_crm"
-                      filterable
-                      placeholder="Choose"
-                    >
-                      <el-option
-                        v-for="option in leadsCrmOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
+                      </base-input>
+                    </div>
+                  </div>
+                  <hr class="my-4" />
+                  <h6 class="heading-small text-muted mb-4">Customer's Data</h6>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <base-input
+                        label="Caller full name"
+                        placeholder="Caller full name"
+                        v-model="caller_full_name"
+                        name="Caller full name"
+                        rules="required"
                       >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="General Call"
-                    name="General call"
-                    rules="required"
-                  >
-                    <el-select
-                      v-model="general_call"
-                      filterable
-                      placeholder="Choose"
-                    >
-                      <el-option
-                        v-for="option in generalCalls"
-                        :key="option.id"
-                        :label="option.name"
-                        :value="option.name"
+                      </base-input>
+                    </div>
+                    <div class="col-lg-4">
+                      <base-input
+                        label="Caller phone"
+                        placeholder="Caller phone"
+                        v-model="caller_phone"
+                        name="Caller phone"
+                        rules="required"
                       >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4">
-                  <base-input
-                    label="Interested to Buy"
-                    name="Interested to Buy"
-                    rules="required"
-                  >
-                    <el-select
-                      v-model="interested_to_buy"
-                      filterable
-                      placeholder="Choose"
-                    >
-                      <el-option
-                        v-for="option in interestedToBuys"
-                        :key="option.id"
-                        :label="option.name"
-                        :value="option.name"
+                      </base-input>
+                    </div>
+                    <div class="col-lg-4">
+                      <base-input
+                        type="text"
+                        label="Email"
+                        placeholder="Email"
+                        name="Email"
+                        v-model="email"
+                        :rules="{ required: true, email: true }"
                       >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-lg-4">
-                  <base-input
-                    label="Interested to Sell"
-                    name="Interested to Sell"
-                    rules="required"
-                  >
-                    <el-select
-                      v-model="interested_to_sell"
-                      filterable
-                      placeholder="Choose"
-                    >
-                      <el-option
-                        v-for="option in interestedToSells"
-                        :key="option.id"
-                        :label="option.name"
-                        :value="option.name"
+                      </base-input>
+                    </div>
+                  </div>
+                  <hr class="my-4" />
+                  <h6 class="heading-small text-muted mb-4">CRM Data</h6>
+                  <div class="row">
+                    <div class="col-lg-3">
+                      <base-input label="CRM" name="CRM" rules="required">
+                        <el-select
+                          v-model="crm"
+                          filterable
+                          placeholder="Choose"
+                          disabled
+                        >
+                          <el-option
+                            v-for="option in crmOptions"
+                            :key="option.label"
+                            :label="option.label"
+                            :value="option.value"
+                          >
+                          </el-option>
+                        </el-select>
+                      </base-input>
+                    </div>
+                    <div class="col-lg-3">
+                      <base-input
+                        label="Leads transferred CRM"
+                        name="Leads transferred CRM"
+                        rules="required"
                       >
-                      </el-option>
-                    </el-select>
-                  </base-input>
+                        <el-select
+                          v-model="leads_transferred_crm"
+                          filterable
+                          placeholder="Choose"
+                          disabled
+                        >
+                          <el-option
+                            v-for="option in leadsCrmOptions"
+                            :key="option.label"
+                            :label="option.label"
+                            :value="option.value"
+                          >
+                          </el-option>
+                        </el-select>
+                      </base-input>
+                    </div>
+                  </div>
+                  <hr class="my-4" />
+                  <h6 class="heading-small text-muted mb-4">Call type</h6>
+                  <div class="row">
+                    <div class="col-lg-3">
+                      <base-input
+                        label="General Call"
+                        name="General call"
+                        rules="required"
+                      >
+                        <el-select
+                          v-model="general_call"
+                          filterable
+                          placeholder="Choose"
+                        >
+                          <el-option
+                            v-for="option in generalCalls"
+                            :key="option.id"
+                            :label="option.name"
+                            :value="option.name"
+                          >
+                          </el-option>
+                        </el-select>
+                      </base-input>
+                    </div>
+                  </div>
+                  <hr class="my-4" />
+                  <h6 class="heading-small text-muted mb-4">
+                    Callers category
+                  </h6>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <base-input
+                        label="Interested to Buy"
+                        name="Interested to Buy"
+                        rules="required"
+                      >
+                        <el-select
+                          v-model="interested_to_buy"
+                          filterable
+                          placeholder="Choose"
+                        >
+                          <el-option
+                            v-for="option in interestedToBuys"
+                            :key="option.id"
+                            :label="option.name"
+                            :value="option.name"
+                          >
+                          </el-option>
+                        </el-select>
+                      </base-input>
+                    </div>
+                    <div class="col-lg-4">
+                      <base-input
+                        label="Interested to Sell"
+                        name="Interested to Sell"
+                        rules="required"
+                      >
+                        <el-select
+                          v-model="interested_to_sell"
+                          filterable
+                          placeholder="Choose"
+                        >
+                          <el-option
+                            v-for="option in interestedToSells"
+                            :key="option.id"
+                            :label="option.name"
+                            :value="option.name"
+                          >
+                          </el-option>
+                        </el-select>
+                      </base-input>
+                    </div>
+                  </div>
+                  <hr class="my-4" />
+                  <h6 class="heading-small text-muted mb-4">Call memo</h6>
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <base-input label="Reason of the call">
+                        <textarea
+                          class="form-control"
+                          id="notes"
+                          rows="3"
+                          v-model="reason_of_the_call"
+                        ></textarea>
+                      </base-input>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12">
-                  <base-input label="Reason of the call">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="reason_of_the_call"
-                    ></textarea>
-                  </base-input>
+                <base-button
+                  type="primary"
+                  native-type="submit"
+                  loading
+                  v-if="saving"
+                  >Submit</base-button
+                >
+                <base-button type="primary" native-type="submit" v-else
+                  >Submit</base-button
+                >
+              </b-tab>
+              <b-tab title="Script">
+                <div class="row">
+                  <div class="col-lg-12 mb-3">
+                    <label>Script Answer</label>
+                    <section class="container">
+                      <div
+                        class="quill-editor"
+                        :content="script_answer"
+                        @change="onEditorChange($event)"
+                        @blur="onEditorBlur($event)"
+                        @focus="onEditorFocus($event)"
+                        @ready="onEditorReady($event)"
+                        v-quill:myQuillEditor="editorOption"
+                        required
+                      ></div>
+                    </section>
+                  </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12 mb-3">
-                  <section class="container">
-                    <div
-                      class="quill-editor"
-                      :content="script_answer"
-                      @change="onEditorChange($event)"
-                      @blur="onEditorBlur($event)"
-                      @focus="onEditorFocus($event)"
-                      @ready="onEditorReady($event)"
-                      v-quill:myQuillEditor="editorOption"
-                    ></div>
-                  </section>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <form-view-list :filter="company"></form-view-list>
+                  </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12">
-                  <form-view-list :filter="company"></form-view-list>
-                </div>
-              </div>
-            </div>
-            <base-button
-              type="primary"
-              native-type="submit"
-              loading
-              v-if="saving"
-              >Submit</base-button
-            >
-            <base-button type="primary" native-type="submit" v-else
-              >Submit</base-button
-            >
-          </form>
+                <base-button
+                  type="primary"
+                  native-type="submit"
+                  loading
+                  v-if="saving"
+                  >Submit</base-button
+                >
+                <base-button type="primary" native-type="submit" v-else
+                  >Submit</base-button
+                >
+              </b-tab>
+            </form>
+          </b-tabs>
         </validation-observer>
       </card>
     </div>
@@ -386,6 +437,7 @@ export default {
     return {
       query: "",
       companies: [],
+      company_crm: [],
       selectedCompany: null,
       error: "",
       interaction: {},
@@ -430,11 +482,27 @@ export default {
         .get(`/api/v1/company/?search=${this.company}`)
         .then(res => {
           this.companies = res.data.results;
+          this.getCompanyCrm();
         })
         .catch(err => {
           console.log(err);
         });
     }, 700),
+    getCompanyCrm() {
+      this.companies.forEach(item => {
+        this.company_crm = item.company_crm;
+        this.crmOptions.forEach(item => {
+          if (this.company_crm == "true") {
+            item.value = "yes";
+            this.crm = "yes";
+            this.leads_transferred_crm = "needs_transferred";
+          } else if (this.company_crm == "false") {
+            this.crm = "no";
+            this.leads_transferred_crm = "na";
+          }
+        });
+      });
+    },
     async fetchCompanies() {
       this.isBusy = true;
       await this.$store.dispatch("company/fetchCompanies").then(() => {

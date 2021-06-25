@@ -129,8 +129,8 @@
         <h6 slot="header" class="modal-title">
           Script information for {{ form.company }} - {{ form.form_title }}
         </h6>
-        <div class="col-lg-12">
-          <card>
+        <div id="form-script" class="col-lg-12">
+          <b-card-text>
             <div
               class="mb-3"
               v-for="form in form.attribute_forms"
@@ -147,8 +147,13 @@
                 </p>
               </div>
             </div>
-          </card>
+          </b-card-text>
         </div>
+        <b-button
+          variant="success"
+          @click="copyThreadInfoToClipboard('form-script')"
+          >Copy to clipboard</b-button
+        >
       </modal>
     </div>
   </div>
@@ -236,6 +241,17 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
+    copyThreadInfoToClipboard(id) {
+      var copyText = document.getElementById(id).innerText;
+      var input_temp = document.createElement("textarea");
+      input_temp.innerHTML = copyText;
+      document.body.appendChild(input_temp);
+      input_temp.select();
+      input_temp.setSelectionRange(0, 99999); /*For mobile devices*/
+      document.execCommand("copy");
+      document.body.removeChild(input_temp);
+      this.copySuccess('success');
+    },
     async fetchForm(id) {
       let endpoint = `/api/v1/form/${id}`;
       return await this.$axios
@@ -246,6 +262,13 @@ export default {
         .catch(e => {
           throw e;
         });
+    },
+    copySuccess(variant = null) {
+      this.$bvToast.toast(`Successfully copy to clipboard`, {
+        title: "Success",
+        variant: variant,
+        solid: true
+      });
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
