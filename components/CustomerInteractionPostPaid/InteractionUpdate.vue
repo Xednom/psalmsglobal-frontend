@@ -58,17 +58,71 @@
                     </div>
                     <hr class="my-4" />
                     <h6 class="heading-small text-muted mb-4">Property Data</h6>
-                    <div class="col-lg-3">
-                      <base-input
-                        type="text"
-                        label="apn"
-                        placeholder="APN"
-                        v-model="interaction.apn"
-                        name="APN"
-                        rules="required"
-                        :disabled="clientDisable"
-                      >
-                      </base-input>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <base-input
+                          type="text"
+                          label="apn"
+                          placeholder="APN"
+                          v-model="interaction.apn"
+                          name="APN"
+                          rules="required"
+                          :disabled="clientDisable"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-lg-6">
+                        <base-input
+                          type="text"
+                          label="Reference number"
+                          placeholder="Reference number"
+                          v-model="interaction.reference_number"
+                          name="Reference number"
+                          rules="required"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-lg-4">
+                        <base-input label="State" name="State" rules="required">
+                          <el-select
+                            v-model="interaction.state"
+                            filterable
+                            placeholder="Choose"
+                            @change="fetchCounties"
+                            disabled
+                          >
+                            <el-option
+                              v-for="option in states"
+                              :key="option.label"
+                              :label="option.label"
+                              :value="option.name"
+                            >
+                            </el-option>
+                          </el-select>
+                        </base-input>
+                      </div>
+                      <div class="col-lg-4">
+                        <base-input
+                          label="County"
+                          name="County"
+                          rules="required"
+                        >
+                          <el-select
+                            v-model="interaction.county"
+                            filterable
+                            placeholder="Choose"
+                            disabled
+                          >
+                            <el-option
+                              v-for="option in counties"
+                              :key="option.label"
+                              :label="option.label"
+                              :value="option.name"
+                            >
+                            </el-option>
+                          </el-select>
+                        </base-input>
+                      </div>
                     </div>
                     <hr class="my-4" />
                     <h6 class="heading-small text-muted mb-4">
@@ -337,6 +391,8 @@ export default {
     return {
       query: "",
       companies: [],
+      states: [],
+      counties: [],
       selectedCompany: null,
       error: "",
       interaction: {},
@@ -498,6 +554,24 @@ export default {
           solid: true
         }
       );
+    },
+    async fetchCounties() {
+      let endpoint = `/api/v1/county/?search=${this.state}`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          this.counties = res.data;
+        });
+      } catch (err) {}
+    },
+    async fetchStates() {
+      let endpoint = `/api/v1/state/`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          this.states = res.data;
+        });
+      } catch (err) {
+        console.error(err);
+      }
     }
   },
   mounted() {
@@ -506,6 +580,7 @@ export default {
     this.fetchInterestedToBuy();
     this.fetchGeneralCalls();
     this.fetchInteraction(this.$route.params.id);
+    this.fetchStates();
   }
 };
 </script>

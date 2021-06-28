@@ -60,6 +60,65 @@
                       >
                       </base-input>
                     </div>
+                    <div class="col-lg-6">
+                      <base-input
+                        type="text"
+                        label="Reference number"
+                        placeholder="Reference number"
+                        v-model="reference_number"
+                        name="APN"
+                        rules="required"
+                      >
+                      </base-input>
+                    </div>
+                    <div class="col-lg-4">
+                      <base-input label="State" name="State" rules="required">
+                        <el-select
+                          v-model="state"
+                          filterable
+                          placeholder="Choose"
+                          @change="fetchCounties"
+                        >
+                          <el-option
+                            v-for="option in states"
+                            :key="option.label"
+                            :label="option.label"
+                            :value="option.name"
+                          >
+                          </el-option>
+                        </el-select>
+                      </base-input>
+                    </div>
+                    <div class="col-lg-4">
+                      <base-input label="County" name="County" rules="required">
+                        <el-select
+                          v-model="county"
+                          filterable
+                          placeholder="Choose"
+                        >
+                          <el-option
+                            v-for="option in counties"
+                            :key="option.label"
+                            :label="option.label"
+                            :value="option.name"
+                          >
+                          </el-option>
+                        </el-select>
+                      </base-input>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <base-input label="Address">
+                        <textarea
+                          class="form-control"
+                          id="address"
+                          rows="3"
+                          v-model="address"
+                        ></textarea>
+                      </base-input>
+                    </div>
                   </div>
                   <hr class="my-4" />
                   <h6 class="heading-small text-muted mb-4">Customer's Data</h6>
@@ -334,6 +393,40 @@ export default {
         this.setBasicStoreValue("apn", value);
       }
     },
+    reference_number: {
+      get() {
+        return this.$store.getters[
+          "postPaidCustomerInteraction/reference_number"
+        ];
+      },
+      set(value) {
+        this.setBasicStoreValue("reference_number", value);
+      }
+    },
+    county: {
+      get() {
+        return this.$store.getters["postPaidCustomerInteraction/county"];
+      },
+      set(value) {
+        this.setBasicStoreValue("county", value);
+      }
+    },
+    state: {
+      get() {
+        return this.$store.getters["postPaidCustomerInteraction/state"];
+      },
+      set(value) {
+        this.setBasicStoreValue("state", value);
+      }
+    },
+    address: {
+      get() {
+        return this.$store.getters["postPaidCustomerInteraction/address"];
+      },
+      set(value) {
+        this.setBasicStoreValue("address", value);
+      }
+    },
     caller_full_name: {
       get() {
         return this.$store.getters[
@@ -438,6 +531,8 @@ export default {
       query: "",
       companies: [],
       company_crm: [],
+      states: [],
+      counties: [],
       selectedCompany: null,
       error: "",
       interaction: {},
@@ -498,6 +593,9 @@ export default {
           } else if (this.company_crm == "false") {
             this.crm = "no";
             this.leads_transferred_crm = "na";
+          } else if (this.company_crm) {
+          } else if (!this.company_crm) {
+            this.crmMessage("warning", this.company);
           }
         });
       });
@@ -536,6 +634,10 @@ export default {
       const interactionPayload = {
         company: this.company,
         apn: this.apn,
+        state: this.state,
+        county: this.county,
+        address: this.adress,
+        reference_number: this.reference_number,
         caller_full_name: this.caller_full_name,
         caller_phone: this.caller_phone,
         email: this.email,
@@ -579,6 +681,16 @@ export default {
         solid: true
       });
     },
+    crmMessage(variant = null, company) {
+      this.$bvToast.toast(
+        `Your company${company} needs to be registered in the CRM list!`,
+        {
+          title: `Successful`,
+          variant: variant,
+          solid: true
+        }
+      );
+    },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
         error.company
@@ -594,6 +706,24 @@ export default {
           solid: true
         }
       );
+    },
+    async fetchCounties() {
+      let endpoint = `/api/v1/county/?search=${this.state}`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          this.counties = res.data;
+        });
+      } catch (err) {}
+    },
+    async fetchStates() {
+      let endpoint = `/api/v1/state/`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          this.states = res.data;
+        });
+      } catch (err) {
+        console.error(err);
+      }
     }
   },
   mounted() {
@@ -601,6 +731,7 @@ export default {
     this.fetchInterestedToSell();
     this.fetchInterestedToBuy();
     this.fetchGeneralCalls();
+    this.fetchStates();
   }
 };
 </script>
