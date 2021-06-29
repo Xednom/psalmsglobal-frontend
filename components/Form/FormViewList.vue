@@ -96,7 +96,7 @@
               size="sm"
               @click="
                 {
-                  fetchForm(row.item.id), (modals.form = true);
+                  fetchForm(row.item.id_form);
                 }
               "
               class="mr-1"
@@ -155,6 +155,44 @@
           >Copy to clipboard</b-button
         >
       </modal>
+      <div class="container mt-5" v-if="form.attribute_forms">
+        <h3>
+          Script information for {{ form.company }} - {{ form.form_title }}
+        </h3>
+        <div id="form-script" class="col-lg-12">
+          <b-card-text>
+            <div
+              class="mb-3"
+              v-for="(form, index) in form.attribute_forms"
+              :key="index"
+            >
+              <div class="mt-5" v-if="form.data_type == 'text'">
+                <span>
+                  <strong>{{ form.value_text }}</strong>
+                </span>
+              </div>
+              <div class="mb-3" v-else-if="form.data_type == 'question'">
+                <p>
+                  {{ form.value_question }}:
+                  <textarea
+                    class="form-control"
+                    name="input-question"
+                    v-model="form.input_question"
+                    id=""
+                    cols="30"
+                    rows="10"
+                  ></textarea>
+                </p>
+              </div>
+            </div>
+            <b-button
+          variant="success"
+          @click="emitForm"
+          >Emit</b-button
+        >
+          </b-card-text>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -194,7 +232,13 @@ export default {
   },
   data() {
     return {
-      form: {},
+      form: {
+        data_type: "",
+        value_text: "",
+        value_question: "",
+        input_question: "",
+        original_script: false
+      },
       forms: [],
       isBusy: false,
       saving: false,
@@ -250,7 +294,7 @@ export default {
       input_temp.setSelectionRange(0, 99999); /*For mobile devices*/
       document.execCommand("copy");
       document.body.removeChild(input_temp);
-      this.copySuccess('success');
+      this.copySuccess("success");
     },
     async fetchForm(id) {
       let endpoint = `/api/v1/form/${id}`;
@@ -258,10 +302,14 @@ export default {
         .get(endpoint)
         .then(res => {
           this.form = res.data;
+          this.form.original_script = false;
         })
         .catch(e => {
           throw e;
         });
+    },
+    emitForm() {
+      this.$emit("form-script", this.form);
     },
     copySuccess(variant = null) {
       this.$bvToast.toast(`Successfully copy to clipboard`, {

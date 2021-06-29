@@ -31,9 +31,6 @@
                   <h6 class="heading-small text-muted mb-4">
                     Customer Interaction information
                   </h6>
-                  <div v-if="interaction.company_crm == 'true'">
-                    {{ interaction.company_crm }}
-                  </div>
                   <div class="pl-lg-4">
                     <div class="row">
                       <div class="col-lg-3">
@@ -290,22 +287,6 @@
                         </base-input>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col-lg-12 mb-3">
-                        <label>Script answer</label>
-                        <section class="container">
-                          <div
-                            class="quill-editor"
-                            :content="interaction.script_answer"
-                            @change="onEditorChange($event)"
-                            @blur="onEditorBlur($event)"
-                            @focus="onEditorFocus($event)"
-                            @ready="onEditorReady($event)"
-                            v-quill:myQuillEditor="editorOption"
-                          ></div>
-                        </section>
-                      </div>
-                    </div>
                   </div>
                   <base-button
                     type="primary"
@@ -329,6 +310,35 @@
               <interaction-record-list
                 :interactionRecord="interaction"
               ></interaction-record-list>
+            </b-tab>
+            <b-tab title="Script answer">
+              <div class="row">
+                <div
+                  class="col-lg-12 mb-3"
+                  v-for="(interaction_forms, index) in interaction.customer_interaction_post_paid_forms"
+                  :key="index"
+                >
+                  <h6 class="heading-small text-muted">
+                    {{ interaction_forms.form_title }} of {{ interaction_forms.company }}
+                  </h6>
+                  <div
+                    v-for="(form, index) in interaction_forms.attribute_forms"
+                    :key="index"
+                  >
+                    <base-input
+                      :label="form.value_question"
+                      v-if="form.input_question"
+                    >
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="form.input_question"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                </div>
+              </div>
             </b-tab>
           </b-tabs>
         </b-card>
@@ -505,7 +515,9 @@ export default {
         total_minutes: this.interaction.total_minutes,
         crm: this.interaction.crm,
         leads_transferred_crm: this.interaction.leads_transferred_crm,
-        script_answer: this.interaction.script_answer
+        script_answer: this.interaction.script_answer,
+        customer_interaction_post_paid_forms: this.interaction
+          .customer_interaction_post_paid_forms
       };
 
       if (this.$auth.user.designation_category == "staff") {

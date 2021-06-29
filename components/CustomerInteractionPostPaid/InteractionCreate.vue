@@ -66,7 +66,7 @@
                         label="Reference number"
                         placeholder="Reference number"
                         v-model="reference_number"
-                        name="APN"
+                        name="Reference number"
                         rules="required"
                       >
                       </base-input>
@@ -106,7 +106,6 @@
                         </el-select>
                       </base-input>
                     </div>
-                    
                   </div>
                   <div class="row">
                     <div class="col-lg-12">
@@ -300,25 +299,11 @@
               </b-tab>
               <b-tab title="Script">
                 <div class="row">
-                  <div class="col-lg-12 mb-3">
-                    <label>Script Answer</label>
-                    <section class="container">
-                      <div
-                        class="quill-editor"
-                        :content="script_answer"
-                        @change="onEditorChange($event)"
-                        @blur="onEditorBlur($event)"
-                        @focus="onEditorFocus($event)"
-                        @ready="onEditorReady($event)"
-                        v-quill:myQuillEditor="editorOption"
-                        required
-                      ></div>
-                    </section>
-                  </div>
-                </div>
-                <div class="row">
                   <div class="col-lg-12">
-                    <form-view-list :filter="company"></form-view-list>
+                    <form-view-list
+                      :filter="company"
+                      @form-script="eventChild"
+                    ></form-view-list>
                   </div>
                 </div>
                 <base-button
@@ -530,6 +515,7 @@ export default {
     return {
       query: "",
       companies: [],
+      form: [],
       company_crm: [],
       states: [],
       counties: [],
@@ -572,6 +558,10 @@ export default {
       console.log("editor change!", editor, html, text);
       this.script_answer = html;
     },
+    eventChild(form) {
+			console.log('Event from child component emitted', this.form = form);
+      console.log(this.form);
+		},
     getCompany: debounce(function() {
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
@@ -647,7 +637,8 @@ export default {
         general_call: this.general_call,
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm,
-        script_answer: this.script_answer
+        script_answer: this.script_answer,
+        customer_interaction_post_paid_forms: Array(this.form)
       };
 
       if (this.$auth.user.designation_category == "staff") {
