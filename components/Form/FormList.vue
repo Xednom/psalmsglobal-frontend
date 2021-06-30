@@ -72,7 +72,7 @@
         >
           <template #cell(company)="row">
             <i class="ni ni-building"></i>
-            <nuxt-link :to="'/form/' + row.item.id">{{
+            <nuxt-link :to="'/form/' + row.item.id_form">{{
               row.item.company
             }}</nuxt-link>
           </template>
