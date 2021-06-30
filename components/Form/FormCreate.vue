@@ -186,6 +186,14 @@ export default {
       set(value) {
         this.setBasicStoreValue("form_title", value);
       }
+    },
+    original_script: {
+      get() {
+        return this.$store.getters["form/original_script"];
+      },
+      set(value) {
+        this.setBasicStoreValue("original_script", value);
+      }
     }
   },
   data() {
@@ -231,7 +239,8 @@ export default {
       const formPayload = {
         company: this.company,
         form_title: this.form_title,
-        attribute_forms: this.attribute_forms
+        attribute_forms: this.attribute_forms,
+        original_script: this.original_script
       };
 
       if (

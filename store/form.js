@@ -1,6 +1,7 @@
 const blankState = {
     form_title: "",
     company: "",
+    original_script: true,
     attribute_forms: []
   };
   
@@ -19,6 +20,7 @@ const blankState = {
   export const getters = {
     form_title: state => state.form_title,
     company: state => state.company,
+    original_script: state => state.original_script,
     attribute_forms: state => state.attribute_forms,
     formsPagination: state => state.formsPagination,
     forms: state => state.forms,
