@@ -193,7 +193,12 @@ export const actions = {
   async saveInteraction({ commit }, payload) {
     let url = "/api/v1/post-paid/customer-interaction-post-paid/";
     try {
-      return await this.$axios.post(url, payload).then(() => {
+      return await this.$axios.post(url, payload).then((res) => {
+        console.log(res);
+        this.$router.push({
+          name: "post-paid-customer-interaction-id",
+          params: { id: res.data.ticket_number }
+        });
         commit("setBasicField", payload);
       });
     } catch (err) {

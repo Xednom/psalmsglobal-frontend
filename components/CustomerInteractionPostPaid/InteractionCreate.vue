@@ -559,9 +559,9 @@ export default {
       this.script_answer = html;
     },
     eventChild(form) {
-			console.log('Event from child component emitted', this.form = form);
+      console.log("Event from child component emitted", (this.form = form));
       console.log(this.form);
-		},
+    },
     getCompany: debounce(function() {
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
