@@ -365,7 +365,6 @@ export default {
           .get(endpoint)
           .then(res => {
             this.callMeInfo = res.data.results;
-            console.log(this.callMeInfo.length);
             if (this.callMeInfo.length >= 1) {
               this.callMeInfo.forEach(item => {
                 this.callMe = item;
@@ -618,7 +617,6 @@ export default {
         .get(`/api/v1/company/?search=${this.company}`)
         .then(res => {
           this.companies = res.data.results;
-          console.log(this.companies);
           this.getCompanyCrm();
         })
         .catch(err => {
