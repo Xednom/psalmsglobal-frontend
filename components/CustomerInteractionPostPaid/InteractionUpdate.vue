@@ -123,7 +123,7 @@
                     </div>
                     <hr class="my-4" />
                     <h6 class="heading-small text-muted mb-4">
-                      Customer's Data
+                      Caller's Data
                     </h6>
                     <div class="row">
                       <div class="col-lg-3">
@@ -205,11 +205,11 @@
                     </div>
                     <hr class="my-4" />
                     <h6 class="heading-small text-muted mb-4">
-                      Call type
+                      Caller's Category
                     </h6>
                     <div class="row">
                       <div class="col-lg-3">
-                        <base-input label="General Call">
+                        <base-input label="Type of caller">
                           <el-select
                             v-model="interaction.general_call"
                             filterable
@@ -230,7 +230,7 @@
                     </div>
                     <hr class="my-4" />
                     <h6 class="heading-small text-muted mb-4">
-                      Callers category
+                      Type of Caller
                     </h6>
                     <div class="row">
                       <div class="col-lg-4">
