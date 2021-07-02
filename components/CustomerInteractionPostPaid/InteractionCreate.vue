@@ -228,6 +228,32 @@
               </b-tab>
               <b-tab title="Caller's Category">
                 <h6 class="heading-small text-muted mb-4">
+                  Caller's Category
+                </h6>
+                <div class="row">
+                  <div class="col-lg-3">
+                    <base-input
+                      label="Type of caller"
+                      name="Type of caller"
+                      rules="required"
+                    >
+                      <el-select
+                        v-model="general_call"
+                        filterable
+                        placeholder="Choose"
+                      >
+                        <el-option
+                          v-for="option in generalCalls"
+                          :key="option.id"
+                          :label="option.name"
+                          :value="option.name"
+                        >
+                        </el-option>
+                      </el-select>
+                    </base-input>
+                  </div>
+                </div>
+                <h6 class="heading-small text-muted mb-4">
                   Type of Caller
                 </h6>
                 <div class="row">
@@ -265,32 +291,6 @@
                       >
                         <el-option
                           v-for="option in interestedToSells"
-                          :key="option.id"
-                          :label="option.name"
-                          :value="option.name"
-                        >
-                        </el-option>
-                      </el-select>
-                    </base-input>
-                  </div>
-                </div>
-                <h6 class="heading-small text-muted mb-4">
-                  Caller's Category
-                </h6>
-                <div class="row">
-                  <div class="col-lg-3">
-                    <base-input
-                      label="Type of caller"
-                      name="Type of caller"
-                      rules="required"
-                    >
-                      <el-select
-                        v-model="general_call"
-                        filterable
-                        placeholder="Choose"
-                      >
-                        <el-option
-                          v-for="option in generalCalls"
                           :key="option.id"
                           :label="option.name"
                           :value="option.name"

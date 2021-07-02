@@ -120,6 +120,16 @@
                           </el-select>
                         </base-input>
                       </div>
+                      <div class="col-lg-12">
+                        <base-input label="Address">
+                          <textarea
+                            class="form-control"
+                            id="address"
+                            rows="3"
+                            v-model="interaction.address"
+                          ></textarea>
+                        </base-input>
+                      </div>
                     </div>
                     <hr class="my-4" />
                     <h6 class="heading-small text-muted mb-4">
@@ -172,7 +182,7 @@
                             v-model="interaction.crm"
                             filterable
                             placeholder="Choose"
-                            :disabled="clientDisable"
+                            disabled
                           >
                             <el-option
                               v-for="option in crmOptions"
@@ -190,7 +200,7 @@
                             v-model="interaction.leads_transferred_crm"
                             filterable
                             placeholder="Choose"
-                            :disabled="clientDisable"
+                            disabled
                           >
                             <el-option
                               v-for="option in leadsCrmOptions"
@@ -315,11 +325,13 @@
               <div class="row">
                 <div
                   class="col-lg-12 mb-3"
-                  v-for="(interaction_forms, index) in interaction.customer_interaction_post_paid_forms"
+                  v-for="(interaction_forms,
+                  index) in interaction.customer_interaction_post_paid_forms"
                   :key="index"
                 >
                   <h6 class="heading-small text-muted">
-                    {{ interaction_forms.form_title }} of {{ interaction_forms.company }}
+                    {{ interaction_forms.form_title }} of
+                    {{ interaction_forms.company }}
                   </h6>
                   <div
                     v-for="(form, index) in interaction_forms.attribute_forms"
