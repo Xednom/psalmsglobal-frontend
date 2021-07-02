@@ -40,7 +40,7 @@
                 <b-form-input
                   id="filter-input"
                   v-model="filter"
-                  :input="fetchInteractions"
+                  @keyup.enter="fetchInteractions"
                   type="search"
                   placeholder="Type to Search"
                 ></b-form-input>
@@ -57,7 +57,6 @@
 
         <!-- Main table element -->
         <b-table
-        v-if="filter"
           :items="interactions"
           :fields="fields"
           :current-page="currentPage"
@@ -152,19 +151,6 @@ export default {
       user: "user/user",
       client: "user/clientUser"
     }),
-    async fetchInteractions() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.interactions = res.data.results;
-          this.isBusy = false;
-        })
-        .catch(e => {
-          throw e;
-        });
-    }
   },
   data() {
     return {
@@ -208,6 +194,19 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+    async fetchInteractions() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          this.isBusy = false;
+        })
+        .catch(e => {
+          throw e;
+        });
     },
     async fetchInteraction(id) {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${id}`;
