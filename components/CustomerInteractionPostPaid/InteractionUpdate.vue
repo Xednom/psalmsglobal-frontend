@@ -86,7 +86,6 @@
                             filterable
                             placeholder="Choose"
                             @change="fetchCounties"
-                            disabled
                           >
                             <el-option
                               v-for="option in states"
@@ -108,7 +107,6 @@
                             v-model="interaction.county"
                             filterable
                             placeholder="Choose"
-                            disabled
                           >
                             <el-option
                               v-for="option in counties"
