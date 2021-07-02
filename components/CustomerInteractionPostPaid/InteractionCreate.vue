@@ -19,7 +19,7 @@
             <form @submit.prevent="handleSubmit(save)">
               <b-tab title="Customer Interaction information" active>
                 <h6 class="heading-small text-muted mb-4">
-                  Customer Interaction information
+                  Caller Interaction
                 </h6>
                 <hr class="my-4" />
                 <div class="pl-lg-4">
@@ -34,20 +34,19 @@
                           :ieCloseFix="false"
                           :data="companies"
                           :serializer="item => item.company_name"
-                          @hit="selectedCompany = $event"
-                          :disabledValues="
-                            selectedCompany
-                              ? [selectedCompany.company_name]
-                              : []
-                          "
+                          :value="keyword"
+                          @hit="getCompany"
+                          @input="onSearchInput"
                           placeholder="Search a Company"
-                          @input="getCompany"
                         />
                       </div>
                     </div>
                   </div>
                   <hr class="my-4" />
                   <h6 class="heading-small text-muted mb-4">Property Data</h6>
+                  <div v-for="(callMe, index) in callMeInfo" :key="index">
+                    {{ callMe.reference }}
+                  </div>
                   <div class="row">
                     <div class="col-lg-6">
                       <base-input
@@ -55,6 +54,7 @@
                         label="apn"
                         placeholder="APN"
                         v-model="apn"
+                        :input="getCallMeInfo"
                         name="APN"
                         rules="required"
                       >
@@ -66,6 +66,7 @@
                         label="Reference number"
                         placeholder="Reference number"
                         v-model="reference_number"
+                        :input="getCallMeInfo"
                         name="Reference number"
                         rules="required"
                       >
@@ -120,41 +121,6 @@
                     </div>
                   </div>
                   <hr class="my-4" />
-                  <h6 class="heading-small text-muted mb-4">Customer's Data</h6>
-                  <div class="row">
-                    <div class="col-lg-4">
-                      <base-input
-                        label="Caller full name"
-                        placeholder="Caller full name"
-                        v-model="caller_full_name"
-                        name="Caller full name"
-                        rules="required"
-                      >
-                      </base-input>
-                    </div>
-                    <div class="col-lg-4">
-                      <base-input
-                        label="Caller phone"
-                        placeholder="Caller phone"
-                        v-model="caller_phone"
-                        name="Caller phone"
-                        rules="required"
-                      >
-                      </base-input>
-                    </div>
-                    <div class="col-lg-4">
-                      <base-input
-                        type="text"
-                        label="Email"
-                        placeholder="Email"
-                        name="Email"
-                        v-model="email"
-                        :rules="{ required: true, email: true }"
-                      >
-                      </base-input>
-                    </div>
-                  </div>
-                  <hr class="my-4" />
                   <h6 class="heading-small text-muted mb-4">CRM Data</h6>
                   <div class="row">
                     <div class="col-lg-3">
@@ -199,79 +165,6 @@
                     </div>
                   </div>
                   <hr class="my-4" />
-                  <h6 class="heading-small text-muted mb-4">Call type</h6>
-                  <div class="row">
-                    <div class="col-lg-3">
-                      <base-input
-                        label="General Call"
-                        name="General call"
-                        rules="required"
-                      >
-                        <el-select
-                          v-model="general_call"
-                          filterable
-                          placeholder="Choose"
-                        >
-                          <el-option
-                            v-for="option in generalCalls"
-                            :key="option.id"
-                            :label="option.name"
-                            :value="option.name"
-                          >
-                          </el-option>
-                        </el-select>
-                      </base-input>
-                    </div>
-                  </div>
-                  <hr class="my-4" />
-                  <h6 class="heading-small text-muted mb-4">
-                    Callers category
-                  </h6>
-                  <div class="row">
-                    <div class="col-lg-4">
-                      <base-input
-                        label="Interested to Buy"
-                        name="Interested to Buy"
-                        rules="required"
-                      >
-                        <el-select
-                          v-model="interested_to_buy"
-                          filterable
-                          placeholder="Choose"
-                        >
-                          <el-option
-                            v-for="option in interestedToBuys"
-                            :key="option.id"
-                            :label="option.name"
-                            :value="option.name"
-                          >
-                          </el-option>
-                        </el-select>
-                      </base-input>
-                    </div>
-                    <div class="col-lg-4">
-                      <base-input
-                        label="Interested to Sell"
-                        name="Interested to Sell"
-                        rules="required"
-                      >
-                        <el-select
-                          v-model="interested_to_sell"
-                          filterable
-                          placeholder="Choose"
-                        >
-                          <el-option
-                            v-for="option in interestedToSells"
-                            :key="option.id"
-                            :label="option.name"
-                            :value="option.name"
-                          >
-                          </el-option>
-                        </el-select>
-                      </base-input>
-                    </div>
-                  </div>
-                  <hr class="my-4" />
                   <h6 class="heading-small text-muted mb-4">Call memo</h6>
                   <div class="row">
                     <div class="col-lg-12">
@@ -296,6 +189,117 @@
                 <base-button type="primary" native-type="submit" v-else
                   >Submit</base-button
                 >
+              </b-tab>
+              <b-tab title="Caller's Data">
+                <h6 class="heading-small text-muted mb-4">Caller's Data</h6>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <base-input
+                      label="Caller full name"
+                      placeholder="Caller full name"
+                      v-model="caller_full_name"
+                      name="Caller full name"
+                      rules="required"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <base-input
+                      label="Caller phone"
+                      placeholder="Caller phone"
+                      v-model="caller_phone"
+                      name="Caller phone"
+                      rules="required"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <base-input
+                      type="text"
+                      label="Email"
+                      placeholder="Email"
+                      name="Email"
+                      v-model="email"
+                      :rules="{ required: true, email: true }"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+              </b-tab>
+              <b-tab title="Caller's Category">
+                <h6 class="heading-small text-muted mb-4">
+                  Type of Caller
+                </h6>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <base-input
+                      label="Interested to Buy"
+                      name="Interested to Buy"
+                      rules="required"
+                    >
+                      <el-select
+                        v-model="interested_to_buy"
+                        filterable
+                        placeholder="Choose"
+                      >
+                        <el-option
+                          v-for="option in interestedToBuys"
+                          :key="option.id"
+                          :label="option.name"
+                          :value="option.name"
+                        >
+                        </el-option>
+                      </el-select>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <base-input
+                      label="Interested to Sell"
+                      name="Interested to Sell"
+                      rules="required"
+                    >
+                      <el-select
+                        v-model="interested_to_sell"
+                        filterable
+                        placeholder="Choose"
+                      >
+                        <el-option
+                          v-for="option in interestedToSells"
+                          :key="option.id"
+                          :label="option.name"
+                          :value="option.name"
+                        >
+                        </el-option>
+                      </el-select>
+                    </base-input>
+                  </div>
+                </div>
+                <h6 class="heading-small text-muted mb-4">
+                  Caller's Category
+                </h6>
+                <div class="row">
+                  <div class="col-lg-3">
+                    <base-input
+                      label="Type of caller"
+                      name="Type of caller"
+                      rules="required"
+                    >
+                      <el-select
+                        v-model="general_call"
+                        filterable
+                        placeholder="Choose"
+                      >
+                        <el-option
+                          v-for="option in generalCalls"
+                          :key="option.id"
+                          :label="option.name"
+                          :value="option.name"
+                        >
+                        </el-option>
+                      </el-select>
+                    </base-input>
+                  </div>
+                </div>
               </b-tab>
               <b-tab title="Script">
                 <div class="row">
@@ -354,6 +358,26 @@ export default {
       user: "user/user",
       client: "user/company"
     }),
+    async getCallMeInfo() {
+      if (this.apn || this.reference) {
+        let endpoint = `/api/v1/callme-info/?apn=${this.apn}`;
+        return await this.$axios
+          .get(endpoint)
+          .then(res => {
+            this.callMeInfo = res.data.results;
+            console.log(this.callMeInfo.length);
+            if (this.callMeInfo.length >= 1) {
+              this.callMeInfo.forEach(item => {
+                this.callMe = item;
+              });
+            } else if (this.callMeInfo.length === 0) {
+            }
+          })
+          .catch(e => {
+            throw e;
+          });
+      }
+    },
     ticket_number: {
       get() {
         return this.$store.getters["postPaidCustomerInteraction/ticket_number"];
@@ -364,7 +388,12 @@ export default {
     },
     company: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/company"];
+        if (this.callMeInfo.length === 0) {
+          this.callMeInfo.reference = "";
+          return this.$store.getters["postPaidCustomerInteraction/company"];
+        } else if (this.callMeInfo.length >= 1) {
+          return this.callMe.company_name;
+        }
       },
       set(value) {
         this.setBasicStoreValue("company", value);
@@ -380,9 +409,14 @@ export default {
     },
     reference_number: {
       get() {
-        return this.$store.getters[
-          "postPaidCustomerInteraction/reference_number"
-        ];
+        if (this.callMeInfo.length === 0) {
+          this.callMeInfo.reference = "";
+          return this.$store.getters[
+            "postPaidCustomerInteraction/reference_number"
+          ];
+        } else if (this.callMeInfo.length >= 1) {
+          return this.callMe.reference;
+        }
       },
       set(value) {
         this.setBasicStoreValue("reference_number", value);
@@ -390,7 +424,11 @@ export default {
     },
     county: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/county"];
+        if (this.callMeInfo.length === 0) {
+          return this.$store.getters["postPaidCustomerInteraction/county"];
+        } else if (this.callMeInfo.length >= 1) {
+          return this.callMe.property_county;
+        }
       },
       set(value) {
         this.setBasicStoreValue("county", value);
@@ -398,7 +436,12 @@ export default {
     },
     state: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/state"];
+        if (this.callMeInfo.length === 0) {
+          return this.$store.getters["postPaidCustomerInteraction/state"];
+        } else if (this.callMeInfo.length >= 1) {
+          this.state = "";
+          return this.callMe.property_state;
+        }
       },
       set(value) {
         this.setBasicStoreValue("state", value);
@@ -406,7 +449,12 @@ export default {
     },
     address: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/address"];
+        if (this.callMeInfo.length === 0) {
+          return this.$store.getters["postPaidCustomerInteraction/address"];
+        } else if (this.callMeInfo.length >= 1) {
+          this.address = "";
+          return this.callMe.property_address;
+        }
       },
       set(value) {
         this.setBasicStoreValue("address", value);
@@ -414,9 +462,14 @@ export default {
     },
     caller_full_name: {
       get() {
-        return this.$store.getters[
-          "postPaidCustomerInteraction/caller_full_name"
-        ];
+        if (this.callMeInfo.length === 0) {
+          return this.$store.getters[
+            "postPaidCustomerInteraction/caller_full_name"
+          ];
+        } else if (this.callMeInfo.length >= 1) {
+          this.caller_full_name = "";
+          return this.callMe.first_name + " " + this.callMe.last_name;
+        }
       },
       set(value) {
         this.setBasicStoreValue("caller_full_name", value);
@@ -501,20 +554,15 @@ export default {
       set(value) {
         this.setBasicStoreValue("leads_transferred_crm", value);
       }
-    },
-    script_answer: {
-      get() {
-        return this.$store.getters["postPaidCustomerInteraction/script_answer"];
-      },
-      set(value) {
-        this.setBasicStoreValue("script_answer", value);
-      }
     }
   },
   data() {
     return {
       query: "",
+      keyword: "",
       companies: [],
+      callMeInfo: [],
+      callMe: [],
       form: [],
       company_crm: [],
       states: [],
@@ -562,11 +610,15 @@ export default {
       console.log("Event from child component emitted", (this.form = form));
       console.log(this.form);
     },
+    onSearchInput(text) {
+      this.keyword = text;
+    },
     getCompany: debounce(function() {
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
         .then(res => {
           this.companies = res.data.results;
+          console.log(this.companies);
           this.getCompanyCrm();
         })
         .catch(err => {
@@ -723,6 +775,15 @@ export default {
     this.fetchInterestedToBuy();
     this.fetchGeneralCalls();
     this.fetchStates();
+  },
+  watch: {
+    keyword: debounce(function(oldKeyword, newKeyword) {
+      if (newKeyword !== "" && newKeyword !== oldKeyword) {
+        this.getCompany();
+      } else if (!newKeyword) {
+        this.companies = [];
+      }
+    }, 500)
   }
 };
 </script>
