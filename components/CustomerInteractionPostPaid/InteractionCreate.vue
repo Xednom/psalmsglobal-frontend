@@ -387,12 +387,7 @@ export default {
     },
     company: {
       get() {
-        if (this.callMeInfo.length === 0) {
-          this.callMeInfo.reference = "";
-          return this.$store.getters["postPaidCustomerInteraction/company"];
-        } else if (this.callMeInfo.length >= 1) {
-          return this.callMe.company_name;
-        }
+        return this.$store.getters["postPaidCustomerInteraction/company"];
       },
       set(value) {
         this.setBasicStoreValue("company", value);
