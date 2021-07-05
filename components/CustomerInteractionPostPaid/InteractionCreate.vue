@@ -17,7 +17,7 @@
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
           <b-tabs content-class="mt-3">
             <form @submit.prevent="handleSubmit(save)">
-              <b-tab title="Customer Interaction information" active>
+              <b-tab title="Cust. Interaction information" active>
                 <h6 class="heading-small text-muted mb-4">
                   Caller Interaction
                 </h6>
@@ -44,9 +44,6 @@
                   </div>
                   <hr class="my-4" />
                   <h6 class="heading-small text-muted mb-4">Property Data</h6>
-                  <div v-for="(callMe, index) in callMeInfo" :key="index">
-                    {{ callMe.reference }}
-                  </div>
                   <div class="row">
                     <div class="col-lg-6">
                       <base-input
@@ -321,6 +318,13 @@
                   >Submit</base-button
                 >
               </b-tab>
+              <b-tab title="CallMe Info">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <callme-info :filterApn="apn"> </callme-info>
+                  </div>
+                </div>
+              </b-tab>
             </form>
           </b-tabs>
         </validation-observer>
@@ -330,15 +334,16 @@
 </template>
 
 <script>
+import { debounce } from "lodash";
 import { Select, Option } from "element-ui";
+import { mapGetters, mapActions } from "vuex";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import FormViewList from "@/components/Form/FormViewList";
-import { mapGetters, mapActions } from "vuex";
+import CallmeInfo from "@/components/CallMeInfo/CallMeInfoList";
 
 import CreateCustomerInteractionMixin from "@/mixins/CreatePostPaidInteractionMixin.js";
 import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
-import { debounce } from "lodash";
 
 export default {
   name: "customer_interaction_create",
@@ -348,7 +353,8 @@ export default {
     [Select.name]: Select,
     [Option.name]: Option,
     VueTypeaheadBootstrap,
-    FormViewList
+    FormViewList,
+    CallmeInfo
   },
   computed: {
     ...mapGetters({

@@ -1,0 +1,502 @@
+<template>
+  <div>
+    <div class="card">
+      <div class="card-header bg-transparent border-0">
+        <h3 class="mb-0">CallMe Info list</h3>
+      </div>
+      <b-container fluid>
+        <!-- User Interface controls -->
+        <b-row>
+          <b-col sm="5" md="6" class="my-1">
+            <b-form-group
+              label="Per page"
+              label-for="per-page-select"
+              label-cols-sm="6"
+              label-cols-md="4"
+              label-cols-lg="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-form-select
+                id="per-page-select"
+                v-model="perPage"
+                :options="pageOptions"
+                size="sm"
+              ></b-form-select>
+            </b-form-group>
+          </b-col>
+
+          <b-col lg="6" class="my-1">
+            <b-form-group
+              label="Filter"
+              label-for="filter-input"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-input-group size="sm">
+                <b-form-input
+                  id="filter-input"
+                  v-model="filterApn"
+                  :input="fetchCallMeInfos"
+                  type="search"
+                  placeholder="Type to Search"
+                  disabled
+                ></b-form-input>
+
+                <b-input-group-append>
+                  <b-button :disabled="!filter" @click="filter = ''"
+                    >Clear</b-button
+                  >
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <!-- Main table element -->
+        <b-table
+          v-if="filterApn"
+          :items="callMeInfos"
+          :fields="fields"
+          :current-page="currentPage"
+          :per-page="perPage"
+          :filter="filter"
+          :busy="isBusy"
+          :filter-included-fields="filterOn"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          stacked="md"
+          show-empty
+          small
+          @filtered="onFiltered"
+          responsive
+        >
+          <template #table-busy>
+            <div class="text-center text-default my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
+          <template #cell(apn)="row">
+            <nuxt-link :to="'/callme-info/' + row.item.apn">{{
+              row.item.ticket_number
+            }}</nuxt-link>
+          </template>
+          <template #cell(company_name)="row">
+            <b-button
+              size="sm"
+              @click="
+                {
+                  (modals.info = true), fetchCallMeInfo(row.item.id);
+                }
+              "
+              class="mr-1"
+            >
+              <i class="ni ni-building"></i>
+              {{ row.item.company_name }}
+            </b-button>
+          </template>
+        </b-table>
+
+        <modal size="lg" :show.sync="modals.info">
+          <h6 slot="header" class="modal-title">
+            CallMe information
+          </h6>
+          <div id="callme-info" class="col-lg-12">
+            <b-card-text>
+              <div class="row">
+                <div class="col-lg-4">
+                  <base-input
+                    label="Company owner name"
+                    alternative
+                    class="mb-3"
+                    placeholder="Company owner name"
+                    prepend-icon="ni ni-building"
+                    v-model="callMeInfo.company_name"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-4">
+                  <base-input
+                    label="APN"
+                    alternative
+                    class="mb-3"
+                    placeholder="APN"
+                    v-model="callMeInfo.apn"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-4">
+                  <base-input
+                    label="Reference"
+                    alternative
+                    class="mb-3"
+                    placeholder="Reference"
+                    v-model="callMeInfo.reference"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <base-input
+                    label="First name"
+                    alternative
+                    class="mb-3"
+                    placeholder="First name"
+                    v-model="callMeInfo.first_name"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-6">
+                  <base-input
+                    label="Last name"
+                    alternative
+                    class="mb-3"
+                    placeholder="Last name"
+                    v-model="callMeInfo.last_name"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <base-input label="Short Legal Description">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.short_legal_description"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3">
+                  <base-input
+                    label="Property City"
+                    alternative
+                    class="mb-3"
+                    placeholder="Property City"
+                    v-model="callMeInfo.property_city"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-3">
+                  <base-input
+                    label="Property State"
+                    alternative
+                    class="mb-3"
+                    placeholder="Property State"
+                    v-model="callMeInfo.property_state"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-3">
+                  <base-input
+                    label="Property County"
+                    alternative
+                    class="mb-3"
+                    placeholder="Property County"
+                    v-model="callMeInfo.property_county"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-3">
+                  <base-input
+                    label="Property Zip"
+                    alternative
+                    class="mb-3"
+                    placeholder="Property Zip"
+                    v-model="callMeInfo.property_zip"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <base-input label="Property Address">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.property_address"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+              </div>
+              <h6 class="heading-small text-muted mb-4">
+                Buyer offer info
+              </h6>
+              <div class="row">
+                <div class="col-lg-6">
+                  <base-input label="Buyer offer amount">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.buyer_offer_amount"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-6">
+                  <base-input label="Approved option amount">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.approved_option_amount"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-6">
+                  <base-input label="Other terms">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.other_terms"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-6">
+                  <base-input label="Approved option amount">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.approved_option_amount"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+              </div>
+              <h6 class="heading-small text-muted mb-4">
+                Seller counter offer
+              </h6>
+              <div class="row">
+                <div class="col-lg-6">
+                  <base-input label="Seller offer amount">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.seller_offer_amount"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-6">
+                  <base-input label="Other offer terms">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.other_offer_terms"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-12">
+                  <base-input label="Notes">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.notes"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-6">
+                  <base-input
+                    label="Offer status"
+                    alternative
+                    class="mb-3"
+                    placeholder="Offer status"
+                    v-model="callMeInfo.offer_status"
+                    disabled
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-12">
+                  <base-input label="Offer status note">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="callMeInfo.offer_status_notes"
+                      disabled
+                    ></textarea>
+                  </base-input>
+                </div>
+              </div>
+            </b-card-text>
+          </div>
+        </modal>
+
+        <div
+          slot="footer"
+          class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap"
+        >
+          <div class="">
+            <p class="card-category"></p>
+          </div>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="fill"
+            size="sm"
+            class="my-0 mb-3"
+          ></b-pagination>
+        </div>
+      </b-container>
+    </div>
+  </div>
+</template>
+
+<script>
+import {
+  Table,
+  TableColumn,
+  DropdownMenu,
+  DropdownItem,
+  Dropdown
+} from "element-ui";
+import { mapGetters } from "vuex";
+
+export default {
+  name: "callme_list",
+  components: {
+    [Table.name]: Table,
+    [TableColumn.name]: TableColumn,
+    [Dropdown.name]: Dropdown,
+    [DropdownItem.name]: DropdownItem,
+    [DropdownMenu.name]: DropdownMenu
+  },
+  computed: {
+    ...mapGetters({
+      //   callMeInfos: "callMeInfo/callMeInfos",
+      pagination: "callMeInfo/callMeInfosPagination",
+      user: "user/user",
+      client: "user/clientUser"
+    }),
+    async fetchCallMeInfos() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/callme-info/?apn=${this.filterApn}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.callMeInfos = res.data.results;
+          this.isBusy = false;
+        })
+        .catch(e => {
+          throw e;
+        });
+    }
+  },
+  props: {
+    filterApn: {
+      Type: String,
+      Description: "Filter based on apn for CallMeInfo"
+    }
+  },
+  data() {
+    return {
+      callMeInfo: {},
+      callMeInfos: [],
+      isBusy: false,
+      saving: false,
+      modals: {
+        info: false
+      },
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 5,
+      pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
+      sortBy: "",
+      sortDesc: false,
+      sortDirection: "asc",
+      filter: null,
+      filterOn: [],
+      infoModal: {
+        id: "info-modal",
+        title: "",
+        content: ""
+      },
+      fields: [
+        { key: "company_name", label: "Company", sortable: true },
+        { key: "apn", sortable: true },
+        { key: "reference", sortable: true },
+        { key: "first_name", sortable: true },
+        { key: "last_name", sortable: true },
+        { key: "property_state", sortable: true },
+        { key: "property_county", sortable: true },
+        { key: "property_city", sortable: true }
+      ]
+    };
+  },
+  methods: {
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length;
+      this.currentPage = 1;
+    },
+    async fetchCallMeInfo(id) {
+      let endpoint = `/api/v1/callme-info/${id}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.callMeInfo = res.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    errorMessage(variant = null, error) {
+      this.$bvToast.toast(
+        error.company
+          ? "Company: " + error.company
+          : error.detail
+          ? "Detail: " + error.detail
+          : error.non_field_errors
+          ? error.non_field_errors
+          : error,
+        {
+          title: `Error`,
+          variant: variant,
+          solid: true
+        }
+      );
+    }
+  },
+  mounted() {
+    this.totalRows = this.callMeInfos.length;
+  }
+};
+</script>
+
+<style scoped>
+.company-info {
+  float: right;
+}
+</style>

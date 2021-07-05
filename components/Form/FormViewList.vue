@@ -185,11 +185,7 @@
                 </p>
               </div>
             </div>
-            <b-button
-          variant="success"
-          @click="emitForm"
-          >Emit</b-button
-        >
+            <b-button class="mb-3" variant="success" @click="emitForm">Emit</b-button>
           </b-card-text>
         </div>
       </div>
@@ -205,10 +201,10 @@ import {
   DropdownItem,
   Dropdown
 } from "element-ui";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
-  name: "form_list",
+  name: "form_view_list",
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
@@ -310,9 +306,10 @@ export default {
     },
     emitForm() {
       this.$emit("form-script", this.form);
+      this.emitSuccess("success");
     },
-    copySuccess(variant = null) {
-      this.$bvToast.toast(`Successfully copy to clipboard`, {
+    emitSuccess(variant = null) {
+      this.$bvToast.toast(`Successfully emitted the script`, {
         title: "Success",
         variant: variant,
         solid: true
