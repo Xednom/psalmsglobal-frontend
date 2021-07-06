@@ -350,6 +350,9 @@
                 </div>
               </div>
             </b-tab>
+            <b-tab title="Job Order">
+              <job-order-list></job-order-list>
+            </b-tab>
           </b-tabs>
         </b-card>
       </card>
@@ -370,6 +373,7 @@ import { Select, Option } from "element-ui";
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
 import InteractionRecordList from "@/components/InteractionRecord/RecordList";
+import JobOrderList from "@/components/JobOrder/JobOrderList";
 
 import { mapGetters, mapActions } from "vuex";
 
@@ -389,7 +393,8 @@ export default {
     VueTypeaheadBootstrap,
     InteractionComment,
     InteractionRecordList,
-    HtmlEditor
+    HtmlEditor,
+    JobOrderList
   },
   computed: {
     ...mapGetters({
