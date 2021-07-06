@@ -17,7 +17,7 @@
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
           <b-tabs content-class="mt-3">
             <form @submit.prevent="handleSubmit(save)">
-              <b-tab title="Cust. Interaction information" active>
+              <b-tab title="Cust. Interaction" active>
                 <h6 class="heading-small text-muted mb-4">
                   Caller Interaction
                 </h6>
@@ -140,8 +140,8 @@
                     </div>
                     <div class="col-lg-3">
                       <base-input
-                        label="Leads transferred CRM"
-                        name="Leads transferred CRM"
+                        label="Leads status"
+                        name="Leads status"
                         rules="required"
                       >
                         <el-select
@@ -223,7 +223,7 @@
                   </div>
                 </div>
               </b-tab>
-              <b-tab title="Caller's Category">
+              <b-tab title="Caller's Type">
                 <h6 class="heading-small text-muted mb-4">
                   Caller's Category
                 </h6>
