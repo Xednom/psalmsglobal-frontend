@@ -325,13 +325,21 @@
                     </base-input>
                   </div>
                   <div class="col-lg-6">
-                    <base-input
-                      label="Offer status"
-                      alternative
-                      class="mb-3"
-                      placeholder="Offer status"
-                      v-model="callMeInfo.offer_status"
-                    >
+                    <base-input label="Offer status">
+                      <el-select
+                        v-model="callMeInfo.offer_status"
+                        filterable
+                        placeholder="Choose a Status"
+                        rules="required"
+                      >
+                        <el-option
+                          v-for="option in offerStatuses"
+                          :key="option.id"
+                          :label="option.name"
+                          :value="option.name"
+                        >
+                        </el-option>
+                      </el-select>
                     </base-input>
                   </div>
                   <div class="col-lg-12">
@@ -387,7 +395,9 @@ import {
   TableColumn,
   DropdownMenu,
   DropdownItem,
-  Dropdown
+  Dropdown,
+  Select,
+  Option
 } from "element-ui";
 import { mapGetters, mapActions } from "vuex";
 
@@ -398,7 +408,9 @@ export default {
     [TableColumn.name]: TableColumn,
     [Dropdown.name]: Dropdown,
     [DropdownItem.name]: DropdownItem,
-    [DropdownMenu.name]: DropdownMenu
+    [DropdownMenu.name]: DropdownMenu,
+    [Select.name]: Select,
+    [Option.name]: Option
   },
   computed: {
     ...mapGetters({
@@ -431,6 +443,7 @@ export default {
     return {
       callMeInfo: {},
       callMeInfos: [],
+      offerStatuses: [],
       isBusy: false,
       saving: false,
       modals: {
@@ -504,6 +517,17 @@ export default {
           console.log(e);
         });
     },
+    async fetchOfferStatus() {
+      let endpoint = `/api/v1/offer-status/`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.offerStatuses = res.data.results;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
     successMessage(variant = null) {
       this.$bvToast.toast("Successfully updated this Property Info!", {
         title: `Successful`,
@@ -529,6 +553,7 @@ export default {
     }
   },
   mounted() {
+    this.fetchOfferStatus();
     this.totalRows = this.callMeInfos.length;
   }
 };
