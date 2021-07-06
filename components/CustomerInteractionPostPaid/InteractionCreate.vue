@@ -62,7 +62,7 @@
                         type="text"
                         label="Reference number"
                         placeholder="Reference number"
-                        v-model="reference_number"
+                        v-model="callMe.reference"
                         :input="getCallMeInfo"
                         name="Reference number"
                         rules="required"
@@ -72,7 +72,7 @@
                     <div class="col-lg-4">
                       <base-input label="State" name="State" rules="required">
                         <el-select
-                          v-model="state"
+                          v-model="callMe.property_state"
                           filterable
                           placeholder="Choose"
                           @change="fetchCounties"
@@ -90,7 +90,7 @@
                     <div class="col-lg-4">
                       <base-input label="County" name="County" rules="required">
                         <el-select
-                          v-model="county"
+                          v-model="callMe.property_county"
                           filterable
                           placeholder="Choose"
                         >
@@ -112,7 +112,7 @@
                           class="form-control"
                           id="address"
                           rows="3"
-                          v-model="address"
+                          v-model="callMe.property_address"
                         ></textarea>
                       </base-input>
                     </div>
@@ -194,7 +194,7 @@
                     <base-input
                       label="Caller full name"
                       placeholder="Caller full name"
-                      v-model="caller_full_name"
+                      v-model="callMe.full_name"
                       name="Caller full name"
                       rules="required"
                     >
@@ -560,6 +560,7 @@ export default {
     return {
       query: "",
       keyword: "",
+      fullName: "",
       companies: [],
       callMeInfo: [],
       callMe: [],
@@ -593,19 +594,6 @@ export default {
   },
   methods: {
     ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
-    onEditorBlur(editor) {
-      console.log("editor blur!", editor);
-    },
-    onEditorFocus(editor) {
-      console.log("editor focus!", editor);
-    },
-    onEditorReady(editor) {
-      console.log("editor ready!", editor);
-    },
-    onEditorChange({ editor, html, text }) {
-      console.log("editor change!", editor, html, text);
-      this.script_answer = html;
-    },
     eventChild(form) {
       console.log("Event from child component emitted", (this.form = form));
       console.log(this.form);
@@ -675,11 +663,11 @@ export default {
       const interactionPayload = {
         company: this.company,
         apn: this.apn,
-        state: this.state,
-        county: this.county,
-        address: this.adress,
-        reference_number: this.reference_number,
-        caller_full_name: this.caller_full_name,
+        state: this.callMe.property_state,
+        county: this.callMe.property_county,
+        address: this.callMe.property_address,
+        reference_number: this.callMe.reference,
+        caller_full_name: this.callMe.full_name,
         caller_phone: this.caller_phone,
         email: this.email,
         reason_of_the_call: this.reason_of_the_call,

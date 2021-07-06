@@ -106,251 +106,258 @@
           <h6 slot="header" class="modal-title">
             CallMe information
           </h6>
-          <div id="callme-info" class="col-lg-12">
-            <b-card-text>
-              <div class="row">
-                <div class="col-lg-4">
-                  <base-input
-                    label="Company owner name"
-                    alternative
-                    class="mb-3"
-                    placeholder="Company owner name"
-                    prepend-icon="ni ni-building"
-                    v-model="callMeInfo.company_name"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-4">
-                  <base-input
-                    label="APN"
-                    alternative
-                    class="mb-3"
-                    placeholder="APN"
-                    v-model="callMeInfo.apn"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-4">
-                  <base-input
-                    label="Reference"
-                    alternative
-                    class="mb-3"
-                    placeholder="Reference"
-                    v-model="callMeInfo.reference"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6">
-                  <base-input
-                    label="First name"
-                    alternative
-                    class="mb-3"
-                    placeholder="First name"
-                    v-model="callMeInfo.first_name"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-6">
-                  <base-input
-                    label="Last name"
-                    alternative
-                    class="mb-3"
-                    placeholder="Last name"
-                    v-model="callMeInfo.last_name"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12">
-                  <base-input label="Short Legal Description">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.short_legal_description"
+          <form @submit.prevent="save">
+            <div id="callme-info" class="col-lg-12">
+              <b-card-text>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <base-input
+                      label="Company owner name"
+                      alternative
+                      class="mb-3"
+                      placeholder="Company owner name"
+                      prepend-icon="ni ni-building"
+                      v-model="callMeInfo.company_name"
                       disabled
-                    ></textarea>
-                  </base-input>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-3">
-                  <base-input
-                    label="Property City"
-                    alternative
-                    class="mb-3"
-                    placeholder="Property City"
-                    v-model="callMeInfo.property_city"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Property State"
-                    alternative
-                    class="mb-3"
-                    placeholder="Property State"
-                    v-model="callMeInfo.property_state"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Property County"
-                    alternative
-                    class="mb-3"
-                    placeholder="Property County"
-                    v-model="callMeInfo.property_county"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-                <div class="col-lg-3">
-                  <base-input
-                    label="Property Zip"
-                    alternative
-                    class="mb-3"
-                    placeholder="Property Zip"
-                    v-model="callMeInfo.property_zip"
-                    disabled
-                  >
-                  </base-input>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12">
-                  <base-input label="Property Address">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.property_address"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <base-input
+                      label="APN"
+                      alternative
+                      class="mb-3"
+                      placeholder="APN"
+                      v-model="callMeInfo.apn"
                       disabled
-                    ></textarea>
-                  </base-input>
-                </div>
-              </div>
-              <h6 class="heading-small text-muted mb-4">
-                Buyer offer info
-              </h6>
-              <div class="row">
-                <div class="col-lg-6">
-                  <base-input label="Buyer offer amount">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.buyer_offer_amount"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <base-input
+                      label="Reference"
+                      alternative
+                      class="mb-3"
+                      placeholder="Reference"
+                      v-model="callMeInfo.reference"
                       disabled
-                    ></textarea>
-                  </base-input>
+                    >
+                    </base-input>
+                  </div>
                 </div>
-                <div class="col-lg-6">
-                  <base-input label="Approved option amount">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.approved_option_amount"
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      label="First name"
+                      alternative
+                      class="mb-3"
+                      placeholder="First name"
+                      v-model="callMeInfo.first_name"
                       disabled
-                    ></textarea>
-                  </base-input>
-                </div>
-                <div class="col-lg-6">
-                  <base-input label="Other terms">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.other_terms"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      label="Last name"
+                      alternative
+                      class="mb-3"
+                      placeholder="Last name"
+                      v-model="callMeInfo.last_name"
                       disabled
-                    ></textarea>
-                  </base-input>
+                    >
+                    </base-input>
+                  </div>
                 </div>
-                <div class="col-lg-6">
-                  <base-input label="Approved option amount">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.approved_option_amount"
+                <div class="row">
+                  <div class="col-lg-12">
+                    <base-input label="Short Legal Description">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.short_legal_description"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3">
+                    <base-input
+                      label="Property City"
+                      alternative
+                      class="mb-3"
+                      placeholder="Property City"
+                      v-model="callMeInfo.property_city"
                       disabled
-                    ></textarea>
-                  </base-input>
-                </div>
-              </div>
-              <h6 class="heading-small text-muted mb-4">
-                Seller counter offer
-              </h6>
-              <div class="row">
-                <div class="col-lg-6">
-                  <base-input label="Seller offer amount">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.seller_offer_amount"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-3">
+                    <base-input
+                      label="Property State"
+                      alternative
+                      class="mb-3"
+                      placeholder="Property State"
+                      v-model="callMeInfo.property_state"
                       disabled
-                    ></textarea>
-                  </base-input>
-                </div>
-                <div class="col-lg-6">
-                  <base-input label="Other offer terms">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.other_offer_terms"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-3">
+                    <base-input
+                      label="Property County"
+                      alternative
+                      class="mb-3"
+                      placeholder="Property County"
+                      v-model="callMeInfo.property_county"
                       disabled
-                    ></textarea>
-                  </base-input>
-                </div>
-                <div class="col-lg-12">
-                  <base-input label="Notes">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.notes"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-3">
+                    <base-input
+                      label="Property Zip"
+                      alternative
+                      class="mb-3"
+                      placeholder="Property Zip"
+                      v-model="callMeInfo.property_zip"
                       disabled
-                    ></textarea>
-                  </base-input>
+                    >
+                    </base-input>
+                  </div>
                 </div>
-                <div class="col-lg-6">
-                  <base-input
-                    label="Offer status"
-                    alternative
-                    class="mb-3"
-                    placeholder="Offer status"
-                    v-model="callMeInfo.offer_status"
-                    disabled
-                  >
-                  </base-input>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <base-input label="Property Address">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.property_address"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
                 </div>
-                <div class="col-lg-12">
-                  <base-input label="Offer status note">
-                    <textarea
-                      class="form-control"
-                      id="notes"
-                      rows="3"
-                      v-model="callMeInfo.offer_status_notes"
-                      disabled
-                    ></textarea>
-                  </base-input>
+                <h6 class="heading-small text-muted mb-4">
+                  Buyer offer info
+                </h6>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input label="Buyer offer amount">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.buyer_offer_amount"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input label="Approved option amount">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.approved_option_amount"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input label="Other terms">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.other_terms"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input label="Approved option amount">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.approved_option_amount"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
                 </div>
-              </div>
-            </b-card-text>
-          </div>
+                <h6 class="heading-small text-muted mb-4">
+                  Seller counter offer
+                </h6>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input label="Seller offer amount">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.seller_offer_amount"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input label="Other offer terms">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.other_offer_terms"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input label="Notes">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.notes"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      label="Offer status"
+                      alternative
+                      class="mb-3"
+                      placeholder="Offer status"
+                      v-model="callMeInfo.offer_status"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input label="Offer status note">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="callMeInfo.offer_status_notes"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                </div>
+              </b-card-text>
+            </div>
+            <base-button
+              type="secondary"
+              native-type="submit"
+              loading
+              v-if="saving"
+              >Update</base-button
+            >
+            <base-button type="primary" native-type="submit" v-else
+              >Update</base-button
+            >
+          </form>
         </modal>
 
         <div
@@ -382,7 +389,7 @@ import {
   DropdownItem,
   Dropdown
 } from "element-ui";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "callme_list",
@@ -456,10 +463,35 @@ export default {
     };
   },
   methods: {
+    ...mapActions("callMeInfo", ["reset", "updateCallMeInfo"]),
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+    async save() {
+      const propertyPayload = {
+        id: this.callMeInfo.id,
+        company: this.callMeInfo.company,
+        apn: this.callMeInfo.apn,
+        reference: this.callMeInfo.reference,
+        seller_offer_amount: this.callMeInfo.seller_offer_amount,
+        other_offer_terms: this.callMeInfo.other_offer_terms,
+        notes: this.callMeInfo.notes,
+        offer_status: this.callMeInfo.offer_status,
+        offer_status_notes: this.callMeInfo.offer_status_notes
+      };
+
+      if (this.$auth.user.designation_category == "staff") {
+        try {
+          this.saving = true;
+          await this.updateCallMeInfo(propertyPayload);
+          this.saving = false;
+          this.successMessage("success");
+        } catch (e) {
+          console.log(e);
+        }
+      }
     },
     async fetchCallMeInfo(id) {
       let endpoint = `/api/v1/callme-info/${id}`;
@@ -471,6 +503,13 @@ export default {
         .catch(e => {
           console.log(e);
         });
+    },
+    successMessage(variant = null) {
+      this.$bvToast.toast("Successfully updated this Property Info!", {
+        title: `Successful`,
+        variant: variant,
+        solid: true
+      });
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(

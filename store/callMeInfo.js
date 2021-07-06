@@ -148,7 +148,7 @@ export const actions = {
       });
   },
   async saveCallMeInfo({ commit }, payload) {
-    let url = "/api/v1/post-paid/callme-info/";
+    let url = "/api/v1/callme-info/";
     try {
       return await this.$axios.post(url, payload).then(res => {
         commit("setBasicField", payload);
@@ -158,7 +158,7 @@ export const actions = {
     }
   },
   async updateCallMeInfo({ commit }, payload) {
-    let url = `/api/v1/post-paid/callme-info/${payload.id}/`;
+    let url = `/api/v1/callme-info/${payload.id}/`;
     let method = "put";
     return await this.$axios[method](url, payload).then(res => {
       return res.data;
