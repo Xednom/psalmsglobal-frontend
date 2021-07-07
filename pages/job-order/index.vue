@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import JobOrderList from "@/components/JobOrder/JobOrderList.vue";
+import JobOrderList from "@/components/JobOrder/JobOrderInteractionList.vue";
 export default {
     layout: "DashboardLayout",
     components: {

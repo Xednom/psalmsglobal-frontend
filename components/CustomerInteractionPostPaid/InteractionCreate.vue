@@ -318,7 +318,7 @@
                   >Submit</base-button
                 >
               </b-tab>
-              <b-tab title="CallMe Info">
+              <b-tab title="Property Info and Offer">
                 <div class="row">
                   <div class="col-lg-12">
                     <callme-info :filterApn="apn"> </callme-info>
