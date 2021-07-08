@@ -51,9 +51,9 @@
               <div class="col-lg-12">
                 <base-input
                   type="text"
-                  label="Total minutes"
-                  placeholder="Total minutes"
-                  name="Total minutes"
+                  label="Job title"
+                  placeholder="Job title"
+                  name="Job title"
                   v-model="jobOrder.job_title"
                   :rules="{ required: true }"
                   disabled
