@@ -314,7 +314,7 @@
                 </form>
               </validation-observer>
             </b-tab>
-            <b-tab lazy title="Interaction Record">
+            <b-tab lazy title="Call log report">
               <interaction-record-list
                 :interactionRecord="interaction"
               ></interaction-record-list>
