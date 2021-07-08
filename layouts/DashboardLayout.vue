@@ -51,6 +51,13 @@
           }"
         />
         <sidebar-item
+          v-if="$auth.user.designation_category == 'staff'"
+          :link="{
+            name: 'List of Job Order',
+            path: '/job-order'
+          }"
+        />
+        <sidebar-item
           v-if="
             $auth.user.designation_category == 'new_client' ||
               $auth.user.designation_category == 'current_client' ||

@@ -141,7 +141,7 @@ export const actions = {
     }
   },
   async updateJobOrder({ commit }, payload) {
-    let url = `/api/v1/post-paid/job-order/${payload.ticket_number}/`;
+    let url = `/api/v1/post-paid/job-order-general/${payload.ticket_number}/`;
     let method = "put";
     return await this.$axios[method](url, payload).then(res => {
       return res.data;

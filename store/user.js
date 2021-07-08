@@ -118,7 +118,7 @@ const blankState = {
         });
     },
     async fetchUser({ commit, dispatch }) {
-      let endpoint = `/auth/users/me/`;
+      let endpoint = `/api/auth/users/me/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
@@ -130,7 +130,7 @@ const blankState = {
         });
     },
     async fetchClientUser({ commit, dispatch }, payload) {
-      let endpoint = `/api/v1/client/${payload}/`;
+      let endpoint = `/api/auth/client/${payload}/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
@@ -142,7 +142,7 @@ const blankState = {
     },
     async fetchStaff({commit, dispatch}, payload) {
       this.loading = true;
-      let endpoint = `/api/v1/staff/${payload}`;
+      let endpoint = `/api/auth/staff/${payload}`;
       try {
         await this.$axios.get(endpoint).then(res => {
           commit("setStaff", {staff: res.data})

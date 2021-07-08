@@ -10,11 +10,6 @@
             <route-breadcrumb />
           </nav>
         </div>
-        <div class="col-lg-6 col-5 text-right">
-          <nuxt-link to="/form/create" size="md" type="neutral">
-            <base-button size="md" type="neutral">Create a Job Order</base-button>
-          </nuxt-link>
-        </div>
       </div>
     </base-header>
     <div class="container-fluid mt--6">
@@ -24,7 +19,7 @@
 </template>
 
 <script>
-import JobOrderList from "@/components/JobOrder/JobOrderInteractionList.vue";
+import JobOrderList from "@/components/JobOrder/JobOrderList.vue";
 export default {
     layout: "DashboardLayout",
     components: {
