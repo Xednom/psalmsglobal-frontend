@@ -78,10 +78,10 @@
                 </base-input>
               </div>
               <div class="col-lg-12">
-                <base-input label="Summary">
+                <base-input label="Job description">
                   <textarea
                     class="form-control"
-                    id="summary"
+                    id="job-description"
                     rows="3"
                     v-model="jobOrder.job_description"
                     :rules="{ required: true }"
