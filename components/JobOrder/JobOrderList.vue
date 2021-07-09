@@ -98,18 +98,6 @@
               @click="
                 {
                   fetchJobOrder(row.item.id, row.index, $event.target),
-                    (modals.info = true);
-                }
-              "
-              class="mr-1"
-            >
-              Info modal
-            </b-button>
-            <b-button
-              size="sm"
-              @click="
-                {
-                  fetchJobOrder(row.item.id, row.index, $event.target),
                     (modals.update = true);
                 }
               "
@@ -226,25 +214,19 @@
           </card>
         </modal>
 
-        <!-- info modal -->
-        <modal
-          :show.sync="modals.info"
-          headerClasses="justify-content-center"
-          class="white-content"
-        >
-          <job-order-view :jobOrder="jobOrder"></job-order-view>
-        </modal>
-
         <!-- update modal -->
         <modal
           :show.sync="modals.update"
+          size="lg"
           headerClasses="justify-content-center"
           class="white-content"
         >
-          <job-order-update
-            :jobOrder="jobOrder"
-            :refresh="refresh"
-          ></job-order-update>
+          <div class="container">
+            <job-order-update
+              :jobOrder="jobOrder"
+              :refresh="refresh"
+            ></job-order-update>
+          </div>
         </modal>
 
         <div

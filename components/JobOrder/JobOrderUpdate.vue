@@ -8,96 +8,109 @@
           </h3>
         </div>
       </div>
-      <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
-        <form @submit.prevent="handleSubmit(save)">
-          <div class="pl-lg-12">
-            <div class="row">
-              <div class="col-lg-12">
-                <base-input
-                  type="text"
-                  label="Ticket number"
-                  placeholder="Ticket number"
-                  name="Ticket number"
-                  v-model="jobOrder.caller_interaction_record"
-                  rules="required"
-                  disabled
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-12">
-                <base-input
-                  type="text"
-                  label="Request date"
-                  placeholder="Request date"
-                  name="Request date"
-                  v-model="jobOrder.request_date"
-                  :rules="{ required: true }"
-                  disabled
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-12">
-                <base-input
-                  type="text"
-                  label="Due date"
-                  placeholder="Due date"
-                  name="Due date"
-                  v-model="jobOrder.due_date"
-                  :rules="{ required: true }"
-                  disabled
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-12">
-                <base-input label="Status">
-                  <el-select
-                    v-model="jobOrder.status"
-                    filterable
-                    placeholder="Choose a Ticket"
-                    rules="required"
-                  >
-                    <el-option
-                      v-for="option in StatusChoices.status"
-                      :key="option.id"
-                      :label="option.label"
-                      :value="option.value"
+      <b-tabs content-class="mt-3">
+        <!-- This tabs content will always be mounted -->
+        <b-tab title="Job order">
+          <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
+            <form @submit.prevent="handleSubmit(save)">
+              <div class="pl-lg-12">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <base-input
+                      type="text"
+                      label="Ticket number"
+                      placeholder="Ticket number"
+                      name="Ticket number"
+                      v-model="jobOrder.caller_interaction_record"
+                      rules="required"
+                      disabled
                     >
-                    </el-option>
-                  </el-select>
-                </base-input>
-              </div>
-              <div class="col-lg-12">
-                <base-input
-                  type="text"
-                  label="Job title"
-                  placeholder="Job title"
-                  name="Job title"
-                  v-model="jobOrder.job_title"
-                  :rules="{ required: true }"
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Request date"
+                      placeholder="Request date"
+                      name="Request date"
+                      v-model="jobOrder.request_date"
+                      :rules="{ required: true }"
+                      disabled
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Due date"
+                      placeholder="Due date"
+                      name="Due date"
+                      v-model="jobOrder.due_date"
+                      :rules="{ required: true }"
+                      disabled
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input label="Status">
+                      <el-select
+                        v-model="jobOrder.status"
+                        filterable
+                        placeholder="Choose a Ticket"
+                        rules="required"
+                      >
+                        <el-option
+                          v-for="option in StatusChoices.status"
+                          :key="option.id"
+                          :label="option.label"
+                          :value="option.value"
+                        >
+                        </el-option>
+                      </el-select>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input
+                      type="text"
+                      label="Job title"
+                      placeholder="Job title"
+                      name="Job title"
+                      v-model="jobOrder.job_title"
+                      :rules="{ required: true }"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input label="Job description">
+                      <textarea
+                        class="form-control"
+                        id="job-description"
+                        rows="3"
+                        v-model="jobOrder.job_description"
+                        :rules="{ required: true }"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                </div>
+                <base-button
+                  type="info"
+                  native-type="submit"
+                  loading
+                  v-if="saving"
+                  >Updating</base-button
                 >
-                </base-input>
+                <base-button type="info" native-type="submit" v-else
+                  >Update</base-button
+                >
               </div>
-              <div class="col-lg-12">
-                <base-input label="Job description">
-                  <textarea
-                    class="form-control"
-                    id="job-description"
-                    rows="3"
-                    v-model="jobOrder.job_description"
-                    :rules="{ required: true }"
-                  ></textarea>
-                </base-input>
-              </div>
-            </div>
-            <base-button type="info" native-type="submit" loading v-if="saving"
-              >Updating</base-button
-            >
-            <base-button type="info" native-type="submit" v-else
-              >Update</base-button
-            >
-          </div>
-        </form>
-      </validation-observer>
+            </form>
+          </validation-observer>
+        </b-tab>
+
+        <b-tab title="Comment section" lazy>
+          <job-order-comment :job="jobOrder" :fetch="refresh"></job-order-comment>
+        </b-tab>
+      </b-tabs>
     </div>
   </div>
 </template>
@@ -108,12 +121,15 @@ import { mapGetters, mapActions } from "vuex";
 
 import CreateInteractionRecordMixin from "@/mixins/CreateInteractionRecordMixin.js";
 
+import JobOrderComment from "@/components/JobOrder/JobOrderComment";
+
 export default {
   name: "jobOrder_record_view",
   mixins: [CreateInteractionRecordMixin],
   components: {
     [Select.name]: Select,
-    [Option.name]: Option
+    [Option.name]: Option,
+    JobOrderComment
   },
   props: {
     jobOrder: {
@@ -159,16 +175,16 @@ export default {
           { value: "weekly_tasks", label: "Weekly Tasks" },
           { value: "monthly_tasks", label: "Monthly Tasks" },
           { value: "redo", label: "Redo" },
-          { value: "pending", label: "Pending"},
+          { value: "pending", label: "Pending" },
           { value: "request_for_posting", label: "Request for Posting" },
           { value: "mark_as_sold_request", label: "Mark as Sold Request" },
           { value: "initial_dd_processing", label: "Initial DD Processing" },
           { value: "initial_dd_complete", label: "Initial DD Complete" },
           { value: "dd_call_out_processing", label: "DD Call Out Processing" },
           { value: "dd_call_out_complete", label: "DD Call Out Complete" },
-          { value: "duplicate_request", label: "Duplicate Request" },
-        ],
-      },
+          { value: "duplicate_request", label: "Duplicate Request" }
+        ]
+      }
     };
   },
   methods: {
