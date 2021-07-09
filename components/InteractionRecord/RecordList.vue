@@ -199,6 +199,7 @@ export default {
       user: {},
       fuseSearch: null,
       isBusy: false,
+      loading: false,
       error: "",
       fields: [
         {
