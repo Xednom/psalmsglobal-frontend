@@ -41,7 +41,11 @@
       <div class="form-row">
         <base-table :data="job.job_order_comments" thead-classes="text-primary">
           <template slot-scope="{ row }">
-            <td>
+            <div v-if="loading">
+              <b-spinner type="grow" label="Loading..."></b-spinner>
+              loading...
+            </div>
+            <td v-else-if="!loading">
               <blockquote class="blockquote">
                 <p class="mb-0">
                   {{ row.comment }}
@@ -74,7 +78,7 @@ export default {
       type: Object
     },
     fetch: {
-        type: Function
+      type: Function
     }
   },
   data() {

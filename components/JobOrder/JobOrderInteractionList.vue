@@ -96,7 +96,7 @@
               "
               class="mr-1"
             >
-              Info modal
+              Info
             </b-button>
           </template>
         </b-table>
@@ -186,6 +186,7 @@
         <!-- info modal -->
         <modal
           :show.sync="modals.info"
+          size="lg"
           headerClasses="justify-content-center"
           class="white-content"
         >

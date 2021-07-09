@@ -31,7 +31,14 @@
                   <h6 class="heading-small text-muted mb-4">
                     Customer Interaction information
                   </h6>
-                  <div class="pl-lg-4">
+                  <div v-if="loading" class="pl-lg-4 text-center">
+                    <div>
+                      <b-spinner type="grow" label="Loading..."></b-spinner>
+                      loading...
+                    </div>
+                  </div>
+
+                  <div v-else-if="!loading" class="pl-lg-4">
                     <div class="row">
                       <div class="col-lg-3">
                         <label>Company</label>
@@ -320,7 +327,13 @@
               ></interaction-record-list>
             </b-tab>
             <b-tab title="Script answer">
-              <div class="row">
+              <div v-if="loading" class="row">
+                <div>
+                  <b-spinner type="grow" label="Loading..."></b-spinner>
+                  loading...
+                </div>
+              </div>
+              <div v-else-if="!loading" class="row">
                 <div
                   class="col-lg-12 mb-3"
                   v-for="(interaction_forms,
@@ -373,7 +386,7 @@ import { Select, Option } from "element-ui";
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
 import InteractionRecordList from "@/components/InteractionRecord/RecordList";
-import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
+import JobOrderList from "@/components/JobOrder/JobOrderList";
 
 import { mapGetters, mapActions } from "vuex";
 
@@ -424,6 +437,7 @@ export default {
       clientUser: {},
       isBusy: false,
       saving: false,
+      loading: false,
       modals: {
         classic: false
       },
