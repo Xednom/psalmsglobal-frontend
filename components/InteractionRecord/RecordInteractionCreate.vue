@@ -4,39 +4,22 @@
       <div slot="header" class="row align-items-center mb-3">
         <div class="col-8">
           <h3 class="mb-0">
-            Update interaction record for {{ interaction.ticket_number }}
+            Add interaction record for {{ interaction.ticket_number }}
           </h3>
         </div>
       </div>
       <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
         <form @submit.prevent="handleSubmit(save)">
-          <div v-if="loading" class="pl-lg-12">
-            <div class="text-center">
-              <b-spinner type="grow" label="Loading..."></b-spinner>
-              loading...
-            </div>
-          </div>
-          <div v-else-if="!loading" class="pl-lg-12">
+          <div class="pl-lg-12">
             <div class="row">
-              <div class="col-lg-6">
+              <div class="col-lg-12">
                 <base-input
                   type="text"
                   label="Ticket number"
                   placeholder="Ticket number"
                   name="Ticket number"
-                  v-model="interaction.ticket_number"
+                  v-model="ticket_number"
                   rules="required"
-                  disabled
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-6">
-                <base-input
-                  type="text"
-                  label="Status"
-                  placeholder="Status"
-                  name="Status"
-                  v-model="interaction.status"
                   disabled
                 >
                 </base-input>
@@ -47,18 +30,18 @@
                   label="Total minutes"
                   placeholder="Total minutes"
                   name="Total minutes"
-                  v-model="interaction.total_minutes"
+                  v-model="total_minutes"
                   :rules="{ required: true }"
                 >
                 </base-input>
               </div>
               <div class="col-lg-12">
-                <base-input label="Summary of the call">
+                <base-input label="Summary">
                   <textarea
                     class="form-control"
                     id="notes"
                     rows="3"
-                    v-model="interaction.summary"
+                    v-model="summary"
                     :rules="{ required: true }"
                   ></textarea>
                 </base-input>
@@ -98,9 +81,6 @@ export default {
     },
     refresh: {
       Type: Function
-    },
-    loading: {
-      Type: Boolean
     }
   },
   computed: {
@@ -162,7 +142,7 @@ export default {
     return {
       query: "",
       companies: [],
-      user: {},
+      user:{},
       selectedCompany: null,
       isBusy: false,
       saving: false,
@@ -177,7 +157,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("interactionRecord", ["reset", "updateRecord"]),
+    ...mapActions("interactionRecord", ["reset", "saveRecord"]),
     async fetchMe() {
       this.loading = true;
       try {
@@ -225,18 +205,18 @@ export default {
     },
     async save() {
       const recordPayload = {
-        id: this.interaction.id,
         ticket_number: this.interaction.ticket_number,
         customer_interaction_post_paid: this.interaction.ticket_number,
+        client: this.interaction.company_client,
         agent: this.staffUser.id,
-        total_minutes: this.interaction.total_minutes,
-        summary: this.interaction.summary
+        total_minutes: this.total_minutes,
+        summary: this.summary
       };
 
       if (this.$auth.user.designation_category == "staff") {
         try {
           this.saving = true;
-          await this.updateRecord(recordPayload)
+          await this.saveRecord(recordPayload)
             .then(() => {
               this.saving = false;
               this.reset();

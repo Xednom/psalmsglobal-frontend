@@ -4,7 +4,7 @@
       <div slot="header" class="row align-items-center mb-3">
         <div class="col-8">
           <h3 class="mb-0">
-            Add interaction record for {{ interaction.ticket_number }}
+            Add interaction record
           </h3>
         </div>
       </div>
@@ -13,15 +13,22 @@
           <div class="pl-lg-12">
             <div class="row">
               <div class="col-lg-12">
-                <base-input
-                  type="text"
-                  label="Ticket number"
-                  placeholder="Ticket number"
-                  name="Ticket number"
-                  v-model="ticket_number"
-                  rules="required"
-                  disabled
-                >
+
+                <base-input label="Caller interaction ticket number">
+                  <el-select
+                    v-model="ticket_number"
+                    filterable
+                    placeholder="Choose a Ticket"
+                    rules="required"
+                  >
+                    <el-option
+                      v-for="option in custInteractions"
+                      :key="option.id"
+                      :label="option.ticket_number"
+                      :value="option.ticket_number"
+                    >
+                    </el-option>
+                  </el-select>
                 </base-input>
               </div>
               <div class="col-lg-12">
@@ -68,17 +75,13 @@ import { mapGetters, mapActions } from "vuex";
 import CreateInteractionRecordMixin from "@/mixins/CreateInteractionRecordMixin.js";
 
 export default {
-  name: "interaction_record_create",
+  name: "record_create",
   mixins: [CreateInteractionRecordMixin],
   components: {
     [Select.name]: Select,
     [Option.name]: Option
   },
   props: {
-    interaction: {
-      Type: Object,
-      description: "Customer interaction data"
-    },
     refresh: {
       Type: Function
     }
@@ -89,7 +92,7 @@ export default {
     }),
     ticket_number: {
       get() {
-        return this.interaction.ticket_number;
+        return this.$store.getters["interactionRecord/ticket_number"];
       },
       set(value) {
         this.setBasicStoreValue("ticket_number", value);
@@ -142,7 +145,8 @@ export default {
     return {
       query: "",
       companies: [],
-      user:{},
+      custInteractions: [],
+      user: {},
       selectedCompany: null,
       isBusy: false,
       saving: false,
@@ -193,6 +197,18 @@ export default {
         console.error(err.response.data);
       }
     },
+    async fetchCustInteractions() {
+      this.loading = true;
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          this.loading = false;
+          this.custInteractions = res.data.results;
+        });
+      } catch (err) {
+        console.error(err.response.data);
+      }
+    },
     async fetchStaff(id) {
       let endpoint = `/api/auth/staff/${id}/`;
       try {
@@ -205,9 +221,8 @@ export default {
     },
     async save() {
       const recordPayload = {
-        ticket_number: this.interaction.ticket_number,
-        customer_interaction_post_paid: this.interaction.id,
-        client: this.interaction.company_client,
+        ticket_number: this.ticket_number,
+        customer_interaction_post_paid: this.ticket_number,
         agent: this.staffUser.id,
         total_minutes: this.total_minutes,
         summary: this.summary
@@ -269,6 +284,7 @@ export default {
   },
   mounted() {
     this.fetchMe();
+    this.fetchCustInteractions();
   }
 };
 </script>

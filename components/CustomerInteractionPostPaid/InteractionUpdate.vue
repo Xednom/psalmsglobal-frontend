@@ -385,7 +385,7 @@ import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
-import InteractionRecordList from "@/components/InteractionRecord/RecordList";
+import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList";
 import JobOrderList from "@/components/JobOrder/JobOrderList";
 
 import { mapGetters, mapActions } from "vuex";

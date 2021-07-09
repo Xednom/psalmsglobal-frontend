@@ -4,10 +4,7 @@
       <div class="col-12">
         <card card-body-classes="table-full-width">
           <div>
-            <b-button
-              variant="success"
-              @click="modals.create = true"
-              v-if="$auth.user.designation_category == 'staff'"
+            <b-button variant="success" @click="modals.create = true" v-if="$auth.user.designation_category == 'staff'"
               >Add interaction record</b-button
             >
             <b-container fluid>
@@ -90,7 +87,6 @@
                 <template #cell(actions)="row">
                   <b-button
                     size="sm"
-                    variant="info"
                     @click="
                       {
                         fetchInteractionRecord(row.item.id),
@@ -99,7 +95,7 @@
                     "
                     class="mr-1"
                   >
-                    Update
+                    Info
                   </b-button>
                 </template>
               </b-table>
@@ -114,7 +110,7 @@
             </div>
             <b-pagination
               v-model="currentPage"
-              :total-rows="totalRows"
+              :total-rows="interactionRecordCount"
               :per-page="perPage"
               align="fill"
               size="sm"
@@ -130,7 +126,7 @@
       headerClasses="justify-content-center"
       class="white-content"
     >
-      <record-update :interaction="record" :refresh="refresh" :loading="loading"></record-update>
+    <record-view :interaction="record"></record-view>
     </modal>
 
     <modal
@@ -138,7 +134,10 @@
       headerClasses="justify-content-center"
       class="white-content"
     >
-      <record-create :refresh="refresh"></record-create>
+      <record-create
+        :interaction="interactionRecord"
+        :refresh="refresh"
+      ></record-create>
     </modal>
   </div>
 </template>
@@ -146,18 +145,23 @@
 import { Table, TableColumn, Select, Option } from "element-ui";
 import swal from "sweetalert2";
 
-import RecordCreate from "@/components/InteractionRecord/Create";
-import RecordUpdate from "@/components/InteractionRecord/RecordUpdate";
+import RecordCreate from "@/components/InteractionRecord/RecordInteractionCreate";
+import RecordView from "@/components/InteractionRecord/RecordInfo";
 
 export default {
-  name: "record_list",
+  name: "interaction_record_list",
   components: {
     [Select.name]: Select,
     [Option.name]: Option,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     RecordCreate,
-    RecordUpdate
+    RecordView
+  },
+  props: {
+    interactionRecord: {
+      Type: Object
+    }
   },
   computed: {
     /***
@@ -188,6 +192,11 @@ export default {
       } else {
         return this.fields.filter(field => !field.requiresClient);
       }
+    },
+    interactionRecordCount() {
+      if (this.records) {
+        return this.records.length;
+      }
     }
   },
   data() {
@@ -201,11 +210,7 @@ export default {
       isBusy: false,
       error: "",
       fields: [
-        {
-          key: "customer_interaction_post_paid",
-          label: "Customer Interaction ticket",
-          sortable: true
-        },
+        { key: "ticket_number", sortable: true },
         { key: "date_called", sortable: true },
         { key: "total_minutes", sortable: true },
         { key: "actions", label: "Actions" }
@@ -263,12 +268,10 @@ export default {
       this.currentPage = 1;
     },
     async fetchInteractionRecord(id) {
-      this.loading = true;
       let endpoint = `/api/v1/post-paid/interaction-record/${id}/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
-          this.loading = false;
           this.record = res.data;
         })
         .catch(e => {
@@ -277,7 +280,7 @@ export default {
     },
     fetchInteractionRecords() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/interaction-record/`;
+      let endpoint = `/api/v1/post-paid/interaction-record/?search=${this.interactionRecord.id}`;
       return this.$axios
         .get(endpoint)
         .then(res => {
