@@ -229,7 +229,7 @@ import { mapGetters, mapActions } from "vuex";
 import JobOrderView from "@/components/JobOrder/JobOrderView";
 
 export default {
-  name: "job_order_list",
+  name: "job_order_interaction_list",
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,

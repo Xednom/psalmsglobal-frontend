@@ -319,7 +319,7 @@ export default {
       },
       totalRows: 1,
       currentPage: 1,
-      perPage: 5,
+      perPage: 10,
       pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
       sortBy: "",
       sortDesc: false,
@@ -369,11 +369,12 @@ export default {
     }, 700),
     async fetchJobOrders() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/job-order-general/`;
+      let endpoint = `/api/v1/post-paid/job-order/?search=${this.interaction.ticket_number}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
           this.jobOrders = res.data.results;
+          console.log(this.jobOrders);
           this.isBusy = false;
         })
         .catch(e => {
@@ -502,7 +503,7 @@ export default {
   },
   mounted() {
     this.fetchMe();
-    this.fetchJobOrders();
+    setTimeout(() => this.fetchJobOrders(), 1000);
     this.totalRows = this.jobOrders.length;
   },
   watch: {
