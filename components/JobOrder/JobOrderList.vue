@@ -362,7 +362,6 @@ export default {
         )
         .then(res => {
           this.callerInteractions = res.data.results;
-          console.log(this.callerInteractions);
         })
         .catch(err => {
           console.log(err);

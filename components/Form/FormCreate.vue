@@ -215,6 +215,9 @@ export default {
   },
   methods: {
     ...mapActions("form", ["reset", "saveForm"]),
+    flush() {
+      this.attribute_forms.splice(0);
+    },
     getCompany: debounce(function() {
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
@@ -254,6 +257,7 @@ export default {
             .then(() => {
               this.saving = false;
               this.reset();
+              this.flush();
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
