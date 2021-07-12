@@ -374,7 +374,6 @@ export default {
         .get(endpoint)
         .then(res => {
           this.jobOrders = res.data.results;
-          console.log(this.jobOrders);
           this.isBusy = false;
         })
         .catch(e => {
