@@ -77,7 +77,7 @@
                           ></b-icon>
                         </button>
                       </div>
-                      <div class="col-sm-12 col-md-2">
+                      <div class="col-sm-12 col-md-3 mt-3">
                         <base-input label="Data Type">
                           <el-select
                             v-model="item.data_type"
@@ -95,15 +95,17 @@
                           </el-select>
                         </base-input>
                       </div>
-                      <div class="col-xs-12 col-md-7">
-                        <base-input
-                          type="text"
-                          label="Text"
-                          placeholder="Text"
+                      <div
+                        class="col-xs-12 col-md-12"
+                        v-if="item.data_type == 'text'"
+                      >
+                        <label>Text</label>
+                        <textarea
+                          class="form-control"
+                          id="question"
+                          rows="3"
                           v-model="item.value_text"
-                          v-if="item.data_type == 'text'"
-                        >
-                        </base-input>
+                        ></textarea>
                       </div>
                       <div
                         class="col-sm-12 col-md-12"
