@@ -150,7 +150,7 @@ export default {
       pagination: "postPaidCustomerInteraction/interactionsPagination",
       user: "user/user",
       client: "user/clientUser"
-    }),
+    })
   },
   data() {
     return {
@@ -208,6 +208,19 @@ export default {
           throw e;
         });
     },
+    async fetchClientInteractions() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          this.isBusy = false;
+        })
+        .catch(e => {
+          throw e;
+        });
+    },
     async fetchInteraction(id) {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${id}`;
       return await this.$axios
@@ -238,7 +251,13 @@ export default {
     }
   },
   mounted() {
-    // this.fetchInteractions();
+    if (
+      this.$auth.user.designation_category == "new_client" ||
+      this.$auth.user.designation_category == "current_client" ||
+      this.$auth.user.designation_category == "affiliate_partner"
+    ) {
+      this.fetchClientInteractions();
+    }
     this.totalRows = this.interactions.length;
   }
 };
