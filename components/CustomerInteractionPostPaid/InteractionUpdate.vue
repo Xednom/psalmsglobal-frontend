@@ -321,12 +321,12 @@
                 </form>
               </validation-observer>
             </b-tab>
-            <b-tab lazy title="Call log report">
+            <b-tab lazy title="Call log report" :disabled="loading">
               <interaction-record-list
                 :interactionRecord="interaction"
               ></interaction-record-list>
             </b-tab>
-            <b-tab title="Script answer">
+            <b-tab title="Script answer" :disabled="loading">
               <div v-if="loading" class="row">
                 <div>
                   <b-spinner type="grow" label="Loading..."></b-spinner>
@@ -363,7 +363,7 @@
                 </div>
               </div>
             </b-tab>
-            <b-tab lazy title="Job Order">
+            <b-tab lazy title="Job Order" :disabled="loading">
               <job-order-list :interaction="interaction"></job-order-list>
             </b-tab>
           </b-tabs>
@@ -386,7 +386,7 @@ import { Select, Option } from "element-ui";
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
 import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList";
-import JobOrderList from "@/components/JobOrder/JobOrderList";
+import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
 
 import { mapGetters, mapActions } from "vuex";
 
