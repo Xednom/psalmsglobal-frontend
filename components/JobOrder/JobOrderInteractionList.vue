@@ -76,11 +76,18 @@
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           :sort-direction="sortDirection"
+          :busy="isBusy"
           stacked="md"
           show-empty
           small
           @filtered="onFiltered"
         >
+          <template #table-busy>
+            <div class="text-center text-default my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template #cell(job_title)="row">
             {{ row.item.job_title }}
           </template>
@@ -91,12 +98,13 @@
               @click="
                 {
                   fetchJobOrder(row.item.id, row.index, $event.target),
-                    (modals.info = true);
+                    (modals.update = true);
                 }
               "
               class="mr-1"
+              variant="info"
             >
-              Info
+              Update
             </b-button>
           </template>
         </b-table>
@@ -126,7 +134,8 @@
                         class="form-control datepicker"
                         format="yyyy-MM-dd"
                         value-format="yyyy-MM-dd"
-                        v-model="jobOrder.request_date"
+                        v-model="job.request_date"
+                        placeholder="Request date"
                       >
                       </flat-picker>
                     </base-input>
@@ -139,20 +148,39 @@
                         @on-close="blur"
                         :config="{ allowInput: true }"
                         class="form-control datepicker"
-                        v-model="jobOrder.due_date"
+                        format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd"
+                        v-model="job.due_date"
+                        placeholder="Due date"
                       >
                       </flat-picker>
                     </base-input>
                   </div>
-                  <div class="col-md-12">
+                  <div class="col-md-6">
                     <base-input
                       label="Job title"
                       alternative
                       class="mb-3"
                       placeholder="Job title"
-                      v-model="jobOrder.job_title"
+                      v-model="job.job_title"
                     >
                     </base-input>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="col-lg-12">
+                      <label>Caller interaction ticket</label>
+                      <vue-typeahead-bootstrap
+                        class="mb-4"
+                        v-model="job.caller_interaction_record"
+                        :ieCloseFix="false"
+                        :data="callerInteractions"
+                        :serializer="item => item.ticket_number"
+                        :value="keyword"
+                        @hit="getCallerInteraction"
+                        @input="onSearchInput"
+                        placeholder="Search a Caller Interaction"
+                      />
+                    </div>
                   </div>
                   <div class="col-md-12">
                     <base-input label="Job description">
@@ -160,7 +188,8 @@
                         class="form-control"
                         id="jobDescription"
                         rows="3"
-                        v-model="jobOrder.job_description"
+                        v-model="job.job_description"
+                        placeholder="Job Description"
                       ></textarea>
                     </base-input>
                   </div>
@@ -183,14 +212,19 @@
           </card>
         </modal>
 
-        <!-- info modal -->
+        <!-- update modal -->
         <modal
-          :show.sync="modals.info"
+          :show.sync="modals.update"
           size="lg"
           headerClasses="justify-content-center"
           class="white-content"
         >
-          <job-order-view :jobOrder="jobOrder"></job-order-view>
+          <div class="container">
+            <job-order-update
+              :jobOrder="jobOrder"
+              :refresh="refresh"
+            ></job-order-update>
+          </div>
         </modal>
 
         <div
@@ -215,29 +249,38 @@
 </template>
 
 <script>
+import { debounce } from "lodash";
 import {
   Table,
   TableColumn,
   DropdownMenu,
   DropdownItem,
-  Dropdown
+  Dropdown,
+  Select,
+  Option
 } from "element-ui";
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
+import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 import { mapGetters, mapActions } from "vuex";
 
 import JobOrderView from "@/components/JobOrder/JobOrderView";
+import JobOrderUpdate from "@/components/JobOrder/JobOrderUpdate";
 
 export default {
-  name: "job_order_interaction_list",
+  name: "job_order_list",
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     [Dropdown.name]: Dropdown,
     [DropdownItem.name]: DropdownItem,
     [DropdownMenu.name]: DropdownMenu,
+    [Select.name]: Select,
+    [Option.name]: Option,
     flatPicker,
-    JobOrderView
+    JobOrderView,
+    JobOrderUpdate,
+    VueTypeaheadBootstrap
   },
   props: {
     interaction: {
@@ -248,29 +291,35 @@ export default {
   computed: {
     ...mapGetters({
       pagination: "jobOrder/jobOrdersPagination",
+      staff: "user/staff",
       user: "user/user",
       client: "user/clientUser"
     })
   },
   data() {
     return {
+      keyword: "",
+      jobOrder: {},
       jobOrders: [],
-      jobOrder: {
+      callerInteractions: [],
+      job: {
         caller_interaction_record: null,
         due_date: "",
         request_date: "",
         job_title: "",
         job_description: ""
       },
+      clientUser: {},
       isBusy: false,
       saving: false,
       modals: {
         form: false,
-        info: false
+        info: false,
+        update: false
       },
       totalRows: 1,
       currentPage: 1,
-      perPage: 5,
+      perPage: 10,
       pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
       sortBy: "",
       sortDesc: false,
@@ -283,9 +332,10 @@ export default {
         content: ""
       },
       fields: [
-        { key: "caller_interaction_record", sortable: true },
+        { key: "caller_interaction_record", label:" Caller interaction ticket ", sortable: true },
+        { key: "ticket_number", label:"Job order ticket number", sortable: true },
         { key: "job_title", sortable: true },
-        { key: "actions", sortable: true }
+        { key: "actions" }
       ]
     };
   },
@@ -297,22 +347,42 @@ export default {
       this.currentPage = 1;
     },
     reset() {
-      this.jobOrder.caller_interaction_record = null;
-      this.jobOrder.due_date = "";
-      this.jobOrder.request_date = "";
-      this.jobOrder.job_title = "";
-      this.jobOrder.job_description = "";
+      this.job.caller_interaction_record = null;
+      this.job.due_date = "";
+      this.job.request_date = "";
+      this.job.job_title = "";
+      this.job.job_description = "";
     },
+    onSearchInput(text) {
+      this.keyword = text;
+    },
+    getCallerInteraction: debounce(function() {
+      this.$axios
+        .get(
+          `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.job.caller_interaction_record}`
+        )
+        .then(res => {
+          this.callerInteractions = res.data.results;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }, 700),
     async fetchJobOrders() {
-      let endpoint = `/api/v1/post-paid/job-order/?search=${this.interaction.ticket_number}`;
+      this.isBusy = true;
+      let endpoint = `/api/v1/post-paid/job-order-general/?search=${this.interaction.ticket_number}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
           this.jobOrders = res.data.results;
+          this.isBusy = false;
         })
         .catch(e => {
           throw e;
         });
+    },
+    async refresh() {
+      this.fetchJobOrders();
     },
     async fetchJobOrder(id) {
       let endpoint = `/api/v1/post-paid/job-order/${id}`;
@@ -325,15 +395,51 @@ export default {
           throw e;
         });
     },
+    async fetchClient(id) {
+      try {
+        await this.$store.dispatch("user/fetchClient", id).then(() => {});
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async fetchStaff(id) {
+      try {
+        await this.$store.dispatch("user/fetchStaff", id).then(() => {});
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async fetchMe() {
+      try {
+        await this.$store.dispatch("user/fetchUser").then(() => {
+          if (
+            this.$auth.user.designation_category == "new_client" ||
+            this.$auth.user.designation_category == "current_client" ||
+            this.$auth.user.designation_category == "affiliate_partner"
+          ) {
+            this.fetchClient(this.$auth.user.id);
+          } else {
+            this.fetchStaff(this.$auth.user.id);
+          }
+        });
+      } catch (err) {
+        console.error(err.response.data);
+      }
+    },
     async save() {
-      const jobOrderPayload = {
-        caller_interaction_record: this.interaction.ticket_number,
-        request_date: this.jobOrder.request_date,
-        due_date: this.jobOrder.due_date,
-        job_title: this.jobOrder.job_title,
-        job_description: this.jobOrder.job_description
-      };
-      if (this.$auth.user) {
+      if (
+        this.$auth.user.designation_category == "new_client" ||
+        this.$auth.user.designation_category == "current_client" ||
+        this.$auth.user.designation_category == "affiliate_partner"
+      ) {
+        const jobOrderPayload = {
+          client: this.clientUser.client_code,
+          caller_interaction_record: this.job.caller_interaction_record,
+          request_date: this.job.request_date,
+          due_date: this.job.due_date,
+          job_title: this.job.job_title,
+          job_description: this.job.job_description
+        };
         try {
           this.saving = true;
           await this.saveJobOrder(jobOrderPayload)
@@ -346,6 +452,26 @@ export default {
             .catch(e => {
               console.log(e);
             });
+        } catch (e) {
+          throw e;
+        }
+      } else if (this.$auth.user.designation_category == "staff") {
+        const jobOrderPayload = {
+          caller_interaction_record: this.job.caller_interaction_record,
+          va_assigned: [this.staff.id],
+          request_date: this.job.request_date,
+          due_date: this.job.due_date,
+          job_title: this.job.job_title,
+          job_description: this.job.job_description
+        };
+        try {
+          this.saving = true;
+          await this.saveJobOrder(jobOrderPayload).then(() => {
+            this.saving = false;
+            this.reset();
+            this.successMessage("success");
+            this.fetchJobOrders();
+          });
         } catch (e) {
           throw e;
         }
@@ -376,8 +502,18 @@ export default {
     }
   },
   mounted() {
-    this.fetchJobOrders();
+    this.fetchMe();
+    setTimeout(() => this.fetchJobOrders(), 1000);
     this.totalRows = this.jobOrders.length;
+  },
+  watch: {
+    keyword: debounce(function(oldKeyword, newKeyword) {
+      if (newKeyword !== "" && newKeyword !== oldKeyword) {
+        this.getCallerInteraction();
+      } else if (!newKeyword) {
+        this.jobOrders = [];
+      }
+    }, 500)
   }
 };
 </script>
