@@ -6,115 +6,143 @@
           <div class="col-8">
             <h3 class="mb-0">Add new Company</h3>
           </div>
-          <div class="col-4 text-right">
-            <base-button type="info" @click="save">Save</base-button>
-          </div>
         </div>
+        <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
+          <form @submit.prevent="handleSubmit(save)">
+            <h6 class="heading-small text-muted mb-4">
+              Company information
+            </h6>
 
-        <form @submit.prevent="updateProfile">
-          <h6 class="heading-small text-muted mb-4">
-            Company information
-          </h6>
-
-          <div class="pl-lg-4">
-            <div class="row">
-              <div class="col-lg-3">
-                <base-input
-                  type="text"
-                  label="Company name"
-                  placeholder="Company name"
-                  v-model="company_name"
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-3">
-                <base-input
-                  label="Company owner name"
-                  placeholder="Company owner name"
-                  v-model="company_owner_name"
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-3">
-                <base-input label="Business type">
-                  <el-select
-                    v-model="business_type"
-                    filterable
-                    placeholder="Choose a business type"
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-3">
+                  <base-input
+                    type="text"
+                    label="Company name"
+                    placeholder="Company name"
+                    v-model="company_name"
+                    name="Company name"
+                    rules="required"
                   >
-                    <el-option
-                      v-for="option in businessTypeOptions"
-                      :key="option.label"
-                      :label="option.label"
-                      :value="option.value"
+                  </base-input>
+                </div>
+                <div class="col-lg-3">
+                  <base-input
+                    label="Company owner name"
+                    placeholder="Company owner name"
+                    v-model="company_owner_name"
+                    name="Company owner name"
+                    rules="required"
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-3">
+                  <base-input
+                    label="Business type"
+                    name="Business type"
+                    rules="required"
+                  >
+                    <el-select
+                      v-model="business_type"
+                      filterable
+                      placeholder="Choose a business type"
                     >
-                    </el-option>
-                  </el-select>
-                </base-input>
+                      <el-option
+                        v-for="option in businessTypeOptions"
+                        :key="option.label"
+                        :label="option.label"
+                        :value="option.value"
+                      >
+                      </el-option>
+                    </el-select>
+                  </base-input>
+                </div>
+                <div class="col-lg-3">
+                  <base-input
+                    type="text"
+                    label="Company phone"
+                    placeholder="Company phone"
+                    v-model="company_phone"
+                    name="Company phone"
+                    rules="required"
+                  >
+                  </base-input>
+                </div>
               </div>
-              <div class="col-lg-3">
-                <base-input
-                  type="text"
-                  label="Company phone"
-                  placeholder="Company phone"
-                  v-model="company_phone"
-                >
-                </base-input>
+              <div class="row">
+                <div class="col-lg-4">
+                  <base-input
+                    type="text"
+                    label="Company email"
+                    placeholder="Company email"
+                    v-model="company_email"
+                    name="Company email"
+                    rules="required"
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-4">
+                  <base-input
+                    type="text"
+                    label="Company forwarding email"
+                    placeholder="Company forwarding email"
+                    v-model="company_forwarding_email"
+                    name="Company forwarding email"
+                    rules="required"
+                  >
+                  </base-input>
+                </div>
+                <div class="col-lg-4">
+                  <base-input
+                    type="text"
+                    label="Company paypal email for billing purposes"
+                    placeholder="Company paypal email"
+                    v-model="paypal_email"
+                    name="Company paypal email for billing purposes"
+                    rules="required"
+                  >
+                  </base-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <base-input label="Company complete address">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="company_complete_address"
+                      name="Company complete address"
+                      rules="required"
+                    ></textarea>
+                  </base-input>
+                </div>
+                <div class="col-lg-6">
+                  <base-input label="Notes">
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      rows="3"
+                      v-model="notes"
+                      name="Notes"
+                      rules="required"
+                    ></textarea>
+                  </base-input>
+                </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-lg-4">
-                <base-input
-                  type="text"
-                  label="Company email"
-                  placeholder="Company email"
-                  v-model="company_email"
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-4">
-                <base-input
-                  type="text"
-                  label="Company forwarding email"
-                  placeholder="Company forwarding email"
-                  v-model="company_forwarding_email"
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-4">
-                <base-input
-                  type="text"
-                  label="Company paypal email for billing purposes"
-                  placeholder="Company paypal email"
-                  v-model="paypal_email"
-                >
-                </base-input>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-6">
-                <base-input label="Company complete address">
-                  <textarea
-                    class="form-control"
-                    id="notes"
-                    rows="3"
-                    v-model="company_complete_address"
-                  ></textarea>
-                </base-input>
-              </div>
-              <div class="col-lg-6">
-                <base-input label="Notes">
-                  <textarea
-                    class="form-control"
-                    id="notes"
-                    rows="3"
-                    v-model="notes"
-                  ></textarea>
-                </base-input>
-              </div>
-            </div>
-          </div>
-        </form>
+            <base-button
+              type="primary"
+              native-type="submit"
+              loading
+              v-if="saving"
+              >Submit</base-button
+            >
+            <base-button type="primary" native-type="submit" v-else
+              >Submit</base-button
+            >
+          </form>
+        </validation-observer>
       </card>
     </div>
   </div>
@@ -231,7 +259,8 @@ export default {
         { value: "corporation", label: "Corporation" },
         { value: "llcs", label: "LLCs" },
         { value: "others", label: "Others" }
-      ]
+      ],
+      error: ""
     };
   },
   methods: {
@@ -287,18 +316,15 @@ export default {
       ) {
         try {
           this.saving = true;
-          await this.saveCompany(companyPayload)
-            .then(() => {
-              this.saving = false;
-              this.reset();
-              this.$refs.formValidator.reset();
-              this.successMessage("success");
-            })
-            .catch(e => {
-              this.saving = false;
-              this.error = e.response.data;
-              this.errorMessage("danger", this.error);
-            });
+          await this.saveCompany(companyPayload).then(() => {
+            this.saving = false;
+            this.error = e.data;
+            this.errorMessage("danger", this.error);
+          })
+          .catch((err) => {
+            this.error = err.response.data;
+            this.errorMessage("danger", this.error);
+          });
         } catch (e) {
           this.saving = false;
         }
@@ -316,6 +342,10 @@ export default {
       this.$bvToast.toast(
         error.client
           ? "Client: " + error.client
+          : error.company_complete_address
+          ? "Company complete address: " + error.company_complete_address
+          : error.notes
+          ? "Notes: " + error.notes
           : error.detail
           ? "Detail: " + error.detail
           : error.non_field_errors

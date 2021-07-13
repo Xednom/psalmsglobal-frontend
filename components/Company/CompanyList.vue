@@ -197,7 +197,6 @@ export default {
         .get(endpoint)
         .then(res => {
           this.company = res.data;
-          console.log(this.company);
         })
         .catch(e => {
           throw e;
