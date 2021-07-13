@@ -229,6 +229,7 @@ export default {
           })
           .catch(e => {
             this.saving = false;
+            this.errorMessage("danger", e.response.data);
             console.log(e);
           });
       } catch (e) {

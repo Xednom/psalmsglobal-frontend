@@ -333,6 +333,7 @@ export default {
       },
       fields: [
         { key: "caller_interaction_record", sortable: true },
+        { key: "ticket_number", label:"Job order ticket number", sortable: true },
         { key: "job_title", sortable: true },
         { key: "actions" }
       ]
@@ -369,7 +370,7 @@ export default {
     }, 700),
     async fetchJobOrders() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/job-order/?search=${this.interaction.ticket_number}`;
+      let endpoint = `/api/v1/post-paid/job-order-general/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
