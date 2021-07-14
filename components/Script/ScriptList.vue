@@ -210,7 +210,6 @@ export default {
         .get(endpoint)
         .then(res => {
           this.crm = res.data;
-          console.log(this.company);
         })
         .catch(e => {
           throw e;

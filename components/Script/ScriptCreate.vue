@@ -23,12 +23,11 @@
             <div class="pl-lg-4">
               <div class="row">
                 <div class="col-lg-3">
-                  <base-input label="Company">
+                  <base-input label="Company" name="Company" rules="required">
                     <el-select
                       v-model="company"
                       filterable
                       placeholder="Choose a Company"
-                      rules="required"
                     >
                       <el-option
                         v-for="option in companies"
@@ -41,12 +40,11 @@
                   </base-input>
                 </div>
                 <div class="col-lg-3">
-                  <base-input label="Forms">
+                  <base-input label="Forms" name="Forms" rules="required">
                     <el-select
                       v-model="form"
                       filterable
                       placeholder="Choose a form"
-                      rules="required"
                     >
                       <el-option
                         v-for="option in forms"
@@ -66,6 +64,8 @@
                     separator=" ,;"
                     placeholder="Enter new email"
                     no-add-on-enter
+                    name="Mailing lists"
+                    required
                   ></b-form-tags>
                   <small class="text-muted"
                     >Enter new email separated by space, comma or
@@ -203,7 +203,6 @@ export default {
         form: this.form,
         mailing_lists: String(this.mailing_lists),
       };
-      console.log(String(this.mailing_lists));
 
       if (
         this.$auth.user.designation_category == "current_client" ||
@@ -219,7 +218,7 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch(e => {
+            .catch((e) => {
               this.saving = false;
               this.error = e.response.data;
               this.errorMessage("danger", this.error);
