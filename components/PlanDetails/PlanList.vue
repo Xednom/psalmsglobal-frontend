@@ -10,12 +10,7 @@
           ><b-button
             class="pull-right"
             variant="success"
-            v-if="
-              $auth.user.designation_category == 'new_client' ||
-                $auth.user.designation_category == 'current_client' ||
-                $auth.user.designation_category == 'affiliate_partner' &&
-                this.planDetails.length >= 0
-            "
+            v-if="this.planDetails.length == 0"
             >Add a new plan
           </b-button></nuxt-link
         >
@@ -116,13 +111,16 @@
           <template #cell(actions)="row">
             <b-button
               size="sm"
-              @click="info(row.item, row.index, $event.target)"
+              variant="primary"
+              @click="
+                {
+                  fetchPlan(row.item);
+                  modals.form = true;
+                }
+              "
               class="mr-1"
             >
-              Info modal
-            </b-button>
-            <b-button size="sm" @click="row.toggleDetails">
-              {{ row.detailsShowing ? "Hide" : "Show" }} Details
+              Update
             </b-button>
           </template>
 
@@ -155,6 +153,14 @@
         </div>
       </b-container>
     </div>
+    <!-- info modal -->
+    <modal
+      :show.sync="modals.form"
+      headerClasses="justify-content-center"
+      class="white-content"
+    >
+      <plan-update :plan="planDetail" :refresh="fetchPlanDetails"></plan-update>
+    </modal>
   </div>
 </template>
 
@@ -168,6 +174,8 @@ import {
 } from "element-ui";
 import { mapGetters, mapActions } from "vuex";
 
+import PlanUpdate from "@/components/PlanDetails/PlanUpdate";
+
 export default {
   name: "company_list",
   components: {
@@ -175,13 +183,11 @@ export default {
     [TableColumn.name]: TableColumn,
     [Dropdown.name]: Dropdown,
     [DropdownItem.name]: DropdownItem,
-    [DropdownMenu.name]: DropdownMenu
+    [DropdownMenu.name]: DropdownMenu,
+    PlanUpdate
   },
   computed: {
     ...mapGetters({
-      planDetails: "planDetail/planDetails",
-      planTypes: "planDetail/planTypes",
-      costOfPlans: "planDetail/costOfPlans",
       pagination: "planDetail/planDetailsPagination",
       user: "user/user",
       client: "user/clientUser"
@@ -189,7 +195,8 @@ export default {
   },
   data() {
     return {
-      crm: {},
+      planDetail: {},
+      planDetails: [],
       isBusy: false,
       saving: false,
       modals: {
@@ -222,29 +229,35 @@ export default {
     };
   },
   methods: {
-    // ...mapActions("crm", ["updateCompany"]),
+    ...mapActions("planDetail", ["fetchPlanDetail"]),
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetchPlanDetails() {
+    fetchPlanDetails() {
       this.isBusy = true;
-      await this.$store
-        .dispatch("planDetail/fetchPlanDetails", this.pagination)
-        .then(() => {
-          this.isBusy = false;
-        });
-    },
-    async fetchCrm(id) {
-      let endpoint = `/api/v1/crm/${id}`;
-      return await this.$axios
+      let endpoint = `/api/v1/post-paid/post-paid/`;
+      return this.$axios
         .get(endpoint)
         .then(res => {
-          this.crm = res.data;
+          this.isBusy = false;
+          this.planDetails = res.data.results;
         })
         .catch(e => {
-          throw e;
+          this.isBusy = false;
+          console.error(e);
+        });
+    },
+    fetchPlan(payload) {
+      let endpoint = `/api/v1/post-paid/post-paid/${payload.id}`;
+      return this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.planDetail = res.data;
+        })
+        .catch(e => {
+          console.error(e);
         });
     },
     errorMessage(variant = null, error) {
