@@ -65,16 +65,21 @@
             <i class="ni ni-single-02"></i>
             <span>My profile</span>
           </nuxt-link>
-          <nuxt-link to="/plan-detail/" class="dropdown-item">
+          <nuxt-link
+            to="/plan-detail/"
+            class="dropdown-item"
+            v-if="
+              $auth.user.designation_category == 'new_client' ||
+                $auth.user.designation_category == 'current_client' ||
+                $auth.user.designation_category == 'affiliate_partner'
+            "
+          >
             <i class="ni ni-collection"></i>
             <span>Plan details</span>
           </nuxt-link>
           <div class="dropdown-divider"></div>
-          <button
-            class="dropdown-item"
-            native-type="submit"
-            @click="logout"
-            ><i class="ni ni-user-run"></i> <span>Logout</span>
+          <button class="dropdown-item" native-type="submit" @click="logout">
+            <i class="ni ni-user-run"></i> <span>Logout</span>
           </button>
         </template>
       </base-dropdown>
