@@ -81,6 +81,12 @@
             path: '/post-paid/customer-interaction'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Minutes report',
+            path: '/minutes-report'
+          }"
+        />
         </sidebar-item>
 
         <sidebar-item
