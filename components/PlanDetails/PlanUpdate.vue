@@ -202,7 +202,7 @@ export default {
       }
     },
     successMessage(variant = null) {
-      this.$bvToast.toast("Successfully updated a Job Order", {
+      this.$bvToast.toast("Successfully updated your Plan Detail", {
         title: `Successful`,
         variant: variant,
         solid: true
