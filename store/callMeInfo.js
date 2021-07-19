@@ -25,9 +25,17 @@ const blankState = {
 export const state = () => ({
   ...blankState,
   callMeInfos: [],
+  propertyInfos: [],
+  propertyInfo: {},
   callMeInfo: {},
   offerStatuses: [],
   callMeInfosPagination: {
+    offset: 0,
+    count: 0,
+    showing: 0,
+    currentPage: 1
+  },
+  propertyInfosPagination: {
     offset: 0,
     count: 0,
     showing: 0,
@@ -58,11 +66,16 @@ export const getters = {
   offer_status: state => state.offer_status,
   offer_status_notes: state => state.offer_status_notes,
   callMeInfosPagination: state => state.callMeInfosPagination,
+  propertyInfosPagination: state => state.propertyInfosPagination,
   offerStatuses: state => state.offerStatuses,
   callMeInfos: state => state.callMeInfos,
+  propertyInfos: state => state.propertyInfos,
   callMeInfo: state => {
     return state.callMeInfo;
   },
+  proeprtyInfo: state => {
+    return state.propertyInfo;
+  }
 };
 
 export const mutations = {
@@ -72,11 +85,20 @@ export const mutations = {
   setCallMeInfos(state, payload) {
     state.callMeInfos = payload.callMeInfos;
   },
+  setPropertyInfo(state, payload) {
+    state.propertyInfo = payload.propertyInfo;
+  },
+  setPropertyInfos(state, payload) {
+    state.propertyInfos = payload.propertyInfos;
+  },
   setOfferStatuses(state, payload) {
     state.offerStatuses = payload.offerStatuses;
   },
   setCallMeInfosPagination(state, payload) {
     state.callMeInfosPagination = payload;
+  },
+  setPropertyInfosPagination(state, payload) {
+    state.propertyInfosPagination = payload;
   },
   setBasicField(state, { field, value }) {
     state[field] = value;
@@ -102,6 +124,24 @@ export const actions = {
         commit("setCallMeInfos", { callMeInfos: res.data.results });
         const offset = getOffset(res.data.previous);
         commit("setCallMeInfosPagination", {
+          offset: offset,
+          count: res.data.count,
+          showing: res.data.results.length,
+          currentPage: offset / 12 + 1
+        });
+        return res;
+      })
+      .catch(e => {
+        throw e;
+      });
+  },
+  async fetchPropertyInfos({ commit, dispatch }, params) {
+    return await this.$axios
+      .get("/api/v1/property-info/", { params: params })
+      .then(res => {
+        commit("setPropertyInfos", { propertyInfos: res.data.results });
+        const offset = getOffset(res.data.previous);
+        commit("setPropertyInfosPagination", {
           offset: offset,
           count: res.data.count,
           showing: res.data.results.length,

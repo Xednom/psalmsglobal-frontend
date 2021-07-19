@@ -42,6 +42,12 @@
               path: '/form'
             }"
           />
+          <sidebar-item
+            :link="{
+              name: 'Property info',
+              path: '/property-info'
+            }"
+          />
         </sidebar-item>
         <sidebar-item
           v-if="$auth.user.designation_category == 'staff'"
