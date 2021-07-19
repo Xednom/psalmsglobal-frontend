@@ -167,19 +167,52 @@
                     </base-input>
                   </div>
                   <div class="col-md-6">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" v-if="haveTicket">
                       <label>Caller interaction ticket</label>
                       <vue-typeahead-bootstrap
-                        class="mb-4"
                         v-model="job.caller_interaction_record"
                         :ieCloseFix="false"
                         :data="callerInteractions"
                         :serializer="item => item.ticket_number"
-                        :value="keyword"
+                        :value="ticketKeyword"
                         @hit="getCallerInteraction"
-                        @input="onSearchInput"
+                        @input="onSearchInputTicket"
                         placeholder="Search a Caller Interaction"
                       />
+                      <div class="row">
+                        <div class="col-md-6 mt-2" v-if="haveTicket">
+                          <b-button
+                            variant="primary"
+                            size="sm"
+                            @click="assignToClient"
+                            >I have a Client</b-button
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-12" v-if="haveClient">
+                      <label>Client Codes</label>
+                      <vue-typeahead-bootstrap
+                        v-model="job.client"
+                        :ieCloseFix="false"
+                        :data="clientCodes"
+                        :serializer="item => item.client_code"
+                        :value="clientKeyword"
+                        @hit="getClient"
+                        @input="onSearchInputClient"
+                        placeholder="Search a Client code"
+                      />
+
+                      <div class="row">
+                        <div class="col-md-6 mt-2" v-if="haveClient">
+                          <b-button
+                            variant="primary"
+                            size="sm"
+                            @click="assignToTicket"
+                            >I have a Ticket</b-button
+                          >
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="col-md-12">
@@ -290,6 +323,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      jobOrders: "jobOrder/jobOrders",
       pagination: "jobOrder/jobOrdersPagination",
       staff: "user/staff",
       user: "user/user",
@@ -298,17 +332,22 @@ export default {
   },
   data() {
     return {
-      keyword: "",
+      ticketKeyword: "",
+      clientKeyword: "",
       jobOrder: {},
-      jobOrders: [],
+      // jobOrders: [],
       callerInteractions: [],
+      clientCodes: [],
       job: {
         caller_interaction_record: null,
         due_date: "",
         request_date: "",
         job_title: "",
-        job_description: ""
+        job_description: "",
+        client: null
       },
+      haveClient: false,
+      haveTicket: true,
       clientUser: {},
       isBusy: false,
       saving: false,
@@ -332,8 +371,11 @@ export default {
         content: ""
       },
       fields: [
-        { key: "caller_interaction_record", sortable: true },
-        { key: "ticket_number", label:"Job order ticket number", sortable: true },
+        {
+          key: "ticket_number",
+          label: "Job order ticket number",
+          sortable: true
+        },
         { key: "job_title", sortable: true },
         { key: "actions" }
       ]
@@ -348,13 +390,25 @@ export default {
     },
     reset() {
       this.job.caller_interaction_record = null;
+      this.job.client = null;
       this.job.due_date = "";
       this.job.request_date = "";
       this.job.job_title = "";
       this.job.job_description = "";
     },
-    onSearchInput(text) {
-      this.keyword = text;
+    onSearchInputTicket(text) {
+      this.ticketKeyword = text;
+    },
+    onSearchInputClient(text) {
+      this.clientKeyword = text;
+    },
+    assignToClient() {
+      this.haveClient = true;
+      this.haveTicket = false;
+    },
+    assignToTicket() {
+      this.haveTicket = true;
+      this.haveClient = false;
     },
     getCallerInteraction: debounce(function() {
       this.$axios
@@ -363,22 +417,45 @@ export default {
         )
         .then(res => {
           this.callerInteractions = res.data.results;
+          console.log(this.callerInteractions);
+          if (this.callerInteractions.length == 0) {
+            this.haveClient = true;
+          }
         })
         .catch(err => {
           console.log(err);
         });
     }, 700),
+    getClient: debounce(function() {
+      this.$axios
+        .get(`/api/auth/client-code/?search=${this.job.client}`)
+        .then(res => {
+          this.clientCodes = res.data.results;
+          console.log(this.clientCodes);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }, 700),
+    // async fetchJobOrders() {
+    //   this.isBusy = true;
+    //   let endpoint = `/api/v1/post-paid/job-order-general/?`;
+    //   return await this.$axios
+    //     .get(endpoint)
+    //     .then(res => {
+    //       this.jobOrders = res.data.results;
+    //       this.isBusy = false;
+    //     })
+    //     .catch(e => {
+    //       throw e;
+    //     });
+    // },
     async fetchJobOrders() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/job-order-general/`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.jobOrders = res.data.results;
+      await this.$store
+        .dispatch("jobOrder/fetchJobOrders", this.pagination)
+        .then(() => {
           this.isBusy = false;
-        })
-        .catch(e => {
-          throw e;
         });
     },
     async refresh() {
@@ -458,6 +535,7 @@ export default {
       } else if (this.$auth.user.designation_category == "staff") {
         const jobOrderPayload = {
           caller_interaction_record: this.job.caller_interaction_record,
+          client: this.job.client,
           va_assigned: [this.staff.id],
           request_date: this.job.request_date,
           due_date: this.job.due_date,
@@ -466,14 +544,20 @@ export default {
         };
         try {
           this.saving = true;
-          await this.saveJobOrder(jobOrderPayload).then(() => {
-            this.saving = false;
-            this.reset();
-            this.successMessage("success");
-            this.fetchJobOrders();
-          });
+          await this.saveJobOrder(jobOrderPayload)
+            .then(() => {
+              this.saving = false;
+              this.reset();
+              this.successMessage("success");
+              this.fetchJobOrders();
+            })
+            .catch(e => {
+              this.saving = false;
+              console.log(e.response.data);
+              this.errorMessage("danger", e.response.data);
+            });
         } catch (e) {
-          throw e;
+          this.saving = false;
         }
       }
     },
@@ -488,8 +572,14 @@ export default {
       this.$bvToast.toast(
         error.caller_interaction_record
           ? "Caller interaction record: " + error.caller_interaction_record
-          : error.detail
-          ? "Detail: " + error.detail
+          : error.due_date
+          ? "Due date: " + error.due_date
+          : error.request_date
+          ? "Request date: " + error.request_date
+          : error.job_description
+          ? "Job Description: " + error.job_description
+          : error.job_title
+          ? "Job title: " + error.job_title
           : error.non_field_errors
           ? error.non_field_errors
           : error,
@@ -503,13 +593,21 @@ export default {
   },
   mounted() {
     this.fetchMe();
+    this.fetchJobOrders();
     setTimeout(() => this.fetchJobOrders(), 1000);
     this.totalRows = this.jobOrders.length;
   },
   watch: {
-    keyword: debounce(function(oldKeyword, newKeyword) {
+    ticketKeyword: debounce(function(oldKeyword, newKeyword) {
       if (newKeyword !== "" && newKeyword !== oldKeyword) {
         this.getCallerInteraction();
+      } else if (!newKeyword) {
+        this.jobOrders = [];
+      }
+    }, 500),
+    clientKeyword: debounce(function(oldKeyword, newKeyword) {
+      if (newKeyword !== "" && newKeyword !== oldKeyword) {
+        this.getClient();
       } else if (!newKeyword) {
         this.jobOrders = [];
       }

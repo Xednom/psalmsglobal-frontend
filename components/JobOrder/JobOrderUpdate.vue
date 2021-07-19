@@ -4,7 +4,7 @@
       <div slot="header" class="row align-items-center mb-3">
         <div class="col-8">
           <h3 class="mb-0">
-            Job order request for {{ jobOrder.caller_interaction_record }}
+            Job order request for Caller interaction - {{ jobOrder.caller_interaction_record }}
           </h3>
         </div>
       </div>
@@ -17,11 +17,25 @@
                 <div class="row">
                   <div class="col-lg-12">
                     <base-input
+                      v-if="jobOrder.caller_interaction_record"
                       type="text"
-                      label="Ticket number"
-                      placeholder="Ticket number"
-                      name="Ticket number"
+                      label="Caller interaction Ticket number"
+                      placeholder="Caller interaction Ticket number"
+                      name="Caller interaction Ticket number"
                       v-model="jobOrder.caller_interaction_record"
+                      rules="required"
+                      disabled
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input
+                      v-if="jobOrder.client"
+                      type="text"
+                      label="Client code"
+                      placeholder="Client code"
+                      name="Client code"
+                      v-model="jobOrder.client"
                       rules="required"
                       disabled
                     >

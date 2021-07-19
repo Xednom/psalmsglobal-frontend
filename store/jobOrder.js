@@ -80,7 +80,7 @@ function getOffset(urlStr) {
 export const actions = {
   async fetchJobOrders({ commit, dispatch }, params) {
     return await this.$axios
-      .get("/api/v1/post-paid/job-order/", { params: params })
+      .get("/api/v1/post-paid/job-order-general/", { params: params })
       .then(res => {
         commit("setJobOrders", { jobOrders: res.data.results });
         const offset = getOffset(res.data.previous);
@@ -132,13 +132,9 @@ export const actions = {
   },
   async saveJobOrder({ commit }, payload) {
     let url = "/api/v1/post-paid/job-order/";
-    try {
-      return await this.$axios.post(url, payload).then(() => {
-        commit("setBasicField", payload);
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    return await this.$axios.post(url, payload).then(() => {
+      commit("setBasicField", payload);
+    });
   },
   async updateJobOrder({ commit }, payload) {
     let url = `/api/v1/post-paid/job-order-general/${payload.ticket_number}/`;
