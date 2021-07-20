@@ -19,7 +19,8 @@ const blankState = {
   other_offer_terms: "",
   notes: "",
   offer_status: null,
-  offer_status_notes: ""
+  offer_status_notes: "",
+  file: ""
 };
 
 export const state = () => ({
@@ -65,6 +66,7 @@ export const getters = {
   notes: state => state.notes,
   offer_status: state => state.offer_status,
   offer_status_notes: state => state.offer_status_notes,
+  file: state => state.file,
   callMeInfosPagination: state => state.callMeInfosPagination,
   propertyInfosPagination: state => state.propertyInfosPagination,
   offerStatuses: state => state.offerStatuses,
@@ -196,6 +198,19 @@ export const actions = {
     } catch (err) {
       console.error(err);
     }
+  },
+  async upload({ commit }, payload) {
+    let url = "/api/v1/file-upload/";
+    return await this.$axios
+      .post(url, payload, {
+        headers: {
+          "Content-Type":
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
+      })
+      .then(res => {
+        commit("setBasicField", payload);
+      });
   },
   async updateCallMeInfo({ commit }, payload) {
     let url = `/api/v1/callme-info/${payload.id}/`;

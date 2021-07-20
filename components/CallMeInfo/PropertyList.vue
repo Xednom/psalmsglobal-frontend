@@ -115,22 +115,25 @@
         </b-table>
 
         <modal size="lg" :show.sync="modals.upload">
-          <b-form-file
+          <base-input
+            label="Excel file"
+            alternative
             class="mb-3"
+            placeholder="Excel file"
+            prepend-icon="ni ni-briefcase-24"
             v-model="file"
-            placeholder="Choose a file or drop it here..."
-            drop-placeholder="Drop file here..."
-          ></b-form-file>
+          >
+          </base-input>
           <div class="text-center">
-            <!-- <base-button
+            <base-button
               type="primary"
               native-type="submit"
               loading
               v-if="uploading"
-              >Uploading</base-button
-            > -->
-            <base-button type="primary" native-type="submit" @click="uploadFile"
-              >Upload</base-button
+              >Parsing</base-button
+            >
+            <base-button type="primary" native-type="submit" v-else @click="parseFile"
+              >Parse</base-button
             >
           </div>
         </modal>
@@ -467,6 +470,7 @@ export default {
       },
       isBusy: false,
       saving: false,
+      uploading: false,
       modals: {
         upload: false
       },
@@ -496,7 +500,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("callMeInfo", ["reset", "updateCallMeInfo"]),
+    ...mapActions("callMeInfo", ["reset", "updateCallMeInfo", "upload"]),
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
@@ -510,24 +514,26 @@ export default {
           this.isBusy = false;
         });
     },
-    uploadFile(event) {
-      this.file = event.target.files ? event.target.files[0] : null;
-      if (this.file) {
-        const reader = new FileReader();
-
-        reader.onload = e => {
-          /* Parse data */
-          const bstr = e.target.result;
-          const wb = XLSX.read(bstr, { type: "binary" });
-          /* Get first worksheet */
-          const wsname = wb.SheetNames[0];
-          const ws = wb.Sheets[wsname];
-          /* Convert array of arrays */
-          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        };
-
-        reader.readAsBinaryString(this.file);
+    async parseFile() {
+      var data = new FormData();
+      data.append("file", this.file);
+      if (
+        this.$auth.user.designation_category == "new_client" ||
+        this.$auth.user.designation_category == "current_client" ||
+        this.$auth.user.designation_category == "affiliate_partner"
+      ) {
+        this.uploading = true;
         console.log(this.file);
+        await this.upload(data)
+          .then(() => {
+            this.uploading = false;
+            this.fetchPropertyInfos();
+            this.successUploadMessage("success");
+          })
+          .catch(e => {
+            this.uploading = false;
+            this.errorMessage("danger", e.response.data);
+          });
       }
     },
     async save() {
@@ -572,6 +578,13 @@ export default {
         solid: true
       });
     },
+    successUploadMessage(variant = null) {
+      this.$bvToast.toast("Successfully parsed your Property Info!", {
+        title: `Successful`,
+        variant: variant,
+        solid: true
+      });
+    },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
         error.company
@@ -589,9 +602,9 @@ export default {
       );
     }
   },
-  mounted() {
-    this.fetchPropertyInfos();
-    this.totalRows = this.callMeInfos.length;
+  async mounted() {
+    await this.fetchPropertyInfos();
+    this.totalRows = this.propertyInfos.length;
   }
 };
 </script>
