@@ -114,7 +114,7 @@
           </template>
         </b-table>
 
-        <modal size="lg" :show.sync="modals.upload">
+        <!-- <modal size="lg" :show.sync="modals.upload">
           <base-input
             label="Excel file"
             alternative
@@ -136,7 +136,7 @@
               >Parse</base-button
             >
           </div>
-        </modal>
+        </modal> -->
 
         <modal size="lg" :show.sync="modals.info">
           <h6 slot="header" class="modal-title">
