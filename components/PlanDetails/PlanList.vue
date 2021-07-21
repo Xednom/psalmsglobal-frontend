@@ -6,14 +6,6 @@
       </div>
       <b-container fluid>
         <!-- User Interface controls -->
-        <nuxt-link to="/plan-detail/create"
-          ><b-button
-            class="pull-right"
-            variant="success"
-            v-if="this.planDetails.length == 0"
-            >Add a new plan
-          </b-button></nuxt-link
-        >
 
         <b-row>
           <b-col sm="5" md="6" class="my-1">
@@ -223,8 +215,7 @@ export default {
         { key: "start_of_plan", sortable: true },
         { key: "end_of_plan", sortable: true },
         { key: "recurring_bill", sortable: true },
-        { key: "account_status", sortable: true },
-        { key: "actions" }
+        { key: "account_status", sortable: true }
       ]
     };
   },
