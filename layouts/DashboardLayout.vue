@@ -93,6 +93,12 @@
             path: '/minutes-report'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Monthly charge',
+            path: '/monthly-charge'
+          }"
+        />
         </sidebar-item>
 
         <sidebar-item
