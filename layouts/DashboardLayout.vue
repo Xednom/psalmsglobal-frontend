@@ -99,6 +99,12 @@
             path: '/monthly-charge'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Account Balance',
+            path: '/account-balance'
+          }"
+        />
         </sidebar-item>
 
         <sidebar-item
