@@ -1,155 +1,171 @@
 <template>
-  <div class="row">
-    <div class="col-xl-12 col-md-12 col-sm-12">
-      <card>
-        <div slot="header" class="row align-items-center">
-          <div class="col-8">
-            <h3 class="mb-0">Update Form attribute for a Company</h3>
+  <b-overlay :show="show" rounded="sm">
+    <div class="row">
+      <div class="col-xl-12 col-md-12 col-sm-12">
+        <card>
+          <div slot="header" class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Update Form attribute for a Company</h3>
+            </div>
+            <div class="col-4 text-right">
+              <nuxt-link to="/form/">
+                <base-button type="info"
+                  >Back to Form list</base-button
+                ></nuxt-link
+              >
+            </div>
           </div>
-          <div class="col-4 text-right">
-            <nuxt-link to="/form/">
-              <base-button type="info"
-                >Back to Form list</base-button
-              ></nuxt-link
-            >
-          </div>
-        </div>
-        <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
-          <form @submit.prevent="handleSubmit(save)">
-            <h6 class="heading-small text-muted mb-4">
-              Form attribute information
-            </h6>
+          <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
+            <form @submit.prevent="handleSubmit(save)">
+              <h6 class="heading-small text-muted mb-4">
+                Form attribute information
+              </h6>
 
-            <div class="pl-lg-4">
-              <div class="row">
-                <div class="col-lg-3">
-                  <base-input label="Company">
-                    <el-select
-                      v-model="form.company"
-                      filterable
-                      placeholder="Choose a Company"
+              <div class="pl-lg-4">
+                <div class="row">
+                  <div class="col-lg-4">
+                    <base-input label="Company">
+                      <el-select
+                        v-model="form.company"
+                        filterable
+                        placeholder="Choose a Company"
+                        rules="required"
+                      >
+                        <el-option
+                          v-for="option in companies"
+                          :key="option.id"
+                          :label="option.company"
+                          :value="option.company_name"
+                        >
+                        </el-option>
+                      </el-select>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <base-input
+                      type="text"
+                      label="Form Title"
+                      placeholder="Form Title"
+                      name="Form Title"
+                      v-model="form.form_title"
                       rules="required"
                     >
-                      <el-option
-                        v-for="option in companies"
-                        :key="option.id"
-                        :label="option.company"
-                        :value="option.company_name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <label for="tags-separators">Mailing Lists</label>
+                    <b-form-tags
+                      input-id="tags-separators"
+                      v-model="form.mailing_lists"
+                      separator=" ,;"
+                      placeholder="Enter new email"
+                      remove-on-delete
+                      name="Mailing lists"
+                      required
+                    ></b-form-tags>
+                    <small class="text-muted"
+                      >Enter new email separated by space</small
+                    >
+                  </div>
                 </div>
-                <div class="col-lg-4">
-                  <base-input
-                    type="text"
-                    label="Form Title"
-                    placeholder="Form Title"
-                    name="Form Title"
-                    v-model="form.form_title"
-                    rules="required"
-                  >
-                  </base-input>
+                <div class="row">
+                  <div class="col-lg-1 mt-4">
+                    <base-checkbox v-model="form.status" class="mb-3">
+                      Status
+                    </base-checkbox>
+                  </div>
                 </div>
               </div>
-            </div>
-            <hr class="my-4" />
+              <hr class="my-4" />
 
-            <div class="pl-lg-4">
-              <h6 class="heading-small text-muted mb-4">
-                Form Attribute
-              </h6>
-              <div class="row">
-                <div class="col-lg-12">
-                  <div
-                    v-for="(item, index) in form.attribute_forms"
-                    :key="index"
-                  >
-                    <div class="row">
-                      <div class="col-xs-1">
-                        <button
-                          class="btn btn-link"
-                          @click="deleteRow($event, item.id)"
+              <div class="pl-lg-4">
+                <h6 class="heading-small text-muted mb-4">
+                  Form Attribute
+                </h6>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div
+                      v-for="(item, index) in form.attribute_forms"
+                      :key="index"
+                    >
+                      <div class="row">
+                        <div class="col-xs-1">
+                          <button
+                            class="btn btn-link"
+                            @click="deleteRow($event, item.id)"
+                          >
+                            <b-icon
+                              icon="x-circle-fill"
+                              variant="danger"
+                            ></b-icon>
+                          </button>
+                        </div>
+                        <div class="col-sm-12 col-md-3 mt-3">
+                          <base-input label="Data Type">
+                            <el-select
+                              v-model="item.data_type"
+                              filterable
+                              placeholder="Choose a data type"
+                              rules="required"
+                            >
+                              <el-option
+                                v-for="option in dataTypeOptions"
+                                :key="option.id"
+                                :label="option.label"
+                                :value="option.value"
+                              >
+                              </el-option>
+                            </el-select>
+                          </base-input>
+                        </div>
+                        <div
+                          class="col-xs-12 col-md-12"
+                          v-if="item.data_type == 'text'"
                         >
-                          <b-icon
-                            icon="x-circle-fill"
-                            variant="danger"
-                          ></b-icon>
+                          <label>Text</label>
+                          <html-editor v-model="item.value_text"></html-editor>
+                        </div>
+                        <div
+                          class="col-sm-12 col-md-12"
+                          v-if="item.data_type == 'question'"
+                        >
+                          <label>Question</label>
+                          <html-editor
+                            v-model="item.value_question"
+                          ></html-editor>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <button
+                          type="button"
+                          class="btn btn-success mt-4 mb-4"
+                          @click="addRow"
+                        >
+                          Add
                         </button>
                       </div>
-                      <div class="col-sm-12 col-md-3 mt-3">
-                        <base-input label="Data Type">
-                          <el-select
-                            v-model="item.data_type"
-                            filterable
-                            placeholder="Choose a data type"
-                            rules="required"
-                          >
-                            <el-option
-                              v-for="option in dataTypeOptions"
-                              :key="option.id"
-                              :label="option.label"
-                              :value="option.value"
-                            >
-                            </el-option>
-                          </el-select>
-                        </base-input>
-                      </div>
-                      <div
-                        class="col-xs-12 col-md-12"
-                        v-if="item.data_type == 'text'"
-                      >
-                        <label>Text</label>
-                        <textarea
-                          class="form-control"
-                          id="question"
-                          rows="3"
-                          v-model="item.value_text"
-                        ></textarea>
-                      </div>
-                      <div
-                        class="col-sm-12 col-md-12"
-                        v-if="item.data_type == 'question'"
-                      >
-                        <label>Question</label>
-                        <textarea
-                          class="form-control"
-                          id="question"
-                          rows="3"
-                          v-model="item.value_question"
-                        ></textarea>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <button
-                        type="button"
-                        class="btn btn-success mt-4 mb-4"
-                        @click="addRow"
-                      >
-                        Add
-                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <base-button
-              type="primary"
-              native-type="submit"
-              loading
-              v-if="saving"
-              >Submit</base-button
-            >
-            <base-button type="primary" native-type="submit" v-else
-              >Submit</base-button
-            >
-          </form>
-        </validation-observer>
-      </card>
+              <base-button
+                type="primary"
+                native-type="submit"
+                loading
+                v-if="saving"
+                >Submit</base-button
+              >
+              <base-button type="primary" native-type="submit" v-else
+                >Submit</base-button
+              >
+            </form>
+          </validation-observer>
+        </card>
+      </div>
     </div>
-  </div>
+  </b-overlay>
 </template>
 
 <script>
@@ -158,12 +174,15 @@ import { mapGetters, mapActions } from "vuex";
 
 import CreateFormMixin from "@/mixins/CreateFormMixin.js";
 
+import HtmlEditor from "@/components/argon-core/Inputs/HtmlEditor";
+
 export default {
   name: "crm_list",
   mixins: [CreateFormMixin],
   components: {
     [Select.name]: Select,
-    [Option.name]: Option
+    [Option.name]: Option,
+    HtmlEditor
   },
   computed: {
     ...mapGetters({
@@ -178,6 +197,7 @@ export default {
       form: {},
       isBusy: false,
       saving: false,
+      show: false,
       modals: {
         form: false
       },
@@ -200,15 +220,18 @@ export default {
     },
     async fetchForm(payload) {
       this.loading = true;
+      this.show = true;
       let endpoint = `/api/v1/form/${payload}/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
           this.loading = false;
+          this.show = false;
           this.form = res.data;
         })
         .catch(e => {
           this.loading = false;
+          this.show = false;
           console.log(e);
           throw e;
         });
@@ -228,6 +251,8 @@ export default {
         id: this.form.id,
         company: this.form.company,
         form_title: this.form.form_title,
+        status: this.form.status,
+        mailing_lists: this.form.mailing_lists,
         attribute_forms: this.form.attribute_forms
       };
 

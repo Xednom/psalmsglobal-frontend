@@ -32,12 +32,6 @@
           />
           <sidebar-item
             :link="{
-              name: 'Forms Mailing list',
-              path: '/script'
-            }"
-          />
-          <sidebar-item
-            :link="{
               name: 'List of Scripts',
               path: '/form'
             }"

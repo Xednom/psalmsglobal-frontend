@@ -49,6 +49,22 @@
                   >
                   </base-input>
                 </div>
+                <div class="col-lg-4">
+                  <label for="tags-separators">Mailing Lists</label>
+                  <b-form-tags
+                    input-id="tags-separators"
+                    v-model="mailing_lists"
+                    separator=" ,;"
+                    placeholder="Enter new email"
+                    remove-on-delete
+                    name="Mailing lists"
+                    required
+                  ></b-form-tags>
+                  <small class="text-muted"
+                    >Enter new email separated by space, comma or
+                    semicolon</small
+                  >
+                </div>
               </div>
             </div>
             <hr class="my-4" />
@@ -95,12 +111,7 @@
                         v-if="item.data_type == 'text'"
                       >
                         <label>Text</label>
-                        <textarea
-                          class="form-control"
-                          id="question"
-                          rows="4"
-                          v-model="item.value_text"
-                        ></textarea>
+                        <html-editor v-model="item.value_text"></html-editor>
                       </div>
 
                       <div
@@ -108,12 +119,9 @@
                         v-if="item.data_type == 'question'"
                       >
                         <label>Question</label>
-                        <textarea
-                          class="form-control"
-                          id="question"
-                          rows="4"
+                        <html-editor
                           v-model="item.value_question"
-                        ></textarea>
+                        ></html-editor>
                       </div>
                     </div>
                   </div>
@@ -156,13 +164,16 @@ import CreateFormMixin from "@/mixins/CreateFormMixin.js";
 import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 import { debounce } from "lodash";
 
+import HtmlEditor from "@/components/argon-core/Inputs/HtmlEditor";
+
 export default {
-  name: "crm_list",
+  name: "form_create",
   mixins: [CreateFormMixin],
   components: {
     [Select.name]: Select,
     [Option.name]: Option,
-    VueTypeaheadBootstrap
+    VueTypeaheadBootstrap,
+    HtmlEditor
   },
   computed: {
     ...mapGetters({
@@ -185,6 +196,22 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("form_title", value);
+      }
+    },
+    mailing_lists: {
+      get() {
+        return this.$store.getters["form/mailing_lists"];
+      },
+      set(value) {
+        this.setBasicStoreValue("mailing_lists", value);
+      }
+    },
+    status: {
+      get() {
+        return this.$store.getters["form/status"];
+      },
+      set(value) {
+        this.setBasicStoreValue("status", value);
       }
     },
     original_script: {
@@ -221,10 +248,10 @@ export default {
     getCompany: debounce(function() {
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
-        .then((res) => {
+        .then(res => {
           this.companies = res.data.results;
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     }, 700),
@@ -243,6 +270,7 @@ export default {
         company: this.company,
         form_title: this.form_title,
         attribute_forms: this.attribute_forms,
+        mailing_lists: this.mailing_lists,
         original_script: this.original_script
       };
 
