@@ -22,6 +22,7 @@ const blankState = {
   export const getters = {
     form_title: state => state.form_title,
     company: state => state.company,
+    mailing_lists: state => state.mailing_lists,
     original_script: state => state.original_script,
     attribute_forms: state => state.attribute_forms,
     formsPagination: state => state.formsPagination,
