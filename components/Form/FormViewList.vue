@@ -230,6 +230,7 @@ export default {
   },
   data() {
     return {
+      limit: 10000,
       form: {
         data_type: "",
         value_text: "",
@@ -265,7 +266,7 @@ export default {
   },
   computed: {
     async fetchForms() {
-      let endpoint = `/api/v1/form/?search=${this.filter}`;
+      let endpoint = `/api/v1/form/?search=${this.filter}&limit=${this.limit}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
