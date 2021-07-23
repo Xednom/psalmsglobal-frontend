@@ -62,7 +62,12 @@ module.exports = {
     '@nuxtjs/pwa',
     '@nuxtjs/auth-next',
     'bootstrap-vue/nuxt',
+    'v-sanitize/nuxt'
   ],
+  sanitize: {
+    allowedTags: true,
+    allowedStyles: true
+  },
   bootstrapVue: {
     // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)
     icons: true

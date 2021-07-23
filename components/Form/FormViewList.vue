@@ -168,12 +168,12 @@
             >
               <div class="mt-5" v-if="form.data_type == 'text'">
                 <span>
-                  <strong>{{ form.value_text }}</strong>
+                  <strong><div v-sanitize.basic="form.value_text"></div></strong>
                 </span>
               </div>
               <div class="mb-3" v-else-if="form.data_type == 'question'">
                 <p>
-                  {{ form.value_question }}:
+                  <span v-sanitize.basic="form.value_question"></span>
                   <textarea
                     class="form-control"
                     name="input-question"
@@ -185,7 +185,9 @@
                 </p>
               </div>
             </div>
-            <b-button class="mb-3" variant="success" @click="emitForm">Emit</b-button>
+            <b-button class="mb-3" variant="success" @click="emitForm"
+              >Emit</b-button
+            >
           </b-card-text>
         </div>
       </div>
@@ -272,7 +274,7 @@ export default {
         .catch(e => {
           throw e;
         });
-    }
+    },
   },
   methods: {
     // ...mapActions("crm", ["updateCompany"]),

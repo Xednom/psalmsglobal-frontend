@@ -2,6 +2,8 @@ const blankState = {
     form_title: "",
     company: "",
     original_script: true,
+    mailing_lists: "",
+    status: "",
     attribute_forms: []
   };
   
