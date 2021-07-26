@@ -18,7 +18,7 @@
           <b-tab title="Account balance" :title-link-class="linkClass(0)"
             ><balance-list></balance-list
           ></b-tab>
-          <b-tab title="Report list" :title-link-class="linkClass(1)"
+          <b-tab title="Call log summary" :title-link-class="linkClass(1)"
             ><report-list></report-list
           ></b-tab>
           <b-tab title="Monthly Charge" :title-link-class="linkClass(2)"
