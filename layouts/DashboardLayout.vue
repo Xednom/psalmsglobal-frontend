@@ -75,19 +75,44 @@
             icon: 'ni ni-single-copy-04 text-pink'
           }"
         >
-        <sidebar-item
-          :link="{
-            name: 'List of Interaction',
-            path: '/post-paid/customer-interaction'
-          }"
-        />
-        <sidebar-item
-          :link="{
-            name: 'Billing',
-            path: '/billing'
-          }"
-        />
+          <sidebar-item
+            :link="{
+              name: 'List of Interaction',
+              path: '/post-paid/customer-interaction'
+            }"
+          />
+          <sidebar-item
+            :link="{
+              name: 'Billing',
+              path: '/billing'
+            }"
+          />
         </sidebar-item>
+
+        <sidebar-item
+          v-if="
+            $auth.user.designation_category == 'new_client' ||
+              $auth.user.designation_category == 'current_client' ||
+              $auth.user.designation_category == 'affiliate_partner'
+          "
+          :link="{
+            name: 'Minutes report',
+            icon: 'ni ni-archive-2',
+            path: '/call-log-report'
+          }"
+        />
+        <sidebar-item
+          v-if="
+            $auth.user.designation_category == 'new_client' ||
+              $auth.user.designation_category == 'current_client' ||
+              $auth.user.designation_category == 'affiliate_partner'
+          "
+          :link="{
+            name: 'General Job Order minutes Report',
+            icon: 'ni ni-bullet-list-67',
+            path: '/job-order'
+          }"
+        />
 
         <sidebar-item
           v-if="
