@@ -186,7 +186,7 @@
               </div>
             </div>
             <b-button class="mb-3" variant="success" @click="emitForm"
-              >Emit</b-button
+              >Save</b-button
             >
           </b-card-text>
         </div>
@@ -312,7 +312,7 @@ export default {
       this.emitSuccess("success");
     },
     emitSuccess(variant = null) {
-      this.$bvToast.toast(`Successfully emitted the script`, {
+      this.$bvToast.toast(`Successfully saved the script`, {
         title: "Success",
         variant: variant,
         solid: true
