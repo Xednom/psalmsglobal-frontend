@@ -79,9 +79,17 @@
               <hr class="my-4" />
 
               <div class="pl-lg-4">
-                <h6 class="heading-small text-muted mb-4">
-                  Form Attribute
-                </h6>
+                <div>
+                  <h6 class="heading-small text-muted mb-4">
+                    Form Attribute
+                  </h6>
+                </div>
+
+                <div class="text-right">
+                  <b-button variant="primary" @click="modals.view = true"
+                    >View your Form</b-button
+                  >
+                </div>
                 <div class="row">
                   <div class="col-lg-12">
                     <div
@@ -92,7 +100,7 @@
                         <div class="col-xs-1">
                           <button
                             class="btn btn-link"
-                            @click="deleteRow($event, item.id)"
+                            @click="deleteRow($event, item.form_id)"
                           >
                             <b-icon
                               icon="x-circle-fill"
@@ -164,6 +172,10 @@
           </validation-observer>
         </card>
       </div>
+
+      <modal :show.sync="modals.view" size="lg" body-classes="p-0">
+        <form-view :form="form"></form-view>
+      </modal>
     </div>
   </b-overlay>
 </template>
@@ -175,6 +187,7 @@ import { mapGetters, mapActions } from "vuex";
 import CreateFormMixin from "@/mixins/CreateFormMixin.js";
 
 import HtmlEditor from "@/components/argon-core/Inputs/HtmlEditor";
+import FormView from "@/components/Form/FormView";
 
 export default {
   name: "crm_list",
@@ -182,7 +195,8 @@ export default {
   components: {
     [Select.name]: Select,
     [Option.name]: Option,
-    HtmlEditor
+    HtmlEditor,
+    FormView
   },
   computed: {
     ...mapGetters({
@@ -199,7 +213,7 @@ export default {
       saving: false,
       show: false,
       modals: {
-        form: false
+        view: false
       },
       attribute_forms: [],
       dataTypeOptions: [
@@ -319,10 +333,11 @@ export default {
       e.preventDefault();
       var index = this.form.attribute_forms
         .map(function(item) {
-          return item.id;
+          console.log(item);
+          return item;
         })
         .indexOf(item);
-      this.attribute_forms.splice(index, 1);
+      this.form.attribute_forms.splice(index, 1);
     }
   },
   mounted() {
