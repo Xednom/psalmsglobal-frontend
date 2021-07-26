@@ -156,7 +156,10 @@
                       </flat-picker>
                     </base-input>
                   </div>
-                  <div class="col-md-6">
+                  <div
+                    class="col-md-6"
+                    v-if="$auth.user.designation_category == 'staff'"
+                  >
                     <base-input
                       label="Job title"
                       alternative
@@ -166,7 +169,23 @@
                     >
                     </base-input>
                   </div>
-                  <div class="col-md-6">
+                  <div
+                    class="col-md-12"
+                    v-if="$auth.user.designation_category != 'staff'"
+                  >
+                    <base-input
+                      label="Job title"
+                      alternative
+                      class="mb-3"
+                      placeholder="Job title"
+                      v-model="job.job_title"
+                    >
+                    </base-input>
+                  </div>
+                  <div
+                    class="col-md-6"
+                    v-if="$auth.user.designation_category == 'staff'"
+                  >
                     <div class="col-lg-12" v-if="haveTicket">
                       <label>Caller interaction ticket</label>
                       <vue-typeahead-bootstrap
@@ -252,12 +271,14 @@
           headerClasses="justify-content-center"
           class="white-content"
         >
-          <div class="container">
-            <job-order-update
-              :jobOrder="jobOrder"
-              :refresh="refresh"
-            ></job-order-update>
-          </div>
+          <b-overlay :show="show" rounded="sm">
+            <div class="container">
+              <job-order-update
+                :jobOrder="jobOrder"
+                :refresh="refresh"
+              ></job-order-update>
+            </div>
+          </b-overlay>
         </modal>
 
         <div
@@ -351,6 +372,7 @@ export default {
       clientUser: {},
       isBusy: false,
       saving: false,
+      show: false,
       modals: {
         form: false,
         info: false,
@@ -462,19 +484,22 @@ export default {
       this.fetchJobOrders();
     },
     async fetchJobOrder(id) {
+      this.show = true;
       let endpoint = `/api/v1/post-paid/job-order/${id}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
+          this.show = false;
           this.jobOrder = res.data;
         })
         .catch(e => {
+          this.show = false;
           throw e;
         });
     },
     async fetchClient(id) {
       try {
-        await this.$store.dispatch("user/fetchClient", id).then(() => {});
+        await this.$store.dispatch("user/fetchClientUser", id).then(() => {});
       } catch (err) {
         console.error(err);
       }
@@ -594,7 +619,7 @@ export default {
   mounted() {
     this.fetchMe();
     this.fetchJobOrders();
-    setTimeout(() => this.fetchJobOrders(), 1000);
+    // setTimeout(() => this.fetchJobOrders(), 1000);
     this.totalRows = this.jobOrders.length;
   },
   watch: {

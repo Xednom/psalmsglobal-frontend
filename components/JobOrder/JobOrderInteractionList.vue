@@ -156,7 +156,10 @@
                       </flat-picker>
                     </base-input>
                   </div>
-                  <div class="col-md-6">
+                  <div
+                    class="col-md-12"
+                    v-if="$auth.user.designation_category != 'staff'"
+                  >
                     <base-input
                       label="Job title"
                       alternative
@@ -166,20 +169,66 @@
                     >
                     </base-input>
                   </div>
-                  <div class="col-md-6">
-                    <div class="col-lg-12">
+                  <div
+                    class="col-md-6"
+                    v-if="$auth.user.designation_category == 'staff'"
+                  >
+                    <base-input
+                      label="Job title"
+                      alternative
+                      class="mb-3"
+                      placeholder="Job title"
+                      v-model="job.job_title"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-md-6" v-if="$auth.user.designation_category == 'staff'">
+                    <div class="col-lg-12" v-if="haveTicket">
                       <label>Caller interaction ticket</label>
                       <vue-typeahead-bootstrap
-                        class="mb-4"
                         v-model="job.caller_interaction_record"
                         :ieCloseFix="false"
                         :data="callerInteractions"
                         :serializer="item => item.ticket_number"
-                        :value="keyword"
+                        :value="ticketKeyword"
                         @hit="getCallerInteraction"
-                        @input="onSearchInput"
+                        @input="onSearchInputTicket"
                         placeholder="Search a Caller Interaction"
                       />
+                      <div class="row">
+                        <div class="col-md-6 mt-2" v-if="haveTicket">
+                          <b-button
+                            variant="primary"
+                            size="sm"
+                            @click="assignToClient"
+                            >I have a Client</b-button
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-12" v-if="haveClient">
+                      <label>Client Codes</label>
+                      <vue-typeahead-bootstrap
+                        v-model="job.client"
+                        :ieCloseFix="false"
+                        :data="clientCodes"
+                        :serializer="item => item.client_code"
+                        :value="clientKeyword"
+                        @hit="getClient"
+                        @input="onSearchInputClient"
+                        placeholder="Search a Client code"
+                      />
+
+                      <div class="row">
+                        <div class="col-md-6 mt-2" v-if="haveClient">
+                          <b-button
+                            variant="primary"
+                            size="sm"
+                            @click="assignToTicket"
+                            >I have a Ticket</b-button
+                          >
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="col-md-12">
@@ -332,8 +381,16 @@ export default {
         content: ""
       },
       fields: [
-        { key: "caller_interaction_record", label:" Caller interaction ticket ", sortable: true },
-        { key: "ticket_number", label:"Job order ticket number", sortable: true },
+        {
+          key: "caller_interaction_record",
+          label: " Caller interaction ticket ",
+          sortable: true
+        },
+        {
+          key: "ticket_number",
+          label: "Job order ticket number",
+          sortable: true
+        },
         { key: "job_title", sortable: true },
         { key: "actions" }
       ]
@@ -434,7 +491,7 @@ export default {
       ) {
         const jobOrderPayload = {
           client: this.clientUser.client_code,
-          caller_interaction_record: this.job.caller_interaction_record,
+          caller_interaction_record: this.interaction.ticket_number,
           request_date: this.job.request_date,
           due_date: this.job.due_date,
           job_title: this.job.job_title,
