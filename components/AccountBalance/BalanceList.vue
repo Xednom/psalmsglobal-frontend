@@ -1,9 +1,12 @@
 <template>
   <div class="content">
-    <div class="row mt-5">
+    <div class="row">
       <div class="col-12">
         <card card-body-classes="table-full-width">
           <div>
+            <div class="card-header bg-transparent border-0">
+              <h3 class="mb-0">Account balance</h3>
+            </div>
             <b-container fluid>
               <b-row>
                 <b-col sm="12" md="4" lg="4" class="my-1 pull-right">

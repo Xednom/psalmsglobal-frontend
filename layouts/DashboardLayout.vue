@@ -83,20 +83,8 @@
         />
         <sidebar-item
           :link="{
-            name: 'Minutes report',
-            path: '/minutes-report'
-          }"
-        />
-        <sidebar-item
-          :link="{
-            name: 'Monthly charge',
-            path: '/monthly-charge'
-          }"
-        />
-        <sidebar-item
-          :link="{
-            name: 'Account Balance',
-            path: '/account-balance'
+            name: 'Billing',
+            path: '/billing'
           }"
         />
         </sidebar-item>
