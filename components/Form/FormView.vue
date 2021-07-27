@@ -13,22 +13,19 @@
               :key="index"
             >
               <div class="mt-5" v-if="form.data_type == 'text'">
-                <span>
-                  <strong
-                    ><div v-sanitize.basic="form.value_text"></div
-                  ></strong>
-                </span>
+                <span v-dompurify-html="form.value_text"></span>
               </div>
               <div class="mb-3" v-else-if="form.data_type == 'question'">
                 <p>
-                  <span v-sanitize.basic="form.value_question"></span>
+                  <span
+                    ><div v-dompurify-html="form.value_question">></div></span
+                  >
                   <textarea
                     class="form-control"
                     name="input-question"
                     v-model="form.input_question"
                     id=""
                     cols="30"
-                    rows="10"
                   ></textarea>
                 </p>
               </div>
@@ -48,7 +45,6 @@ import {
   DropdownItem,
   Dropdown
 } from "element-ui";
-import { mapGetters } from "vuex";
 
 export default {
   name: "form_view_list",
@@ -65,12 +61,6 @@ export default {
       default: null,
       description: "Form view data"
     }
-  },
-  computed: {
-    ...mapGetters({
-      user: "user/user",
-      client: "user/clientUser"
-    })
   },
   data() {
     return {
@@ -112,6 +102,12 @@ export default {
         .catch(e => {
           throw e;
         });
+    },
+    valueText() {
+      this.form.attribute_forms.forEach(item => {
+        console.log(item.value_text);
+        return this.$sanitize(item.value_text);
+      });
     }
   },
   methods: {
@@ -159,9 +155,6 @@ export default {
         }
       );
     }
-  },
-  mounted() {
-    this.totalRows = this.forms.length;
   }
 };
 </script>
