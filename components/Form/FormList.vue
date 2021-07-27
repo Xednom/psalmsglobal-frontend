@@ -93,6 +93,15 @@
             </b-button>
           </template>
 
+          <template #cell(status)="row">
+            <b-badge variant="success" v-if="row.item.status"
+              >Active</b-badge
+            >
+            <b-badge variant="danger" v-else-if="!row.item.status"
+              >Inactive</b-badge
+            >
+          </template>
+
           <template #row-details="row">
             <b-card>
               <ul>
@@ -176,7 +185,8 @@ export default {
       },
       fields: [
         { key: "company", sortable: true },
-        { key: "form_title", sortable: true }
+        { key: "form_title", sortable: true },
+        { key: "status", sortable: true }
       ]
     };
   },
