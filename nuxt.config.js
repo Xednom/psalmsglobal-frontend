@@ -48,6 +48,7 @@ module.exports = {
   */
   plugins: [
     '~/plugins/dashboard/dashboard-plugin',
+    '~/plugins/dom-purify',
     {src: '~/plugins/dashboard/full-calendar', ssr: false },
     {src: '~/plugins/dashboard/world-map', ssr: false },
     { src: "~plugins/vue-quill-editor.js", ssr: false },
@@ -61,13 +62,8 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/auth-next',
-    'bootstrap-vue/nuxt',
-    'v-sanitize/nuxt'
+    'bootstrap-vue/nuxt'
   ],
-  sanitize: {
-    allowedTags: true,
-    allowedStyles: true
-  },
   bootstrapVue: {
     // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)
     icons: true
