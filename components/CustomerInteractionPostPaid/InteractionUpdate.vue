@@ -348,17 +348,17 @@
                     v-for="(form, index) in interaction_forms.attribute_forms"
                     :key="index"
                   >
-                    <base-input
-                      :label="form.value_question"
-                      v-if="form.input_question"
-                    >
-                      <textarea
-                        class="form-control"
-                        id="notes"
-                        rows="3"
-                        v-model="form.input_question"
-                      ></textarea>
-                    </base-input>
+                  <div v-if="form.data_type == 'question' ">
+                    <span v-dompurify-html="form.value_question"></span>
+                    <textarea
+                      class="form-control"
+                      name="input-question"
+                      v-model="form.input_question"
+                      id=""
+                      cols="30"
+                    ></textarea>
+                  </div>
+                    
                   </div>
                 </div>
               </div>

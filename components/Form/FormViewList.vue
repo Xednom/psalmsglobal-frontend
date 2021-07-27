@@ -168,12 +168,12 @@
             >
               <div class="mt-5" v-if="form.data_type == 'text'">
                 <span>
-                  <strong><div v-sanitize.basic="form.value_text"></div></strong>
+                  <strong><div v-dompurify-html="form.value_text"></div></strong>
                 </span>
               </div>
               <div class="mb-3" v-else-if="form.data_type == 'question'">
                 <p>
-                  <span v-sanitize.basic="form.value_question"></span>
+                  <span v-dompurify-html="form.value_question"></span>
                   <textarea
                     class="form-control"
                     name="input-question"
