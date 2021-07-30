@@ -49,6 +49,7 @@
                   name="Total minutes"
                   v-model="interaction.total_minutes"
                   :rules="{ required: true }"
+                  disabled
                 >
                 </base-input>
               </div>
@@ -60,6 +61,7 @@
                     rows="3"
                     v-model="interaction.summary"
                     :rules="{ required: true }"
+                    disabled
                   ></textarea>
                 </base-input>
               </div>
