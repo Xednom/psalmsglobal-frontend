@@ -414,6 +414,7 @@ export default {
           sortable: true
         },
         { key: "job_title", sortable: true },
+        { key: "status", sortable: true},
         { key: "actions" }
       ]
     };
