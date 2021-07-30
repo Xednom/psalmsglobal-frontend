@@ -4,7 +4,12 @@
       <div slot="header" class="row align-items-center mb-3">
         <div class="col-8">
           <h3 class="mb-0">
-            Job order request for Caller interaction - {{ jobOrder.caller_interaction_record }}
+            Job order request for Caller interaction -
+            {{
+              jobOrder.caller_interaction_record
+                ? jobOrder.caller_interaction_record
+                : jobOrder.ticket_number
+            }}
           </h3>
         </div>
       </div>
@@ -73,6 +78,7 @@
                       name="Total time consumed"
                       v-model="jobOrder.total_time_consumed"
                       :rules="{ required: true }"
+                      disabled
                     >
                     </base-input>
                   </div>
@@ -83,6 +89,7 @@
                         filterable
                         placeholder="Choose a Ticket"
                         rules="required"
+                        :disabled="$auth.user.designation_category != 'staff'"
                       >
                         <el-option
                           v-for="option in StatusChoices.status"
@@ -133,7 +140,10 @@
         </b-tab>
 
         <b-tab title="Comment section" lazy>
-          <job-order-comment :job="jobOrder" :fetch="refresh"></job-order-comment>
+          <job-order-comment
+            :job="jobOrder"
+            :fetch="refresh"
+          ></job-order-comment>
         </b-tab>
       </b-tabs>
     </div>
@@ -215,7 +225,10 @@ export default {
   methods: {
     ...mapActions("jobOrder", ["updateJobOrder"]),
     onlyNumbers: function() {
-       this.jobOrder.total_time_consumed = this.job.total_time_consumed.replace(/[^0-9.]/g,'');
+      this.jobOrder.total_time_consumed = this.job.total_time_consumed.replace(
+        /[^0-9.]/g,
+        ""
+      );
     },
     async fetchClient(id) {
       let endpoint = `/api/auth/client/${id}/`;
