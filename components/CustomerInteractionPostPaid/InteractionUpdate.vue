@@ -20,6 +20,13 @@
             >
           </div>
         </div>
+        <b-alert show variant="primary">
+          <h4 class="alert-heading">Memo!</h4>
+          <p>
+            PLEASE DO NOT FORGET TO PROVIDE THE CALLER HIS/HER TICKET # ONCE YOU
+            ARE COMPLETE WITH THE CALL.
+          </p>
+        </b-alert>
         <b-card no-body>
           <b-tabs card>
             <b-tab title="Customer Interaction info" active>
@@ -348,17 +355,16 @@
                     v-for="(form, index) in interaction_forms.attribute_forms"
                     :key="index"
                   >
-                  <div v-if="form.data_type == 'question' ">
-                    <span v-dompurify-html="form.value_question"></span>
-                    <textarea
-                      class="form-control"
-                      name="input-question"
-                      v-model="form.input_question"
-                      id=""
-                      cols="30"
-                    ></textarea>
-                  </div>
-                    
+                    <div v-if="form.data_type == 'question'">
+                      <span v-dompurify-html="form.value_question"></span>
+                      <textarea
+                        class="form-control"
+                        name="input-question"
+                        v-model="form.input_question"
+                        id=""
+                        cols="30"
+                      ></textarea>
+                    </div>
                   </div>
                 </div>
               </div>
