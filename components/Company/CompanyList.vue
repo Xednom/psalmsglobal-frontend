@@ -32,121 +32,132 @@
     <!--Form modal-->
     <modal :show.sync="modals.form" size="lg" body-classes="p-0">
       <h6 slot="header" class="modal-title">Company information</h6>
-      <card
-        type="secondary"
-        header-classes="bg-transparent pb-5"
-        body-classes="px-lg-5 py-lg-5"
-        class="border-0 mb-0"
-      >
-        <template>
-          <div class="text-center text-muted mb-4">
-            <small></small>
-          </div>
-          <form role="form" @submit.prevent="save">
-            <div class="row">
-              <div class="col-md-6">
-                <base-input
-                  label="Company owner name"
-                  alternative
-                  class="mb-3"
-                  placeholder="Company owner name"
-                  prepend-icon="ni ni-user-run"
-                  v-model="company.company_owner_name"
-                >
-                </base-input>
-              </div>
-
-              <div class="col-md-6">
-                <base-input
-                  alternative
-                  label="Company name"
-                  placeholder="Company name"
-                  prepend-icon="ni ni-badge"
-                  v-model="company.company_name"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-6">
-                <base-input
-                  alternative
-                  label="Business type"
-                  placeholder="Business type"
-                  prepend-icon="ni ni-ungroup"
-                  v-model="company.business_type"
-                >
-                </base-input>
-              </div>
-
-              <div class="col-md-6">
-                <base-input
-                  alternative
-                  label="Company phone"
-                  placeholder="Company phone"
-                  prepend-icon="ni ni-mobile-button"
-                  v-model="company.company_phone"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-6">
-                <base-input
-                  alternative
-                  label="Company email"
-                  placeholder="Company email"
-                  prepend-icon="ni ni-email-83"
-                  v-model="company.company_email"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-6">
-                <base-input
-                  alternative
-                  label="Company forwarding email"
-                  placeholder="Company forwarding email"
-                  prepend-icon="ni ni-email-83"
-                  v-model="company.company_forwarding_email"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-6">
-                <base-input
-                  alternative
-                  label="Paypal email"
-                  placeholder="Paypal email"
-                  prepend-icon="ni ni-email-83"
-                  v-model="company.paypal_email"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-12">
-                <base-input label="Company complete address">
-                  <textarea
-                    class="form-control"
-                    id="companyCompleteAddress"
-                    rows="3"
-                    v-model="company.company_complete_address"
-                  ></textarea>
-                </base-input>
-              </div>
-              <div class="col-md-12">
-                <base-input label="Notes">
-                  <textarea
-                    class="form-control"
-                    id="notes"
-                    rows="3"
-                    v-model="company.notes"
-                  ></textarea>
-                </base-input>
-              </div>
-            </div>
-
-            <div class="text-center">
-              <base-button type="info" native-type="submit" class="my-4"
-                >Update</base-button
+      <div class="container">
+        <b-tabs content-class="mt-3">
+          <b-tab title="Company Information">
+            <b-overlay :show="show" rounded="sm">
+              <card
+                type="secondary"
+                header-classes="bg-transparent pb-5"
+                body-classes="px-lg-5 py-lg-5"
+                class="border-0 mb-0"
               >
-            </div>
-          </form>
-        </template>
-      </card>
+                <template>
+                  <div class="text-center text-muted mb-4">
+                    <small></small>
+                  </div>
+                  <form role="form" @submit.prevent="save">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <base-input
+                          label="Company owner name"
+                          alternative
+                          class="mb-3"
+                          placeholder="Company owner name"
+                          prepend-icon="ni ni-user-run"
+                          v-model="company.company_owner_name"
+                        >
+                        </base-input>
+                      </div>
+
+                      <div class="col-md-6">
+                        <base-input
+                          alternative
+                          label="Company name"
+                          placeholder="Company name"
+                          prepend-icon="ni ni-badge"
+                          v-model="company.company_name"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-md-6">
+                        <base-input
+                          alternative
+                          label="Business type"
+                          placeholder="Business type"
+                          prepend-icon="ni ni-ungroup"
+                          v-model="company.business_type"
+                        >
+                        </base-input>
+                      </div>
+
+                      <div class="col-md-6">
+                        <base-input
+                          alternative
+                          label="Company phone"
+                          placeholder="Company phone"
+                          prepend-icon="ni ni-mobile-button"
+                          v-model="company.company_phone"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-md-6">
+                        <base-input
+                          alternative
+                          label="Company email"
+                          placeholder="Company email"
+                          prepend-icon="ni ni-email-83"
+                          v-model="company.company_email"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-md-6">
+                        <base-input
+                          alternative
+                          label="Company forwarding email"
+                          placeholder="Company forwarding email"
+                          prepend-icon="ni ni-email-83"
+                          v-model="company.company_forwarding_email"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-md-6">
+                        <base-input
+                          alternative
+                          label="Paypal email"
+                          placeholder="Paypal email"
+                          prepend-icon="ni ni-email-83"
+                          v-model="company.paypal_email"
+                        >
+                        </base-input>
+                      </div>
+                      <div class="col-md-12">
+                        <base-input label="Company complete address">
+                          <textarea
+                            class="form-control"
+                            id="companyCompleteAddress"
+                            rows="3"
+                            v-model="company.company_complete_address"
+                          ></textarea>
+                        </base-input>
+                      </div>
+                      <div class="col-md-12">
+                        <base-input label="Notes">
+                          <textarea
+                            class="form-control"
+                            id="notes"
+                            rows="3"
+                            v-model="company.notes"
+                          ></textarea>
+                        </base-input>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <base-button type="info" native-type="submit" class="my-4"
+                        >Update</base-button
+                      >
+                    </div>
+                  </form>
+                </template>
+              </card>
+            </b-overlay>
+          </b-tab>
+          <b-tab title="Script">
+            <form-view-list :filter="company.company_name"></form-view-list>
+          </b-tab>
+        </b-tabs>
+      </div>
     </modal>
   </div>
 </template>
@@ -156,12 +167,14 @@ import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import { mapGetters, mapActions } from "vuex";
 
 import CreateCompanyMixin from "@/mixins/CreateCompanyMixin.js";
+import FormViewList from "@/components/Form/FormCompanyViewList";
 
 export default {
   name: "company_list",
   mixins: [CreateCompanyMixin],
   components: {
-    StatsCard
+    StatsCard,
+    FormViewList
   },
   computed: {
     ...mapGetters({
@@ -176,6 +189,7 @@ export default {
       company: {},
       isBusy: false,
       saving: false,
+      show: false,
       modals: {
         form: false
       }
@@ -192,13 +206,16 @@ export default {
         });
     },
     async fetchCompany(id) {
+      this.show = true;
       let endpoint = `/api/v1/company/${id}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
+          this.show = false;
           this.company = res.data;
         })
         .catch(e => {
+          this.show = false;
           throw e;
         });
     },
