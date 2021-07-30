@@ -273,6 +273,16 @@ export default {
           this.isBusy = false;
         });
     },
+    // reset() {
+    //   this.company_name = "";
+    //   this.company_owner_name = "";
+    //   this.company_phone = "";
+    //   this.company_email = "";
+    //   this.company_complete_address = "";
+    //   this.company_forwarding_email = "";
+    //   this.paypal_email = "";
+    //   this.notes = "";
+    // },
     async fetchCompany(id) {
       let endpoint = `/api/v1/company/${id}`;
       return await this.$axios
@@ -318,8 +328,9 @@ export default {
           this.saving = true;
           await this.saveCompany(companyPayload).then(() => {
             this.saving = false;
-            this.error = e.data;
-            this.errorMessage("danger", this.error);
+            this.reset();
+            this.$refs.formValidator.reset();
+            this.successMessage("success");
           })
           .catch((err) => {
             this.error = err.response.data;
