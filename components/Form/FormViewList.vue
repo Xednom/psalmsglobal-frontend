@@ -180,7 +180,6 @@
                     v-model="form.input_question"
                     id=""
                     cols="30"
-                    rows="10"
                   ></textarea>
                 </p>
               </div>
