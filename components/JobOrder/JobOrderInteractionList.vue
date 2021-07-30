@@ -170,7 +170,7 @@
                     </base-input>
                   </div>
                   <div
-                    class="col-md-6"
+                    class="col-md-12"
                     v-if="$auth.user.designation_category == 'staff'"
                   >
                     <base-input
@@ -514,7 +514,7 @@ export default {
         }
       } else if (this.$auth.user.designation_category == "staff") {
         const jobOrderPayload = {
-          caller_interaction_record: this.job.caller_interaction_record,
+          caller_interaction_record: this.interaction.ticket_number,
           va_assigned: [this.staff.id],
           request_date: this.job.request_date,
           due_date: this.job.due_date,
