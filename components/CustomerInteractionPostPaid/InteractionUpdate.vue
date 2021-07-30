@@ -20,7 +20,7 @@
             >
           </div>
         </div>
-        <b-alert show variant="primary">
+        <b-alert show variant="primary" v-if="$auth.user.designation_category == 'staff'">
           <h4 class="alert-heading">Memo!</h4>
           <p>
             PLEASE DO NOT FORGET TO PROVIDE THE CALLER HIS/HER TICKET # ONCE YOU
