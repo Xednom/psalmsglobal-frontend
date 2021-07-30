@@ -124,7 +124,7 @@
               </div>
               <form role="form" @submit.prevent="save">
                 <div class="row">
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <base-input label="Request date">
                       <flat-picker
                         slot-scope="{ focus, blur }"
@@ -140,7 +140,7 @@
                       </flat-picker>
                     </base-input>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <base-input label="Due date">
                       <flat-picker
                         slot-scope="{ focus, blur }"
@@ -154,6 +154,20 @@
                         placeholder="Due date"
                       >
                       </flat-picker>
+                    </base-input>
+                  </div>
+                  <div
+                    class="col-md-4"
+                    v-if="$auth.user.designation_category == 'staff'"
+                  >
+                    <base-input
+                      label="Total time consumed"
+                      alternative
+                      class="mb-3"
+                      placeholder="Total time consumed"
+                      v-model="job.total_time_consumed"
+                      @input="onlyNumbers"
+                    >
                     </base-input>
                   </div>
                   <div
@@ -364,6 +378,7 @@ export default {
         due_date: "",
         request_date: "",
         job_title: "",
+        total_time_consumed: "",
         job_description: "",
         client: null
       },
@@ -410,12 +425,16 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
+    onlyNumbers: function() {
+       this.job.total_time_consumed = this.job.total_time_consumed.replace(/[^0-9.]/g,'');
+    },
     reset() {
       this.job.caller_interaction_record = null;
       this.job.client = null;
       this.job.due_date = "";
       this.job.request_date = "";
       this.job.job_title = "";
+      this.job.total_time_consumed = "";
       this.job.job_description = "";
     },
     onSearchInputTicket(text) {
@@ -564,6 +583,7 @@ export default {
           va_assigned: [this.staff.id],
           request_date: this.job.request_date,
           due_date: this.job.due_date,
+          total_time_consumed: this.job.total_time_consumed,
           job_title: this.job.job_title,
           job_description: this.job.job_description
         };

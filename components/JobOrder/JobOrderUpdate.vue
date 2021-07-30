@@ -41,7 +41,7 @@
                     >
                     </base-input>
                   </div>
-                  <div class="col-lg-6">
+                  <div class="col-lg-4">
                     <base-input
                       type="text"
                       label="Request date"
@@ -53,7 +53,7 @@
                     >
                     </base-input>
                   </div>
-                  <div class="col-lg-6">
+                  <div class="col-lg-4">
                     <base-input
                       type="text"
                       label="Due date"
@@ -62,6 +62,17 @@
                       v-model="jobOrder.due_date"
                       :rules="{ required: true }"
                       disabled
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-4">
+                    <base-input
+                      type="text"
+                      label="Total time consumed"
+                      placeholder="Total time consumed"
+                      name="Total time consumed"
+                      v-model="jobOrder.total_time_consumed"
+                      :rules="{ required: true }"
                     >
                     </base-input>
                   </div>
@@ -203,6 +214,9 @@ export default {
   },
   methods: {
     ...mapActions("jobOrder", ["updateJobOrder"]),
+    onlyNumbers: function() {
+       this.jobOrder.total_time_consumed = this.job.total_time_consumed.replace(/[^0-9.]/g,'');
+    },
     async fetchClient(id) {
       let endpoint = `/api/auth/client/${id}/`;
       try {
@@ -231,6 +245,7 @@ export default {
         due_date: this.jobOrder.due_date,
         status: this.jobOrder.status,
         job_title: this.jobOrder.job_title,
+        total_time_consumed: this.jobOrder.total_time_consumed,
         job_description: this.jobOrder.job_description
       };
       try {
