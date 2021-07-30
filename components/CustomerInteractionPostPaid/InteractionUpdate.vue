@@ -20,7 +20,11 @@
             >
           </div>
         </div>
-        <b-alert show variant="primary" v-if="$auth.user.designation_category == 'staff'">
+        <b-alert
+          show
+          variant="primary"
+          v-if="$auth.user.designation_category == 'staff'"
+        >
           <h4 class="alert-heading">Memo!</h4>
           <p>
             PLEASE DO NOT FORGET TO PROVIDE THE CALLER HIS/HER TICKET # ONCE YOU
@@ -342,29 +346,50 @@
               </div>
               <div v-else-if="!loading" class="row">
                 <div
-                  class="col-lg-12 mb-3"
-                  v-for="(interaction_forms,
-                  index) in interaction.customer_interaction_post_paid_forms"
-                  :key="index"
+                  v-if="
+                    interaction.customer_interaction_post_paid_forms &&
+                      interaction.customer_interaction_post_paid_forms.length
+                  "
                 >
-                  <h6 class="heading-small text-muted">
-                    {{ interaction_forms.form_title }} of
-                    {{ interaction_forms.company }}
-                  </h6>
                   <div
-                    v-for="(form, index) in interaction_forms.attribute_forms"
+                    class="col-lg-12 mb-3"
+                    v-for="(interaction_forms,
+                    index) in interaction.customer_interaction_post_paid_forms"
                     :key="index"
                   >
-                    <div v-if="form.data_type == 'question'">
-                      <span v-dompurify-html="form.value_question"></span>
-                      <textarea
-                        class="form-control"
-                        name="input-question"
-                        v-model="form.input_question"
-                        id=""
-                        cols="30"
-                      ></textarea>
+                    <h6 class="heading-small text-muted">
+                      {{ interaction_forms.form_title }} of
+                      {{ interaction_forms.company }}
+                    </h6>
+                    <div
+                      v-for="(form, index) in interaction_forms.attribute_forms"
+                      :key="index"
+                    >
+                      <div v-if="form.data_type == 'question'">
+                        <span v-dompurify-html="form.value_question"></span>
+                        <textarea
+                          class="form-control"
+                          name="input-question"
+                          v-model="form.input_question"
+                          id=""
+                          cols="30"
+                        ></textarea>
+                      </div>
                     </div>
+                  </div>
+                </div>
+                <div
+                  v-else-if="
+                    interaction.customer_interaction_post_paid_forms &&
+                      !interaction.customer_interaction_post_paid_forms.length
+                  "
+                >
+                  <div class="container">
+                    <b-alert show variant="warning">
+                      <h4 class="alert-heading">
+                        No Script was included in this Interaction!
+                      </h4>
+                    </b-alert>
                   </div>
                 </div>
               </div>
@@ -498,6 +523,16 @@ export default {
         .then(res => {
           this.loading = false;
           this.interaction = res.data;
+          console.log(this.interaction);
+          this.interaction.customer_interaction_post_paid_forms.forEach(
+            item => {
+              if (item) {
+                console.log("yes");
+              } else if (!item) {
+                console.log("no");
+              }
+            }
+          );
         })
         .catch(e => {
           this.loading = false;
