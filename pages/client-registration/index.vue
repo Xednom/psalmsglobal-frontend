@@ -12,7 +12,7 @@
           <div class="card bg-secondary border-0">
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
-                <small>Sign up with your Staff credentials.</small>
+                <small>Sign up with your Client credentials.</small>
               </div>
               <validation-observer
                 v-slot="{ handleSubmit }"
