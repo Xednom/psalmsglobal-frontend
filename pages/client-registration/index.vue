@@ -86,11 +86,11 @@
                   >
                   </base-input>
 
-                  <base-input label="Designation Category">
+                  <base-input label="Designation Category" name="Designation Category" :rules="{ required: true }">
                     <el-select
                       v-model="register.designation_category"
                       filterable
-                      placeholder="Company Category"
+                      placeholder="Designation Category"
                     >
                       <el-option
                         v-for="option in designationOptions"
@@ -102,7 +102,7 @@
                     </el-select>
                   </base-input>
 
-                  <base-input label="Company Category">
+                  <base-input label="Company Category" name="Company Category" :rules="{ required: true }">
                     <el-select
                       v-model="register.company_category"
                       filterable
@@ -110,6 +110,22 @@
                     >
                       <el-option
                         v-for="option in companyOptions"
+                        :key="option.label"
+                        :label="option.label"
+                        :value="option.value"
+                      >
+                      </el-option>
+                    </el-select>
+                  </base-input>
+
+                  <base-input label="Account type" name="Account Type" :rules="{ required: true }">
+                    <el-select
+                      v-model="register.account_type"
+                      filterable
+                      placeholder="Account type"
+                    >
+                      <el-option
+                        v-for="option in accountOptions"
                         :key="option.label"
                         :label="option.label"
                         :value="option.value"
@@ -166,7 +182,8 @@ export default {
         email: "",
         password: "",
         designation_category: "",
-        company_category: ""
+        company_category: "",
+        account_type: ""
       },
       designationOptions: [
         { value: "new_client", label: "New client" },
@@ -180,6 +197,10 @@ export default {
           value: "call_me_psalms_global",
           label: "CallMe.Com.Ph/PsalmsGlobal.Com"
         }
+      ],
+      accountOptions: [
+        { value: "postpaid", label: "Postpaid" },
+        { value: "prepaid", label: "Prepaid" }
       ],
       selects: {
         designation: ""

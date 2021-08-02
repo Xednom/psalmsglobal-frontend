@@ -66,13 +66,36 @@
         />
         <sidebar-item
           v-if="
-            $auth.user.designation_category == 'new_client' ||
-              $auth.user.designation_category == 'current_client' ||
-              $auth.user.designation_category == 'affiliate_partner'
+            $auth.user.account_type == 'post_paid' &&
+              $auth.user.designation_category != 'staff'
           "
           :link="{
             name: 'Postpaid',
             icon: 'ni ni-single-copy-04 text-pink'
+          }"
+        >
+          <sidebar-item
+            :link="{
+              name: 'List of Interaction',
+              path: '/post-paid/customer-interaction'
+            }"
+          />
+          <sidebar-item
+            :link="{
+              name: 'Billing',
+              path: '/billing'
+            }"
+          />
+        </sidebar-item>
+
+        <sidebar-item
+          v-if="
+            $auth.user.designation_category != 'staff' &&
+              $auth.user.account_type == 'prepaid'
+          "
+          :link="{
+            name: 'Prepaid',
+            icon: 'ni ni-credit-card'
           }"
         >
           <sidebar-item
@@ -105,7 +128,8 @@
           v-if="
             $auth.user.designation_category == 'new_client' ||
               $auth.user.designation_category == 'current_client' ||
-              $auth.user.designation_category == 'affiliate_partner'
+              $auth.user.designation_category == 'affiliate_partner' &&
+              $auth.user.account_type == 'post_paid'
           "
           :link="{
             name: 'General Job Order minutes Report',
@@ -113,19 +137,6 @@
             path: '/job-order'
           }"
         />
-
-        <sidebar-item
-          v-if="
-            $auth.user.designation_category == 'new_client' ||
-              $auth.user.designation_category == 'current_client' ||
-              $auth.user.designation_category == 'affiliate_partner'
-          "
-          :link="{
-            name: 'Prepaid',
-            icon: 'ni ni-align-left-2 text-default'
-          }"
-        >
-        </sidebar-item>
       </template>
     </side-bar>
     <div class="main-content">
