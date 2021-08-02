@@ -2,8 +2,7 @@
   <div>
     <!-- Header -->
     <div class="header bg-gradient-success py-7 py-lg-8 pt-lg-9">
-      <div class="separator separator-bottom separator-skew zindex-100">
-      </div>
+      <div class="separator separator-bottom separator-skew zindex-100"></div>
     </div>
     <!-- Page content -->
     <div class="container mt--8 pb-5">
@@ -13,118 +12,30 @@
           <div class="card bg-secondary border-0">
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
-                <small>Sign up with credentials</small>
+                <small>Please choose what kind of user you are.</small>
               </div>
-              <validation-observer
-                v-slot="{ handleSubmit }"
-                ref="formValidator"
-              >
-                <form role="form" @submit.prevent="handleSubmit(onSubmit)">
-                  <base-input
-                    alternative
-                    class="mb-3"
-                    prepend-icon="ni ni-hat-3"
-                    placeholder="First name"
-                    name="First name"
-                    :rules="{ required: true }"
-                    v-model="register.first_name"
-                  >
-                  </base-input>
-
-                  <base-input
-                    alternative
-                    class="mb-3"
-                    prepend-icon="ni ni-hat-3"
-                    placeholder="Last name"
-                    name="Last name"
-                    :rules="{ required: true }"
-                    v-model="register.last_name"
-                  >
-                  </base-input>
-
-                  <base-input
-                    alternative
-                    class="mb-3"
-                    prepend-icon="ni ni-user-run"
-                    placeholder="Username"
-                    name="Username"
-                    :rules="{ required: true}"
-                    v-model="register.username"
-                  >
-                  </base-input>
-
-                  <base-input
-                    alternative
-                    class="mb-3"
-                    prepend-icon="ni ni-email-83"
-                    placeholder="Email"
-                    name="Email"
-                    :rules="{ required: true, email: true }"
-                    v-model="register.email"
-                  >
-                  </base-input>
-
-                  <base-input
-                    alternative
-                    class="mb-3"
-                    prepend-icon="ni ni-lock-circle-open"
-                    placeholder="password"
-                    type="password"
-                    name="Password"
-                    :rules="{ required: true, min: 8 }"
-                    v-model="register.password"
-                  >
-                  </base-input>
-                  <base-input
-                    alternative
-                    class="mb-3"
-                    prepend-icon="ni ni-lock-circle-open"
-                    placeholder="Confirm Password"
-                    type="password"
-                    name="Confirm Password"
-                    :rules="{ required: true, min: 8 }"
-                    v-model="register.re_password"
-                  >
-                  </base-input>
-
-                  <base-input label="Designation Category">
-                    <el-select
-                      v-model="register.designation_category"
-                      filterable
-                      placeholder="Designation Category"
-                    >
-                      <el-option
-                        v-for="option in designationOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-
-                  <base-input label="Company Category">
-                    <el-select
-                      v-model="register.company_category"
-                      filterable
-                      placeholder="Company Category"
-                    >
-                      <el-option
-                        v-for="option in companyOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-                  <div class="text-center">
-                    <button type="submit" class="btn btn-primary mt-4">
-                      Create account
-                    </button>
+              <div class="container">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row row-example">
+                      <div class="col">
+                        <nuxt-link to="/staff-registration"
+                          ><base-button class="col-md-12" type="default"
+                            >Staff</base-button
+                          >
+                        </nuxt-link>
+                      </div>
+                      <div class="col">
+                        <nuxt-link to="/client-registration">
+                          <base-button class="col-md-12" type="primary"
+                            >Client</base-button
+                          ></nuxt-link
+                        >
+                      </div>
+                    </div>
                   </div>
-                </form>
-              </validation-observer>
+                </div>
+              </div>
             </div>
           </div>
           <div class="row mt-3">
@@ -151,81 +62,9 @@ export default {
     [Option.name]: Option
   },
   data() {
-    return {
-      register: {
-        username: "",
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        designation_category: "",
-        company_category: ""
-      },
-      designationOptions: [
-        { value: "staff", label: "Staff" },
-        { value: "new_client", label: "New client" },
-        { value: "current_client", label: "Current client" },
-        { value: "affiliate_partner", label: "Affiliate Partner" }
-      ],
-      companyOptions: [
-        { value: "call_me_ph", label: "CallMe.Com.Ph" },
-        { value: "psalms_global", label: "PsalmsGlobal.Com" },
-        {
-          value: "call_me_psalms_global",
-          label: "CallMe.Com.Ph/PsalmsGlobal.Com"
-        }
-      ],
-      selects: {
-        designation: "",
-      },
-      selects: {
-        company: "",
-      }
-    };
+    return {};
   },
-  methods: {
-    async onSubmit() {
-      this.loading = true;
-      await this.$axios
-        .post(`api/auth/users/`, this.register)
-        .then(async res => {
-          this.loading = false;
-          // instead of showing a success page, we should automatically login the user.
-          await this.$auth
-            .loginWith("local", {
-              data: this.register
-            })
-            .then(res => {
-              this.$router.push("/");
-            });
-        })
-        .catch(e => {
-          this.loading = false;
-          this.error = e.response.data;
-          this.errorMessage("danger", this.error);
-        });
-    },
-    errorMessage(variant = null, error) {
-      this.$bvToast.toast(
-        error.password
-          ? "Password: " + error.password
-          : error.username
-          ? "Username: " + error.username
-          : error.detail
-          ? "Detail: " + error.detail
-          : error.email
-          ? "Email: " + error.email
-          : error.non_field_errors
-          ? error.non_field_errors
-          : error,
-        {
-          title: `Error`,
-          variant: variant,
-          solid: true,
-        }
-      );
-    },
-  }
+  methods: {}
 };
 </script>
 <style></style>
