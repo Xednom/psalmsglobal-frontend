@@ -89,7 +89,6 @@
                   <base-input label="Company Category">
                     <el-select
                       v-model="register.company_category"
-                      filterable
                       placeholder="Company Category"
                     >
                       <el-option

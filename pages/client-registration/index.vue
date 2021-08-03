@@ -89,7 +89,6 @@
                   <base-input label="Designation Category" name="Designation Category" :rules="{ required: true }">
                     <el-select
                       v-model="register.designation_category"
-                      filterable
                       placeholder="Designation Category"
                     >
                       <el-option
@@ -105,7 +104,6 @@
                   <base-input label="Company Category" name="Company Category" :rules="{ required: true }">
                     <el-select
                       v-model="register.company_category"
-                      filterable
                       placeholder="Company Category"
                     >
                       <el-option
@@ -121,7 +119,6 @@
                   <base-input label="Account type" name="Account Type" :rules="{ required: true }">
                     <el-select
                       v-model="register.account_type"
-                      filterable
                       placeholder="Account type"
                     >
                       <el-option
