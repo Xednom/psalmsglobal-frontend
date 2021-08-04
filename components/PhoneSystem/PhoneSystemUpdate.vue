@@ -23,11 +23,12 @@
             <div class="pl-lg-4">
               <div class="row">
                 <div class="col-lg-3">
-                  <base-input label="Company" name="Company" rules="required">
+                  <base-input label="Company" name="Company">
                     <el-select
                       v-model="phoneSystem.company"
                       filterable
                       placeholder="Choose a Company"
+                      disabled
                     >
                       <el-option
                         v-for="option in companies"
@@ -44,6 +45,7 @@
                     v-model="phoneSystem.sub_number"
                     name="Sub number"
                     class="mb-3"
+                    disabled
                   >
                     Sub number
                   </base-checkbox>
@@ -52,12 +54,12 @@
                   <base-input
                     label="Vodaconnect Plan"
                     name="Vodaconnect plan"
-                    rules="required"
                   >
                     <el-select
                       v-model="phoneSystem.vodaconnect_plan"
                       filterable
                       placeholder="Choose a plan"
+                      disabled
                     >
                       <el-option
                         v-for="option in plans"
@@ -73,12 +75,12 @@
                   <base-input
                     label="Vodaconnect line type"
                     name="Vodaconnect line type"
-                    rules="required"
                   >
                     <el-select
                       v-model="phoneSystem.vodaconnect_line_type"
                       filterable
                       placeholder="Choose a plan"
+                      disabled
                     >
                       <el-option
                         v-for="option in lines"
@@ -98,8 +100,8 @@
                     label="Original Line"
                     placeholder="Original Line"
                     name="Original Line"
-                    rules="required"
                     v-model="phoneSystem.original_line"
+                    disabled
                   >
                   </base-input>
                 </div>
@@ -109,8 +111,8 @@
                     label="Call forwarding number"
                     placeholder="Call forwarding number"
                     name="Call forwarding number"
-                    rules="required"
                     v-model="phoneSystem.call_forwarding_number"
+                    disabled
                   >
                   </base-input>
                 </div>
@@ -123,17 +125,12 @@
                       id="callerIdDetail"
                       rows="3"
                       v-model="phoneSystem.caller_id_detail"
+                      disabled
                     ></textarea>
                   </base-input>
                 </div>
               </div>
             </div>
-            <base-button type="primary" native-type="submit" loading v-if="saving"
-              >Submit</base-button
-            >
-            <base-button type="primary" native-type="submit" v-else
-              >Submit</base-button
-            >
           </form>
         </validation-observer>
       </card>
