@@ -56,6 +56,7 @@
                           placeholder="Company owner name"
                           prepend-icon="ni ni-user-run"
                           v-model="company.company_owner_name"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -67,6 +68,7 @@
                           placeholder="Company name"
                           prepend-icon="ni ni-badge"
                           v-model="company.company_name"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -77,6 +79,7 @@
                           placeholder="Business type"
                           prepend-icon="ni ni-ungroup"
                           v-model="company.business_type"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -88,6 +91,7 @@
                           placeholder="Company phone"
                           prepend-icon="ni ni-mobile-button"
                           v-model="company.company_phone"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -98,6 +102,7 @@
                           placeholder="Company email"
                           prepend-icon="ni ni-email-83"
                           v-model="company.company_email"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -108,6 +113,7 @@
                           placeholder="Company forwarding email"
                           prepend-icon="ni ni-email-83"
                           v-model="company.company_forwarding_email"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -118,6 +124,7 @@
                           placeholder="Paypal email"
                           prepend-icon="ni ni-email-83"
                           v-model="company.paypal_email"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -128,6 +135,7 @@
                             id="companyCompleteAddress"
                             rows="3"
                             v-model="company.company_complete_address"
+                            disabled
                           ></textarea>
                         </base-input>
                       </div>
@@ -138,15 +146,10 @@
                             id="notes"
                             rows="3"
                             v-model="company.notes"
+                            disabled
                           ></textarea>
                         </base-input>
                       </div>
-                    </div>
-
-                    <div class="text-center">
-                      <base-button type="info" native-type="submit" class="my-4"
-                        >Update</base-button
-                      >
                     </div>
                   </form>
                 </template>
