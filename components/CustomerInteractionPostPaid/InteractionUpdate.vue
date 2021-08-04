@@ -27,8 +27,10 @@
         >
           <h4 class="alert-heading">Memo!</h4>
           <p>
-            PLEASE DO NOT FORGET TO PROVIDE THE CALLER HIS/HER TICKET # ONCE YOU
-            ARE COMPLETE WITH THE CALL.
+            1. PLEASE DO NOT FORGET TO PROVIDE THE CALLER OF HIS/HER TICKET # ONCE YOU ARE COMPLETE WITH THE CALL.
+          </p>
+          <p>
+            2. PLEASE DO NOT FORGET TO ADD CALL LOG REPORT IN EVERY CALL.
           </p>
         </b-alert>
         <b-card no-body>
