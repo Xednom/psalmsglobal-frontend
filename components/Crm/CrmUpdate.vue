@@ -27,7 +27,6 @@
                   <el-select
                     v-model="crm.company"
                     placeholder="Choose a Company"
-                    disabled
                   >
                     <el-option
                       v-for="option in companies"
@@ -51,7 +50,6 @@
                   placeholder="CRM URL"
                   name="CRM URL"
                   v-model="crm.crm_url"
-                  disabled
                 >
                 </base-input>
               </div>
@@ -64,7 +62,6 @@
                     id="typeOfCrm"
                     rows="3"
                     v-model="crm.type_of_crm"
-                    disabled
                   ></textarea>
                 </base-input>
               </div>
@@ -75,7 +72,6 @@
                     id="crmLogin"
                     rows="3"
                     v-model="crm.crm_login"
-                    disabled
                   ></textarea>
                 </base-input>
               </div>
@@ -86,18 +82,17 @@
                     id="notes"
                     rows="3"
                     v-model="crm.notes"
-                    disabled
                   ></textarea>
                 </base-input>
               </div>
             </div>
           </div>
-          <!-- <base-button type="primary" native-type="submit" loading v-if="saving"
+          <base-button type="primary" native-type="submit" loading v-if="saving"
             >Submit</base-button
           >
           <base-button type="primary" native-type="submit" v-else
             >Submit</base-button
-          > -->
+          >
         </form>
         </validation-observer>
       </card>

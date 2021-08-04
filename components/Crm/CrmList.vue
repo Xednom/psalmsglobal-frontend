@@ -101,6 +101,12 @@
             </b-button>
           </template>
 
+          <template #cell(crm_login)="row">
+            <div v-if="!row.crm_login">
+              <span>-</span>
+            </div>
+          </template>
+
           <template #row-details="row">
             <b-card>
               <ul>

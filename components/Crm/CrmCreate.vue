@@ -50,7 +50,6 @@
                     placeholder="CRM URL"
                     name="CRM URL"
                     v-model="crm_url"
-                    rules="required"
                   >
                   </base-input>
                 </div>
