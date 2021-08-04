@@ -213,12 +213,6 @@ export default {
           { value: "monthly_tasks", label: "Monthly Tasks" },
           { value: "redo", label: "Redo" },
           { value: "pending", label: "Pending" },
-          { value: "request_for_posting", label: "Request for Posting" },
-          { value: "mark_as_sold_request", label: "Mark as Sold Request" },
-          { value: "initial_dd_processing", label: "Initial DD Processing" },
-          { value: "initial_dd_complete", label: "Initial DD Complete" },
-          { value: "dd_call_out_processing", label: "DD Call Out Processing" },
-          { value: "dd_call_out_complete", label: "DD Call Out Complete" },
           { value: "duplicate_request", label: "Duplicate Request" }
         ]
       }
