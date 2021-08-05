@@ -17,11 +17,7 @@
             name: 'Company account information',
             icon: 'ni ni-ui-04 text-info'
           }"
-          v-if="
-            $auth.user.designation_category == 'new_client' ||
-              $auth.user.designation_category == 'current_client' ||
-              $auth.user.designation_category == 'affiliate_partner'
-          "
+          v-if="$auth.user.designation_category != 'staff'"
         >
           <sidebar-item
             :link="{ name: 'List of Companies', path: '/company' }"
@@ -66,7 +62,7 @@
         />
         <sidebar-item
           v-if="
-            $auth.user.account_type == 'post_paid' &&
+            $auth.user.account_type == 'postpaid' &&
               $auth.user.designation_category != 'staff'
           "
           :link="{
@@ -101,7 +97,7 @@
           <sidebar-item
             :link="{
               name: 'List of Interaction',
-              path: '/post-paid/customer-interaction'
+              path: '/prepaid/customer-interaction'
             }"
           />
           <sidebar-item
@@ -128,8 +124,8 @@
           v-if="
             $auth.user.designation_category == 'new_client' ||
               $auth.user.designation_category == 'current_client' ||
-              $auth.user.designation_category == 'affiliate_partner' &&
-              $auth.user.account_type == 'post_paid'
+              ($auth.user.designation_category == 'affiliate_partner' &&
+                $auth.user.account_type == 'post_paid')
           "
           :link="{
             name: 'General Job Order minutes Report',
