@@ -91,12 +91,8 @@
                   <b-button
                     size="sm"
                     variant="info"
-                    @click="
-                      {
-                        fetchInteractionRecord(row.item.id),
-                          (modals.info = true);
-                      }
-                    "
+                    v-b-modal.record-update
+                    @click="fetchInteractionRecord(row.item.id)"
                     class="mr-1"
                   >
                     Update
@@ -125,12 +121,22 @@
       </div>
     </div>
     <!-- info modal -->
+    <b-modal id="record-update" hide-footer>
+      <template #modal-title>
+        Update interaction record for {{ record.ticket_number }}
+      </template>
+      <record-update
+        :interaction="record"
+        :refresh="refresh"
+        :loading="loading"
+      ></record-update>
+    </b-modal>
+
     <modal
       :show.sync="modals.info"
       headerClasses="justify-content-center"
       class="white-content"
     >
-      <record-update :interaction="record" :refresh="refresh" :loading="loading"></record-update>
     </modal>
 
     <modal

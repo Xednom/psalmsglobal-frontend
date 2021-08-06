@@ -5,6 +5,11 @@ const blankState = {
   client: null,
   agent: null,
   total_minutes: 0,
+  client_feedback_status: "",
+  other_feedback: "",
+  client_notes: "",
+  internal_management_ticket_status: "",
+  other_ticket_status: "",
   summary: ""
 };
 
@@ -27,6 +32,11 @@ export const getters = {
   client: state => state.client,
   agent: state => state.agent,
   total_minutes: state => state.total_minutes,
+  client_feedback_status: state => state.client_feedback_status,
+  other_feedback: state => state.other_feedback,
+  client_notes: state => state.client_notes,
+  internal_management_ticket_status: state => state.internal_management_ticket_status,
+  other_ticket_status: state => state.other_ticket_status,
   summary: state => state.summary,
   recordsPagination: state => state.recordsPagination,
   records: state => state.records,

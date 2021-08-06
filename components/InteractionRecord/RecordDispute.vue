@@ -3,84 +3,85 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
       <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
         <form @submit.prevent="handleSubmit(save)">
-          <div v-if="loading" class="pl-lg-12">
-            <div class="text-center">
-              <b-spinner type="grow" label="Loading..."></b-spinner>
-              loading...
-            </div>
-          </div>
-          <div v-else-if="!loading" class="pl-lg-12">
+          <div class="pl-lg-12">
             <div class="row">
-              <div class="col-lg-6">
-                <base-input
-                  type="text"
-                  label="Ticket number"
-                  placeholder="Ticket number"
-                  name="Ticket number"
-                  v-model="interaction.ticket_number"
-                  rules="required"
-                  disabled
-                >
-                </base-input>
-              </div>
-              <div class="col-lg-6">
-                <base-input
-                  type="text"
-                  label="Status"
-                  placeholder="Status"
-                  name="Status"
-                  v-model="interaction.status"
-                  disabled
-                >
+              <div class="col-lg-12">
+                <base-input label="Your Feed back?">
+                  <el-select
+                    v-model="interaction.client_feedback_status"
+                    placeholder="Choose a Feed back status"
+                    rules="required"
+                    :disabled="interaction.client_feedback_status == 'other'"
+                  >
+                    <el-option
+                      v-for="option in feedBackStatus"
+                      :key="option.id"
+                      :label="option.label"
+                      :value="option.value"
+                    >
+                    </el-option>
+                  </el-select>
                 </base-input>
               </div>
               <div class="col-lg-12">
                 <base-input
-                  type="text"
-                  label="Total minutes"
-                  placeholder="Total minutes"
-                  name="Total minutes"
-                  v-model="interaction.total_minutes"
-                  :rules="{ required: true }"
-                  disabled
+                  label="Other feed back"
+                  v-if="interaction.client_feedback_status == 'other'"
                 >
-                </base-input>
-              </div>
-              <div class="col-lg-12">
-                <base-input label="Summary of the call">
                   <textarea
                     class="form-control"
                     id="notes"
                     rows="3"
-                    v-model="interaction.summary"
-                    :rules="{ required: true }"
-                    disabled
+                    v-model="interaction.other_feedback"
+                    name="Other feedback"
                   ></textarea>
                 </base-input>
               </div>
+            </div>
+          </div>
+          <hr
+            class="my-4"
+            v-if="interaction.internal_management_ticket_status != 'na'"
+          />
+          <div
+            class="row"
+            v-if="interaction.internal_management_ticket_status != 'na'"
+          >
+            <div class="col-lg-12">
+              <base-input label="Internal management ticket status">
+                <el-select
+                  v-model="interaction.internal_management_ticket_status"
+                  placeholder="Internal management ticket status"
+                  disabled
+                >
+                </el-select>
+              </base-input>
+            </div>
+            <div class="col-lg-12">
+              <base-input
+                label="Other "
+                v-if="interaction.client_feedback_status == 'other'"
+              >
+                <textarea
+                  class="form-control"
+                  id="notes"
+                  rows="3"
+                  v-model="interaction.other_ticket_status"
+                  name="Other feed back ticket status"
+                  disabled
+                ></textarea>
+              </base-input>
             </div>
           </div>
           <hr class="my-4" />
           <base-button type="primary" native-type="submit" loading v-if="saving"
             >Submit</base-button
           >
-          <base-button
-            type="primary"
-            native-type="submit"
-            v-else-if="!saving && $auth.user.designation_category == 'staff'"
+          <base-button type="primary" native-type="submit" v-else-if="!saving && $auth.user.designation_category != 'staff'"
             >Submit</base-button
           >
-          <b-button variant="info" v-b-modal.dispute>See dispute?</b-button>
-
         </form>
       </validation-observer>
-
-      <b-modal id="dispute" hide-footer>
-        <template #modal-title>
-          Dispute interaction record for {{ interaction.ticket_number }}
-        </template>
-        <dispute :interaction="interaction" :refresh="refresh"></dispute>
-      </b-modal>
     </div>
   </div>
 </template>
@@ -90,15 +91,13 @@ import { Select, Option } from "element-ui";
 import { mapGetters, mapActions } from "vuex";
 
 import CreateInteractionRecordMixin from "@/mixins/CreateInteractionRecordMixin.js";
-import Dispute from "@/components/InteractionRecord/RecordDispute";
 
 export default {
   name: "interaction_record_create",
   mixins: [CreateInteractionRecordMixin],
   components: {
     [Select.name]: Select,
-    [Option.name]: Option,
-    Dispute
+    [Option.name]: Option
   },
   props: {
     interaction: {
@@ -107,82 +106,51 @@ export default {
     },
     refresh: {
       Type: Function
-    },
-    loading: {
-      Type: Boolean
     }
   },
   computed: {
     ...mapGetters({
       client: "user/company"
     }),
-    ticket_number: {
+    client_feedback_status: {
       get() {
-        return this.interaction.ticket_number;
+        return this.$store.getters["interactionRecord/client_feedback_status"];
       },
       set(value) {
-        this.setBasicStoreValue("ticket_number", value);
+        this.setBasicStoreValue("client_feedback_status", value);
       }
     },
-    customer_interaction_post_paid: {
+    client_feedback_status: {
       get() {
-        return this.$store.getters[
-          "interactionRecord/customer_interaction_post_paid"
-        ];
+        return this.$store.getters["interactionRecord/client_feedback_status"];
       },
       set(value) {
-        this.setBasicStoreValue("customer_interaction_post_paid", value);
-      }
-    },
-    client: {
-      get() {
-        return this.$store.getters["interactionRecord/client"];
-      },
-      set(value) {
-        this.setBasicStoreValue("client", value);
-      }
-    },
-    agent: {
-      get() {
-        return this.$store.getters["interactionRecord/agent"];
-      },
-      set(value) {
-        this.setBasicStoreValue("agent", value);
-      }
-    },
-    total_minutes: {
-      get() {
-        return this.$store.getters["interactionRecord/total_minutes"];
-      },
-      set(value) {
-        this.setBasicStoreValue("total_minutes", value);
-      }
-    },
-    summary: {
-      get() {
-        return this.$store.getters["interactionRecord/summary"];
-      },
-      set(value) {
-        this.setBasicStoreValue("summary", value);
+        this.setBasicStoreValue("client_feedback_status", value);
       }
     }
   },
   data() {
     return {
       query: "",
+      error: "",
       companies: [],
       user: {},
-      staffUser: {},
       selectedCompany: null,
       isBusy: false,
       saving: false,
       modals: {
-        classic: false
+        form: false
       },
       attribute_forms: [],
       dataTypeOptions: [
         { value: "text", label: "Text" },
         { value: "question", label: "Question" }
+      ],
+      feedBackStatus: [
+        { value: "na", label: "N/A" },
+        { value: "dispute", label: "Dispute" },
+        { value: "clarification", label: "Clarification" },
+        { value: "other", label: "Other" }
       ]
     };
   },
@@ -208,9 +176,6 @@ export default {
       } catch (err) {
         console.log(err.response.data);
         this.loading = false;
-        UIkit.notification("Error:" + err.response.data, {
-          status: "danger"
-        });
       }
     },
     async fetchClient(id) {
@@ -237,13 +202,13 @@ export default {
       const recordPayload = {
         id: this.interaction.id,
         ticket_number: this.interaction.ticket_number,
-        customer_interaction_post_paid: this.interaction.ticket_number,
-        agent: this.staffUser.id,
+        client_feedback_status: this.interaction.client_feedback_status,
+        other_feedback: this.interaction.other_feedback,
         total_minutes: this.interaction.total_minutes,
         summary: this.interaction.summary
       };
 
-      if (this.$auth.user.designation_category == "staff") {
+      if (this.$auth.user.designation_category != "staff") {
         try {
           this.saving = true;
           await this.updateRecord(recordPayload)
@@ -254,21 +219,19 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch(e => {
+            .catch((err) => {
               this.saving = false;
-              this.error = e.response.data;
+              this.error = err.response.data;
               this.errorMessage("danger", this.error);
             });
         } catch (e) {
-          this.saving = false;
-          this.error = e.response.data;
-          this.errorMessage("danger", this.error);
+          throw e;
         }
       }
       this.saving = false;
     },
     successMessage(variant = null) {
-      this.$bvToast.toast("Successfully added a new interaction", {
+      this.$bvToast.toast("Successfully submitted your dispute, thank you!", {
         title: `Successful`,
         variant: variant,
         solid: true
