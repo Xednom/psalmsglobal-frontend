@@ -144,7 +144,7 @@ export default {
 
 <style lang="scss">
 .bg-gradient-success {
-  background: linear-gradient(87deg,#2309fb,#e60a0a) !important;
+  background: linear-gradient(87deg,#ffffff,#000000) !important;
 }
 .bg-default {
   background: #ffffff !important;
