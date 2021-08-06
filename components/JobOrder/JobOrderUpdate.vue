@@ -89,7 +89,6 @@
                         filterable
                         placeholder="Choose a Ticket"
                         rules="required"
-                        :disabled="$auth.user.designation_category != 'staff'"
                       >
                         <el-option
                           v-for="option in StatusChoices.status"

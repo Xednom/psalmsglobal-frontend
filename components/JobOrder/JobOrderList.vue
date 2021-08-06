@@ -555,7 +555,7 @@ export default {
         this.$auth.user.designation_category == "affiliate_partner"
       ) {
         const jobOrderPayload = {
-          client: this.clientUser.client_code,
+          client: this.client.client_code,
           caller_interaction_record: this.job.caller_interaction_record,
           request_date: this.job.request_date,
           due_date: this.job.due_date,
