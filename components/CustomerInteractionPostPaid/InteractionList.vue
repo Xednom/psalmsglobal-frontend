@@ -90,16 +90,39 @@
             {{ row.item.company }}
           </template>
 
-          <template #cell(actions)="row">
+          <template #cell(customer_interaction_post_paid_forms)="row">
             <b-button
               size="sm"
-              @click="info(row.item, row.index, $event.target)"
+              @click="
+                {
+                  fetchForm(row.item.id, row.index, $event.target),
+                    (modals.update = true);
+                }
+              "
               class="mr-1"
+              variant="info"
             >
-              Info modal
+              <div
+                v-for="form in row.item.customer_interaction_post_paid_forms"
+                :key="form.id"
+              >
+                {{ form.form_title }}
+              </div>
             </b-button>
-            <b-button size="sm" @click="row.toggleDetails">
-              {{ row.detailsShowing ? "Hide" : "Show" }} Details
+          </template>
+
+          <template #cell(interaction_job_orders)>
+            <b-button
+              size="sm"
+              @click="
+                {
+                  modals.jobOrder = true;
+                }
+              "
+              class="mr-1"
+              variant="info"
+            >
+              Job orders
             </b-button>
           </template>
         </b-table>
@@ -121,6 +144,18 @@
           ></b-pagination>
         </div>
       </b-container>
+
+      <modal :show.sync="modals.update" size="lg" body-classes="p-0">
+        <b-overlay :show="show" rounded="sm">
+          <form-view :form="form"></form-view>
+        </b-overlay>
+      </modal>
+
+      <modal :show.sync="modals.jobOrder" size="xl" body-classes="p-0">
+        <b-overlay :show="show" rounded="sm">
+          <job-order-list></job-order-list>
+        </b-overlay>
+      </modal>
     </div>
   </div>
 </template>
@@ -135,6 +170,9 @@ import {
 } from "element-ui";
 import { mapGetters } from "vuex";
 
+import FormView from "@/components/Form/FormView";
+import JobOrderList from "@/components/JobOrder/JobOrderList";
+
 export default {
   name: "interaction_list",
   components: {
@@ -142,7 +180,9 @@ export default {
     [TableColumn.name]: TableColumn,
     [Dropdown.name]: Dropdown,
     [DropdownItem.name]: DropdownItem,
-    [DropdownMenu.name]: DropdownMenu
+    [DropdownMenu.name]: DropdownMenu,
+    FormView,
+    JobOrderList
   },
   computed: {
     ...mapGetters({
@@ -155,11 +195,15 @@ export default {
   data() {
     return {
       interaction: {},
+      form: {},
       interactions: [],
       isBusy: false,
       saving: false,
+      show: false,
+      showJobOrder: false,
       modals: {
-        form: false
+        update: false,
+        jobOrder: false
       },
       totalRows: 1,
       currentPage: 1,
@@ -177,6 +221,16 @@ export default {
       },
       fields: [
         { key: "ticket_number", sortable: true },
+        {
+          key: "customer_interaction_post_paid_forms",
+          label: "Script",
+          sortable: true
+        },
+        {
+          key: "interaction_job_orders",
+          label: "List of Job Orders",
+          sortable: true
+        },
         { key: "company", sortable: true },
         { key: "apn", sortable: true },
         { key: "caller_full_name", sortable: true },
@@ -230,6 +284,20 @@ export default {
           console.log(this.interaction);
         })
         .catch(e => {
+          throw e;
+        });
+    },
+    async fetchForm(id) {
+      this.show = true;
+      let endpoint = `/api/v1/interaction-form/${id}/`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.show = false;
+          this.form = res.data;
+        })
+        .catch(e => {
+          this.show = false;
           throw e;
         });
     },
