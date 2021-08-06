@@ -186,6 +186,7 @@ export default {
       fields: [
         { key: "company", sortable: true },
         { key: "form_title", sortable: true },
+        { key: "mailing_lists_unpacked", sortable: true },
         { key: "status", sortable: true }
       ]
     };

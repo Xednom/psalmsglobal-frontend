@@ -192,7 +192,10 @@ export default {
         { key: "client", label: "Client code", sortable: true },
         { key: "company", sortable: true },
         { key: "crm", sortable: true },
-        { key: "crm_login", sortable: true }
+        { key: "crm_url", sortable: true },
+        { key: "type_of_crm", sortable: true },
+        { key: "crm_login", sortable: true },
+        { key: "notes", sortable: true }
       ]
     };
   },
