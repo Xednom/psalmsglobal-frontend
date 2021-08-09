@@ -75,7 +75,7 @@
                           v-model="callMe.property_state"
                           filterable
                           placeholder="Choose"
-                          @change="fetchCounties"
+                          :input="fetchCounties"
                         >
                           <el-option
                             v-for="option in states"
@@ -102,6 +102,11 @@
                           >
                           </el-option>
                         </el-select>
+                        <template v-if="loadingCounties"
+                          ><b-badge variant="primary"
+                            >loading...</b-badge
+                          ></template
+                        >
                       </base-input>
                     </div>
                   </div>
@@ -223,7 +228,7 @@
                   </div>
                 </div>
               </b-tab>
-              <b-tab title="Caller's Type">
+              <b-tab title="Caller's Type" lazy>
                 <h6 class="heading-small text-muted mb-4">
                   Caller's Category
                 </h6>
@@ -234,11 +239,7 @@
                       name="Type of caller"
                       rules="required"
                     >
-                      <el-select
-                        v-model="general_call"
-                        filterable
-                        placeholder="Choose"
-                      >
+                      <el-select v-model="general_call" placeholder="Choose">
                         <el-option
                           v-for="option in generalCalls"
                           :key="option.id"
@@ -262,7 +263,6 @@
                     >
                       <el-select
                         v-model="interested_to_buy"
-                        filterable
                         placeholder="Choose"
                       >
                         <el-option
@@ -283,7 +283,6 @@
                     >
                       <el-select
                         v-model="interested_to_sell"
-                        filterable
                         placeholder="Choose"
                       >
                         <el-option
@@ -367,7 +366,7 @@ export default {
     async getCallMeInfo() {
       if (this.apn || this.reference) {
         let endpoint = `/api/v1/callme-info/?apn=${this.apn}`;
-        return await this.$axios
+        await this.$axios
           .get(endpoint)
           .then(res => {
             this.callMeInfo = res.data.results;
@@ -382,6 +381,14 @@ export default {
             throw e;
           });
       }
+    },
+    async fetchCounties() {
+      let endpoint = `/api/v1/county/?search=${this.state}`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          this.counties = res.data;
+        });
+      } catch (err) {}
     },
     ticket_number: {
       get() {
@@ -574,6 +581,8 @@ export default {
       clientUser: {},
       isBusy: false,
       saving: false,
+      loadingCounties: false,
+      loadingStates: false,
       modals: {
         form: false
       },
@@ -690,16 +699,13 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch(e => {
+            .catch((e) => {
               this.saving = false;
+              this.error = e.response.data;
               this.errorMessage("danger", this.error);
             });
         } catch (e) {
-          this.saving = false;
-          //   this.error = e.response.data;
-          console.log(e);
-          //   console.error(e.response.data);
-          this.errorMessage("danger", this.error);
+          throw(e);
         }
         this.saving = false;
       }
@@ -727,6 +733,14 @@ export default {
           ? "Company: " + error.company
           : error.detail
           ? "Detail: " + error.detail
+          : error.interested_to_sell
+          ? "Interested to Sell: " + error.interested_to_sell
+          : error.interested_to_buy
+          ? "Interested to Buy: " + error.interested_to_buy
+          : error.general_call
+          ? "General call: " + error.general_call
+          : error.customer_interaction_post_paid_forms
+          ? "Script: Please select a Script for this Interaction."
           : error.non_field_errors
           ? error.non_field_errors
           : error,
@@ -737,19 +751,13 @@ export default {
         }
       );
     },
-    async fetchCounties() {
-      let endpoint = `/api/v1/county/?search=${this.state}`;
-      try {
-        await this.$axios.get(endpoint).then(res => {
-          this.counties = res.data;
-        });
-      } catch (err) {}
-    },
     async fetchStates() {
+      this.loadingStates = true;
       let endpoint = `/api/v1/state/`;
       try {
         await this.$axios.get(endpoint).then(res => {
           this.states = res.data;
+          this.loadingStates = false;
         });
       } catch (err) {
         console.error(err);

@@ -62,7 +62,7 @@ export const getters = {
   interaction: state => {
     return state.interaction;
   },
-  comment: state => state.comment,
+  comment: state => state.comment
 };
 
 export const mutations = {
@@ -103,7 +103,9 @@ function getOffset(urlStr) {
 export const actions = {
   async fetchInteractions({ commit, dispatch }, params) {
     return await this.$axios
-      .get("/api/v1/post-paid/customer-interaction-post-paid/", { params: params })
+      .get("/api/v1/post-paid/customer-interaction-post-paid/", {
+        params: params
+      })
       .then(res => {
         commit("setInteractions", { interactions: res.data.results });
         const offset = getOffset(res.data.previous);
@@ -135,7 +137,7 @@ export const actions = {
       .get("/api/v1/post-paid/interested-to-sell/", { params: params })
       .then(res => {
         commit("setInterestedToSells", {
-            interestedToSells: res.data.results
+          interestedToSells: res.data.results
         });
         return res;
       })
@@ -148,7 +150,7 @@ export const actions = {
       .get("/api/v1/post-paid/general-call/", { params: params })
       .then(res => {
         commit("setGeneralCalls", {
-            generalCalls: res.data.results
+          generalCalls: res.data.results
         });
         return res;
       })
@@ -192,17 +194,13 @@ export const actions = {
   },
   async saveInteraction({ commit }, payload) {
     let url = "/api/v1/post-paid/customer-interaction-post-paid/";
-    try {
-      return await this.$axios.post(url, payload).then((res) => {
-        this.$router.push({
-          name: "post-paid-customer-interaction-id",
-          params: { id: res.data.ticket_number }
-        });
-        commit("setBasicField", payload);
+    return await this.$axios.post(url, payload).then(res => {
+      this.$router.push({
+        name: "post-paid-customer-interaction-id",
+        params: { id: res.data.ticket_number }
       });
-    } catch (err) {
-      console.error(err);
-    }
+      commit("setBasicField", payload);
+    });
   },
   async updateInteraction({ commit }, payload) {
     let url = `/api/v1/post-paid/customer-interaction-post-paid/${payload.ticket_number}/`;

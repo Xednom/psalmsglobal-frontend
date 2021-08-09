@@ -6,7 +6,7 @@
           Script information for {{ form.company }} - {{ form.form_title }}
         </h3>
         <div id="form-script" class="col-lg-12">
-          <b-card-text>
+          <b-card-text v-if="form.attribute_forms">
             <div
               class="mb-3"
               v-for="(form, index) in form.attribute_forms"
@@ -30,6 +30,9 @@
                 </p>
               </div>
             </div>
+          </b-card-text>
+          <b-card-text v-else>
+            <span>There are no Script created for this interaction.</span>
           </b-card-text>
         </div>
       </div>
