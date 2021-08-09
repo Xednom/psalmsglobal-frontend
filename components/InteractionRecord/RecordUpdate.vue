@@ -70,12 +70,13 @@
             v-else-if="!saving && $auth.user.designation_category == 'staff'"
             >Submit</base-button
           >
-          <b-button variant="info" v-b-modal.dispute>See dispute?</b-button>
+          <b-button variant="info" v-b-modal.dispute v-if="$auth.user.designation_category != 'staff'">Would you like to dispute the charge</b-button>
+          <b-button variant="info" v-b-modal.dispute v-else>See dispute?</b-button>
 
         </form>
       </validation-observer>
 
-      <b-modal id="dispute" hide-footer>
+      <b-modal id="dispute" centered hide-footer>
         <template #modal-title>
           Dispute interaction record for {{ interaction.ticket_number }}
         </template>

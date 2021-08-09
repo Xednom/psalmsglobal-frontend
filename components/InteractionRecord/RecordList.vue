@@ -121,7 +121,7 @@
       </div>
     </div>
     <!-- info modal -->
-    <b-modal id="record-update" hide-footer>
+    <b-modal id="record-update" centered hide-footer>
       <template #modal-title>
         Update interaction record for {{ record.ticket_number }}
       </template>
@@ -215,6 +215,7 @@ export default {
         },
         { key: "date_called", sortable: true },
         { key: "total_minutes", sortable: true },
+        { key: "client_feedback_status", label: "Dispute status", sortable: true },
         { key: "actions", label: "Actions" }
       ],
       totalRows: 1,

@@ -11,7 +11,18 @@
                     v-model="interaction.client_feedback_status"
                     placeholder="Choose a Feed back status"
                     rules="required"
-                    :disabled="interaction.client_feedback_status == 'other'"
+                    :disabled="
+                      ($auth.user.designation_category == 'staff' &&
+                        interaction.internal_management_ticket_status ==
+                          'case_closed') ||
+                        interaction.internal_management_ticket_status ==
+                          'dispute_on_progress' ||
+                        interaction.internal_management_ticket_status ==
+                          'resolution_given' ||
+                        interaction.internal_management_ticket_status ==
+                          'others'
+                    "
+                    @change="clearDetails"
                   >
                     <el-option
                       v-for="option in feedBackStatus"
@@ -34,6 +45,32 @@
                     rows="3"
                     v-model="interaction.other_feedback"
                     name="Other feedback"
+                  ></textarea>
+                </base-input>
+                <base-input
+                  label="Dispute details"
+                  v-if="
+                    interaction.client_feedback_status == 'dispute' ||
+                      interaction.client_feedback_status == 'clarification'
+                  "
+                >
+                  <textarea
+                    class="form-control"
+                    id="notes"
+                    rows="3"
+                    v-model="interaction.dispute_details"
+                    name="Dispute details"
+                    :disabled="
+                      ($auth.user.designation_category == 'staff' &&
+                        interaction.internal_management_ticket_status ==
+                          'case_closed') ||
+                        interaction.internal_management_ticket_status ==
+                          'dispute_on_progress' ||
+                        interaction.internal_management_ticket_status ==
+                          'resolution_given' ||
+                        interaction.internal_management_ticket_status ==
+                          'others'
+                    "
                   ></textarea>
                 </base-input>
               </div>
@@ -59,7 +96,7 @@
             </div>
             <div class="col-lg-12">
               <base-input
-                label="Other "
+                label="Other"
                 v-if="interaction.client_feedback_status == 'other'"
               >
                 <textarea
@@ -71,13 +108,29 @@
                   disabled
                 ></textarea>
               </base-input>
+              <base-input
+                label="Solution from the Management"
+                v-if="interaction.client_feedback_status != 'other'"
+              >
+                <textarea
+                  class="form-control"
+                  id="notes"
+                  rows="3"
+                  v-model="interaction.memo_solution_from_the_mgmt"
+                  name="Solution from the Management"
+                  disabled
+                ></textarea>
+              </base-input>
             </div>
           </div>
           <hr class="my-4" />
           <base-button type="primary" native-type="submit" loading v-if="saving"
             >Submit</base-button
           >
-          <base-button type="primary" native-type="submit" v-else-if="!saving && $auth.user.designation_category != 'staff'"
+          <base-button
+            type="primary"
+            native-type="submit"
+            v-else-if="!saving && $auth.user.designation_category != 'staff'"
             >Submit</base-button
           >
         </form>
@@ -156,6 +209,9 @@ export default {
   },
   methods: {
     ...mapActions("interactionRecord", ["reset", "updateRecord"]),
+    clearDetails() {
+      return (this.interaction.dispute_details = "");
+    },
     async fetchMe() {
       this.loading = true;
       try {
@@ -204,6 +260,7 @@ export default {
         ticket_number: this.interaction.ticket_number,
         client_feedback_status: this.interaction.client_feedback_status,
         other_feedback: this.interaction.other_feedback,
+        dispute_details: this.interaction.dispute_details,
         total_minutes: this.interaction.total_minutes,
         summary: this.interaction.summary
       };
@@ -219,7 +276,7 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch((err) => {
+            .catch(err => {
               this.saving = false;
               this.error = err.response.data;
               this.errorMessage("danger", this.error);
