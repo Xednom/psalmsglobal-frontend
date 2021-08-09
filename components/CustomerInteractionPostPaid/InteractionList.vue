@@ -110,21 +110,6 @@
               </div>
             </b-button>
           </template>
-
-          <template #cell(interaction_job_orders)>
-            <b-button
-              size="sm"
-              @click="
-                {
-                  modals.jobOrder = true;
-                }
-              "
-              class="mr-1"
-              variant="info"
-            >
-              Job orders
-            </b-button>
-          </template>
         </b-table>
 
         <div
@@ -151,11 +136,12 @@
         </b-overlay>
       </modal>
 
-      <modal :show.sync="modals.jobOrder" size="xl" body-classes="p-0">
+      <!-- TODO: Add at a later date the job order modal -->
+      <!-- <modal :show.sync="modals.jobOrder" size="xl" body-classes="p-0">
         <b-overlay :show="show" rounded="sm">
-          <job-order-list></job-order-list>
+          <job-order-list :interaction="interaction"></job-order-list>
         </b-overlay>
-      </modal>
+      </modal> -->
     </div>
   </div>
 </template>
@@ -171,7 +157,7 @@ import {
 import { mapGetters } from "vuex";
 
 import FormView from "@/components/Form/FormView";
-import JobOrderList from "@/components/JobOrder/JobOrderList";
+import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
 
 export default {
   name: "interaction_list",
