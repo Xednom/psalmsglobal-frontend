@@ -212,11 +212,6 @@ export default {
           label: "Script",
           sortable: true
         },
-        {
-          key: "interaction_job_orders",
-          label: "List of Job Orders",
-          sortable: true
-        },
         { key: "company", sortable: true },
         { key: "apn", sortable: true },
         { key: "caller_full_name", sortable: true },
