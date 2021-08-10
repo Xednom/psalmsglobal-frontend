@@ -207,11 +207,6 @@ export default {
       },
       fields: [
         { key: "ticket_number", sortable: true },
-        {
-          key: "customer_interaction_post_paid_forms",
-          label: "Script",
-          sortable: true
-        },
         { key: "company", sortable: true },
         { key: "apn", sortable: true },
         { key: "caller_full_name", sortable: true },
