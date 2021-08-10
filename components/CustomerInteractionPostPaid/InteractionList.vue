@@ -90,6 +90,27 @@
             {{ row.item.company }}
           </template>
 
+          <template #cell(customer_interaction_post_paid_comments)="row">
+            <b-button
+              size="sm"
+              v-b-modal.comment-section
+              @click="
+                {
+                  fetchInteraction(
+                    row.item.ticket_number,
+                    row.index,
+                    $event.target
+                  ),
+                    (modals.comment = true);
+                }
+              "
+              class="mr-1"
+              variant="info"
+            >
+              view comments
+            </b-button>
+          </template>
+
           <template #cell(customer_interaction_post_paid_forms)="row">
             <b-button
               size="sm"
@@ -136,6 +157,15 @@
         </b-overlay>
       </modal>
 
+      <b-modal id="comment-section" size="lg" centered hide-footer>
+        <template #modal-title>
+          Comment section for Cust. Interaction of {{ interaction.ticket_number }}
+        </template>
+        <b-overlay :show="show" rounded="sm">
+          <job-order-comment :interaction="interaction"></job-order-comment>
+        </b-overlay>
+      </b-modal>
+
       <!-- TODO: Add at a later date the job order modal -->
       <!-- <modal :show.sync="modals.jobOrder" size="xl" body-classes="p-0">
         <b-overlay :show="show" rounded="sm">
@@ -158,6 +188,7 @@ import { mapGetters } from "vuex";
 
 import FormView from "@/components/Form/FormView";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
+import JobOrderComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
 
 export default {
   name: "interaction_list",
@@ -168,7 +199,8 @@ export default {
     [DropdownItem.name]: DropdownItem,
     [DropdownMenu.name]: DropdownMenu,
     FormView,
-    JobOrderList
+    JobOrderList,
+    JobOrderComment
   },
   computed: {
     ...mapGetters({
@@ -207,6 +239,7 @@ export default {
       },
       fields: [
         { key: "ticket_number", sortable: true },
+        { key: "customer_interaction_post_paid_comments", label: "comments" },
         { key: "company", sortable: true },
         { key: "apn", sortable: true },
         { key: "caller_full_name", sortable: true },
@@ -245,6 +278,7 @@ export default {
         .get(endpoint)
         .then(res => {
           this.interactions = res.data.results;
+          this.totalRows = this.interactions.length;
           this.isBusy = false;
         })
         .catch(e => {
@@ -252,14 +286,16 @@ export default {
         });
     },
     async fetchInteraction(id) {
+      this.show = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${id}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
+          this.show = false;
           this.interaction = res.data;
-          console.log(this.interaction);
         })
         .catch(e => {
+          this.show = false;
           throw e;
         });
     },
@@ -302,7 +338,6 @@ export default {
     ) {
       this.fetchClientInteractions();
     }
-    this.totalRows = this.interactions.length;
   }
 };
 </script>
