@@ -91,6 +91,16 @@
           <template #cell(job_title)="row">
             {{ row.item.job_title }}
           </template>
+          <template #cell(url_of_the_completed_jo)="row">
+            <span v-if="row.item.url_of_the_completed_jo">
+              <a :href="row.item.url_of_the_completed_jo" target="_blank">
+                {{ row.item.url_of_the_completed_jo }}
+              </a>
+            </span>
+            <span v-else-if="!row.item.url_of_the_completed_jo">
+              -
+            </span>
+          </template>
 
           <template #cell(actions)="row">
             <b-button
@@ -380,6 +390,7 @@ export default {
         job_title: "",
         total_time_consumed: "",
         job_description: "",
+        url_of_the_completed_jo: "",
         client: null
       },
       haveClient: false,
@@ -395,7 +406,7 @@ export default {
       },
       totalRows: 1,
       currentPage: 1,
-      perPage: 10,
+      perPage: 5,
       pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
       sortBy: "",
       sortDesc: false,
@@ -414,7 +425,8 @@ export default {
           sortable: true
         },
         { key: "job_title", sortable: true },
-        { key: "status", sortable: true},
+        { key: "url_of_the_completed_jo", sortable: true },
+        { key: "status", sortable: true },
         { key: "actions" }
       ]
     };
@@ -427,7 +439,10 @@ export default {
       this.currentPage = 1;
     },
     onlyNumbers: function() {
-       this.job.total_time_consumed = this.job.total_time_consumed.replace(/[^0-9.]/g,'');
+      this.job.total_time_consumed = this.job.total_time_consumed.replace(
+        /[^0-9.]/g,
+        ""
+      );
     },
     reset() {
       this.job.caller_interaction_record = null;
@@ -479,24 +494,12 @@ export default {
           console.log(err);
         });
     }, 700),
-    // async fetchJobOrders() {
-    //   this.isBusy = true;
-    //   let endpoint = `/api/v1/post-paid/job-order-general/?`;
-    //   return await this.$axios
-    //     .get(endpoint)
-    //     .then(res => {
-    //       this.jobOrders = res.data.results;
-    //       this.isBusy = false;
-    //     })
-    //     .catch(e => {
-    //       throw e;
-    //     });
-    // },
     async fetchJobOrders() {
       this.isBusy = true;
       await this.$store
         .dispatch("jobOrder/fetchJobOrders", this.pagination)
         .then(() => {
+          this.totalRows = this.jobOrders.length;
           this.isBusy = false;
         });
     },
@@ -641,7 +644,6 @@ export default {
     this.fetchMe();
     this.fetchJobOrders();
     // setTimeout(() => this.fetchJobOrders(), 1000);
-    this.totalRows = this.jobOrders.length;
   },
   watch: {
     ticketKeyword: debounce(function(oldKeyword, newKeyword) {

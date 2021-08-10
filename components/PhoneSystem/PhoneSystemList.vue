@@ -203,6 +203,7 @@ export default {
     async fetchPhoneSystems() {
       this.isBusy = true;
       await this.$store.dispatch("phoneSystem/fetchPhoneSystems", this.pagination).then(() => {
+        this.totalRows = this.phoneSystems.length;
         this.isBusy = false;
       });
     },
@@ -237,7 +238,6 @@ export default {
   },
   mounted() {
     this.fetchPhoneSystems();
-    this.totalRows = this.phoneSystems.length;
   }
 };
 </script>

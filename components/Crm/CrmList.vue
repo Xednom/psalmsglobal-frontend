@@ -209,6 +209,7 @@ export default {
     async fetchCrms() {
       this.isBusy = true;
       await this.$store.dispatch("crm/fetchCrms", this.pagination).then(() => {
+        this.totalRows = this.crms.length;
         this.isBusy = false;
       });
     },
@@ -243,7 +244,6 @@ export default {
   },
   mounted() {
     this.fetchCrms();
-    this.totalRows = this.crms.length;
   }
 };
 </script>

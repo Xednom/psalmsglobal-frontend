@@ -201,6 +201,7 @@ export default {
     async fetchScripts() {
       this.isBusy = true;
       await this.$store.dispatch("script/fetchScripts", this.pagination).then(() => {
+        this.totalRows = this.scripts.length;
         this.isBusy = false;
       });
     },
@@ -234,7 +235,6 @@ export default {
   },
   mounted() {
     this.fetchScripts();
-    this.totalRows = this.scripts.length;
   }
 };
 </script>

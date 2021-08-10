@@ -94,9 +94,7 @@
           </template>
 
           <template #cell(status)="row">
-            <b-badge variant="success" v-if="row.item.status"
-              >Active</b-badge
-            >
+            <b-badge variant="success" v-if="row.item.status">Active</b-badge>
             <b-badge variant="danger" v-else-if="!row.item.status"
               >Inactive</b-badge
             >
@@ -200,9 +198,12 @@ export default {
     },
     async fetchForms() {
       this.isBusy = true;
-      await this.$store.dispatch("form/fetchForms", this.pagination).then(() => {
-        this.isBusy = false;
-      });
+      await this.$store
+        .dispatch("form/fetchForms", this.pagination)
+        .then(() => {
+          this.totalRows = this.forms.length;
+          this.isBusy = false;
+        });
     },
     async fetchForm(id) {
       let endpoint = `/api/v1/form/${id}`;
@@ -235,7 +236,6 @@ export default {
   },
   mounted() {
     this.fetchForms();
-    this.totalRows = this.forms.length;
   }
 };
 </script>
