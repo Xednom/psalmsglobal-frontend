@@ -34,10 +34,14 @@
                           :ieCloseFix="false"
                           :data="companies"
                           :serializer="item => item.company_name"
-                          :value="keyword"
-                          @hit="getCompany"
-                          @input="onSearchInput"
+                          @hit="selectedCompany = $event"
+                          :disabledValues="
+                            selectedCompany
+                              ? [selectedCompany.company_name]
+                              : []
+                          "
                           placeholder="Search a Company"
+                          @input="getCompany"
                         />
                       </div>
                     </div>
@@ -70,12 +74,16 @@
                       </base-input>
                     </div>
                     <div class="col-lg-4">
-                      <base-input label="State" name="State" rules="required">
+                      <base-input
+                        label="State"
+                        name="State"
+                        rules="required"
+                        @change="fetchCounties"
+                      >
                         <el-select
                           v-model="callMe.property_state"
                           filterable
                           placeholder="Choose"
-                          :input="fetchCounties"
                         >
                           <el-option
                             v-for="option in states"
@@ -313,7 +321,7 @@
                   v-if="saving"
                   >Submit</base-button
                 >
-                <base-button type="primary" native-type="submit" v-else
+                <base-button type="primary" @click="save" v-else
                   >Submit</base-button
                 >
               </b-tab>
@@ -360,7 +368,6 @@ export default {
       interestedToBuys: "postPaidCustomerInteraction/interestedToBuys",
       interestedToSells: "postPaidCustomerInteraction/interestedToSells",
       generalCalls: "postPaidCustomerInteraction/generalCalls",
-      user: "user/user",
       client: "user/company"
     }),
     async getCallMeInfo() {
@@ -383,7 +390,7 @@ export default {
       }
     },
     async fetchCounties() {
-      let endpoint = `/api/v1/county/?search=${this.state}`;
+      let endpoint = `/api/v1/county/?search=${this.callMe.property_state}`;
       try {
         await this.$axios.get(endpoint).then(res => {
           this.counties = res.data;
@@ -579,6 +586,8 @@ export default {
       error: "",
       interaction: {},
       clientUser: {},
+      staffUser: {},
+      user: {},
       isBusy: false,
       saving: false,
       loadingCounties: false,
@@ -605,7 +614,6 @@ export default {
     ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
     eventChild(form) {
       console.log("Event from child component emitted", (this.form = form));
-      console.log(this.form);
     },
     onSearchInput(text) {
       this.keyword = text;
@@ -668,9 +676,43 @@ export default {
           this.isBusy = false;
         });
     },
+    async fetchStaff(id) {
+      let endpoint = `/api/auth/staff/${id}/`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          this.staffUser = res.data;
+        });
+      } catch (err) {
+        console.error(err.response.data);
+      }
+    },
+    async fetchMe() {
+      try {
+        let endpoint = `api/auth/users/me/`;
+        await this.$axios.get(endpoint).then(res => {
+          this.user = res.data;
+          if (this.$auth.user.designation_category == "staff") {
+            this.fetchStaff(this.user.id);
+          }
+        });
+      } catch (e) {
+        throw e;
+      }
+    },
     async save() {
+      const formArray = [
+        {
+          form_title: this.form.form_title,
+          company: this.form.company,
+          attribute_forms: this.form.attribute_forms,
+          original_script: false,
+          mailing_lists: this.form.mailing_lists,
+          status: true
+        }
+      ];
       const interactionPayload = {
         company: this.company,
+        agent: this.staffUser.id,
         apn: this.apn,
         state: this.callMe.property_state,
         county: this.callMe.property_county,
@@ -686,9 +728,8 @@ export default {
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm,
         script_answer: this.script_answer,
-        customer_interaction_post_paid_forms: Array(this.form)
+        customer_interaction_post_paid_forms: formArray
       };
-
       if (this.$auth.user.designation_category == "staff") {
         try {
           this.saving = true;
@@ -699,13 +740,13 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch((e) => {
+            .catch(e => {
               this.saving = false;
               this.error = e.response.data;
               this.errorMessage("danger", this.error);
             });
         } catch (e) {
-          throw(e);
+          throw e;
         }
         this.saving = false;
       }
@@ -770,15 +811,7 @@ export default {
     this.fetchInterestedToBuy();
     this.fetchGeneralCalls();
     this.fetchStates();
-  },
-  watch: {
-    keyword: debounce(function(oldKeyword, newKeyword) {
-      if (newKeyword !== "" && newKeyword !== oldKeyword) {
-        this.getCompany();
-      } else if (!newKeyword) {
-        this.companies = [];
-      }
-    }, 500)
+    this.fetchMe();
   }
 };
 </script>

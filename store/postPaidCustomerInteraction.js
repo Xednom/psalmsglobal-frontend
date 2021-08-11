@@ -1,6 +1,7 @@
 const blankState = {
   ticket_number: "",
   company: null,
+  agent: null,
   apn: "",
   reference_number: "",
   county: "",
@@ -38,6 +39,7 @@ export const state = () => ({
 export const getters = {
   ticket_number: state => state.ticket_number,
   company: state => state.company,
+  agent: state => state.agent,
   apn: state => state.apn,
   reference_number: state => state.reference_number,
   county: state => state.county,
