@@ -214,20 +214,13 @@ export default {
         this.setBasicStoreValue("status", value);
       }
     },
-    original_script: {
-      get() {
-        return this.$store.getters["form/original_script"];
-      },
-      set(value) {
-        this.setBasicStoreValue("original_script", value);
-      }
-    }
   },
   data() {
     return {
       query: "",
       companies: [],
       selectedCompany: null,
+      originalScript: true,
       isBusy: false,
       saving: false,
       modals: {
@@ -271,7 +264,7 @@ export default {
         form_title: this.form_title,
         attribute_forms: this.attribute_forms,
         mailing_lists: this.mailing_lists,
-        original_script: this.original_script
+        original_script: this.originalScript
       };
 
       if (
