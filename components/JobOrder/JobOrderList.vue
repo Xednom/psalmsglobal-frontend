@@ -419,6 +419,8 @@ export default {
         content: ""
       },
       fields: [
+        { key: "client", sortable: true },
+        { key: "agent_code", sortable: true },
         {
           key: "ticket_number",
           label: "Job order ticket number",
