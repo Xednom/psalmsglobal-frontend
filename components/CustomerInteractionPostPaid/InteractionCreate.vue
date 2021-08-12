@@ -740,10 +740,9 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch(e => {
+            .catch((err) => {
               this.saving = false;
-              this.error = e.response.data;
-              this.errorMessage("danger", this.error);
+              this.errorMessage("danger", err.response.data);
             });
         } catch (e) {
           throw e;

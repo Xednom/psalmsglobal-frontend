@@ -125,7 +125,7 @@
       </b-container>
 
       <!--Classic modal-->
-      <modal size="lg" :show.sync="modals.form">
+      <!-- <modal size="lg" :show.sync="modals.form">
         <h6 slot="header" class="modal-title">
           Script information for {{ form.company }} - {{ form.form_title }}
         </h6>
@@ -154,7 +154,7 @@
           @click="copyThreadInfoToClipboard('form-script')"
           >Copy to clipboard</b-button
         >
-      </modal>
+      </modal> -->
       <div class="container mt-5" v-if="form.attribute_forms">
         <h3>
           Script information for {{ form.company }} - {{ form.form_title }}
