@@ -69,7 +69,7 @@
                           "
                           placeholder="Search a Company"
                           @input="getCompany"
-                          :disabled="clientDisable"
+                          disabled
                         />
                       </div>
                     </div>
@@ -84,7 +84,7 @@
                           v-model="interaction.apn"
                           name="APN"
                           rules="required"
-                          :disabled="clientDisable"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -96,6 +96,7 @@
                           v-model="interaction.reference_number"
                           name="Reference number"
                           rules="required"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -106,6 +107,7 @@
                             filterable
                             placeholder="Choose"
                             @change="fetchCounties"
+                            disabled
                           >
                             <el-option
                               v-for="option in states"
@@ -127,6 +129,7 @@
                             v-model="interaction.county"
                             filterable
                             placeholder="Choose"
+                            disabled
                           >
                             <el-option
                               v-for="option in counties"
@@ -145,6 +148,7 @@
                             id="address"
                             rows="3"
                             v-model="interaction.address"
+                            disabled
                           ></textarea>
                         </base-input>
                       </div>
@@ -161,7 +165,7 @@
                           v-model="interaction.caller_full_name"
                           name="Caller full name"
                           rules="required"
-                          :disabled="clientDisable"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -172,7 +176,7 @@
                           v-model="interaction.caller_phone"
                           name="Caller phone"
                           rules="required"
-                          :disabled="clientDisable"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -184,7 +188,7 @@
                           name="Email"
                           v-model="interaction.email"
                           :rules="{ required: true, email: true }"
-                          :disabled="clientDisable"
+                          disabled
                         >
                         </base-input>
                       </div>
@@ -243,7 +247,7 @@
                             filterable
                             placeholder="Choose"
                             rules="required"
-                            :disabled="clientDisable"
+                            disabled
                           >
                             <el-option
                               v-for="option in generalCalls"
@@ -268,7 +272,7 @@
                             filterable
                             placeholder="Choose"
                             rules="required"
-                            :disabled="clientDisable"
+                            disabled
                           >
                             <el-option
                               v-for="option in interestedToBuys"
@@ -287,7 +291,7 @@
                             filterable
                             placeholder="Choose"
                             rules="required"
-                            :disabled="clientDisable"
+                            disabled
                           >
                             <el-option
                               v-for="option in interestedToSells"
@@ -310,7 +314,7 @@
                             id="notes"
                             rows="3"
                             v-model="interaction.reason_of_the_call"
-                            :disabled="clientDisable"
+                            disabled
                           ></textarea>
                         </base-input>
                       </div>
@@ -375,6 +379,7 @@
                           v-model="form.input_question"
                           id=""
                           cols="30"
+                          disabled
                         ></textarea>
                       </div>
                     </div>
@@ -450,13 +455,14 @@ export default {
       user: "user/user",
       client: "user/company"
     }),
-    clientDisable() {
-      if (this.$auth.user.designation_category == "staff") {
+    fieldDisable() {
+      console.log(this.interaction);
+      if (this.interaction) {
         return false;
       } else {
         return true;
       }
-    }
+    },
   },
   data() {
     return {
@@ -517,6 +523,7 @@ export default {
           console.log(err);
         });
     }, 700),
+    
     async fetchInteraction(payload) {
       this.loading = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${payload}/`;
