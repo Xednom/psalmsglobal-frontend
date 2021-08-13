@@ -155,41 +155,45 @@
           >Copy to clipboard</b-button
         >
       </modal> -->
-      <div class="container mt-5" v-if="form.attribute_forms">
-        <h3>
-          Script information for {{ form.company }} - {{ form.form_title }}
-        </h3>
-        <div id="form-script" class="col-lg-12">
-          <b-card-text>
-            <div
-              class="mb-3"
-              v-for="(form, index) in form.attribute_forms"
-              :key="index"
-            >
-              <div class="mt-5" v-if="form.data_type == 'text'">
-                <span>
-                  <strong><div v-dompurify-html="form.value_text"></div></strong>
-                </span>
+      <b-overlay :show="loading" rounded="sm">
+        <div class="container mt-5" v-if="form.attribute_forms">
+          <h3>
+            Script information for {{ form.company }} - {{ form.form_title }}
+          </h3>
+          <div id="form-script" class="col-lg-12">
+            <b-card-text>
+              <div
+                class="mb-3"
+                v-for="(form, index) in form.attribute_forms"
+                :key="index"
+              >
+                <div class="mt-5" v-if="form.data_type == 'text'">
+                  <span>
+                    <strong
+                      ><div v-dompurify-html="form.value_text"></div
+                    ></strong>
+                  </span>
+                </div>
+                <div class="mb-3" v-else-if="form.data_type == 'question'">
+                  <p>
+                    <span v-dompurify-html="form.value_question"></span>
+                    <textarea
+                      class="form-control"
+                      name="input-question"
+                      v-model="form.input_question"
+                      id=""
+                      cols="30"
+                    ></textarea>
+                  </p>
+                </div>
               </div>
-              <div class="mb-3" v-else-if="form.data_type == 'question'">
-                <p>
-                  <span v-dompurify-html="form.value_question"></span>
-                  <textarea
-                    class="form-control"
-                    name="input-question"
-                    v-model="form.input_question"
-                    id=""
-                    cols="30"
-                  ></textarea>
-                </p>
-              </div>
-            </div>
-            <b-button class="mb-3" variant="success" @click="emitForm"
-              >Save</b-button
-            >
-          </b-card-text>
+              <b-button class="mb-3" variant="success" @click="emitForm"
+                >Save</b-button
+              >
+            </b-card-text>
+          </div>
         </div>
-      </div>
+      </b-overlay>
     </div>
   </div>
 </template>
@@ -240,6 +244,7 @@ export default {
       forms: [],
       isBusy: false,
       saving: false,
+      loading: false,
       modals: {
         form: false
       },
@@ -274,7 +279,7 @@ export default {
         .catch(e => {
           throw e;
         });
-    },
+    }
   },
   methods: {
     // ...mapActions("crm", ["updateCompany"]),
@@ -295,14 +300,17 @@ export default {
       this.copySuccess("success");
     },
     async fetchForm(id) {
+      this.loading = true;
       let endpoint = `/api/v1/form/${id}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
+          this.loading = false;
           this.form = res.data;
           this.form.original_script = false;
         })
         .catch(e => {
+          this.loading = false;
           throw e;
         });
     },
