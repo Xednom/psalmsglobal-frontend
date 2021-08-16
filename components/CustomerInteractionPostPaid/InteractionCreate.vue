@@ -230,7 +230,6 @@
                       placeholder="Email"
                       name="Email"
                       v-model="email"
-                      :rules="{ required: true, email: true }"
                     >
                     </base-input>
                   </div>
@@ -742,6 +741,7 @@ export default {
             })
             .catch((err) => {
               this.saving = false;
+              console.log(err);
               this.errorMessage("danger", err.response.data);
             });
         } catch (e) {
