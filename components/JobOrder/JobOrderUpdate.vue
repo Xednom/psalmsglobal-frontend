@@ -206,6 +206,7 @@ export default {
           { value: "follow_up", label: "Follow up" },
           { value: "dispute", label: "Dispute" },
           { value: "complete", label: "Complete" },
+          { value: "job_closed", label: "Job closed" },
           { value: "under_quality_review", label: "Under Quality Review" },
           { value: "daily_tasks", label: "Daily Tasks" },
           { value: "weekly_tasks", label: "Weekly Tasks" },
