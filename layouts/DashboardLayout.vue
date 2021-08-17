@@ -115,7 +115,7 @@
               $auth.user.designation_category == 'affiliate_partner'
           "
           :link="{
-            name: 'Minutes report',
+            name: 'CI Minutes Summary Overview',
             icon: 'ni ni-archive-2',
             path: '/call-log-report'
           }"
@@ -128,7 +128,7 @@
                 $auth.user.account_type == 'post_paid')
           "
           :link="{
-            name: 'General Job Order minutes Report',
+            name: 'General Request and Other Overview',
             icon: 'ni ni-bullet-list-67',
             path: '/job-order'
           }"

@@ -338,7 +338,7 @@
                 </form>
               </validation-observer>
             </b-tab>
-            <b-tab lazy title="Call log report" :disabled="loading">
+            <b-tab lazy title="CI Summary Overview" :disabled="loading">
               <interaction-record-list
                 :interactionRecord="interaction"
               ></interaction-record-list>

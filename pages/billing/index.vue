@@ -18,10 +18,10 @@
           <b-tab title="Account balance" :title-link-class="linkClass(0)"
             ><balance-list></balance-list
           ></b-tab>
-          <b-tab title="Call log summary" :title-link-class="linkClass(1)"
+          <b-tab title="CI Minutes Summary Overview" :title-link-class="linkClass(1)"
             ><report-list></report-list
           ></b-tab>
-          <b-tab title="Monthly Charge" :title-link-class="linkClass(2)"
+          <b-tab title="Plan Summary and Payments" :title-link-class="linkClass(2)"
             ><charge-list></charge-list
           ></b-tab>
         </b-tabs>
