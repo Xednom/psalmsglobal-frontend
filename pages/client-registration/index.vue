@@ -116,7 +116,7 @@
                     </el-select>
                   </base-input>
 
-                  <base-input label="Account type" name="Account Type" :rules="{ required: true }">
+                  <base-input label="Account type" name="Account Type">
                   <b-alert variant="success" show>Currently we're accepting Postpaid accounts.</b-alert>
                     <el-select
                       v-model="register.account_type"
