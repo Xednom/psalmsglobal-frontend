@@ -320,7 +320,7 @@
                   v-if="saving"
                   >Submit</base-button
                 >
-                <base-button type="primary" @click="save" v-else
+                <base-button type="primary" native-type="submit" v-else
                   >Submit</base-button
                 >
               </b-tab>
