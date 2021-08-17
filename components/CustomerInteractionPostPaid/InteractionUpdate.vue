@@ -22,7 +22,7 @@
         </div>
         <b-alert
           show
-          variant="primary"
+          variant="danger"
           v-if="$auth.user.designation_category == 'staff'"
         >
           <h4 class="alert-heading">Memo!</h4>
