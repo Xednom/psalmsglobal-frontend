@@ -133,6 +133,13 @@
             path: '/job-order'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Account files',
+            icon: 'ni ni-archive-2',
+            path: '/account-files'
+          }"
+        />
       </template>
     </side-bar>
     <div class="main-content">
