@@ -234,6 +234,7 @@ export default {
         .then(res => {
           this.isBusy = false;
           this.planDetails = res.data.results;
+          this.totalRows = this.planDetails.length;
         })
         .catch(e => {
           this.isBusy = false;
@@ -270,7 +271,6 @@ export default {
   },
   mounted() {
     this.fetchPlanDetails();
-    this.totalRows = this.planDetails.length;
   }
 };
 </script>

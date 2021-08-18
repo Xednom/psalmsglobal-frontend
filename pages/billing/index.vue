@@ -15,13 +15,20 @@
     <div>
       <b-card no-body>
         <b-tabs v-model="tabIndex" card>
-          <b-tab title="Account balance" :title-link-class="linkClass(0)"
+          <b-tab title="Plan Details" :title-link-class="linkClass(0)">
+            <plan-list></plan-list>
+          </b-tab>
+          <b-tab title="Account balance" :title-link-class="linkClass(1)"
             ><balance-list></balance-list
           ></b-tab>
-          <b-tab title="Month to Month Minutes Overview" :title-link-class="linkClass(1)"
+          <b-tab
+            title="Month to Month Minutes Overview"
+            :title-link-class="linkClass(2)"
             ><report-list></report-list
           ></b-tab>
-          <b-tab title="Plan Summary and Payments" :title-link-class="linkClass(2)"
+          <b-tab
+            title="Plan Summary and Payments"
+            :title-link-class="linkClass(3)"
             ><charge-list></charge-list
           ></b-tab>
         </b-tabs>
@@ -34,12 +41,15 @@
 import BalanceList from "@/components/AccountBalance/BalanceList.vue";
 import ReportList from "@/components/MinutesReportPostpaid/MinutesReportList.vue";
 import ChargeList from "@/components/MonthlyChargePostPaid/MonthlyChargeList.vue";
+import PlanList from "@/components/PlanDetails/PlanList.vue";
+
 export default {
   layout: "DashboardLayout",
   components: {
     BalanceList,
     ReportList,
-    ChargeList
+    ChargeList,
+    PlanList
   },
   data() {
     return {
