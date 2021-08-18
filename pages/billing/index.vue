@@ -18,7 +18,7 @@
           <b-tab title="Account balance" :title-link-class="linkClass(0)"
             ><balance-list></balance-list
           ></b-tab>
-          <b-tab title="CI Minutes Summary Overview" :title-link-class="linkClass(1)"
+          <b-tab title="Month to Month Minutes Overview" :title-link-class="linkClass(1)"
             ><report-list></report-list
           ></b-tab>
           <b-tab title="Plan Summary and Payments" :title-link-class="linkClass(2)"
