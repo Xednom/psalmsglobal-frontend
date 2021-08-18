@@ -17,7 +17,7 @@
         <div slot="footer">
           <div class="pull-right mt-3 mb-3">
             <base-button
-              v-if="!loading"
+              v-if="!posting"
               native-type="submit"
               slot="footer"
               type="primary"
@@ -84,28 +84,26 @@ export default {
   data() {
     return {
       loading: false,
+      posting: false,
       saving: false,
       error: ""
     };
   },
   methods: {
     async refresh(payload) {
-      this.loading = true;
       let endpoint = `/api/v1/post-paid/job-order-general/${payload}/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
-          this.loading = false;
           this.job = res.data;
         })
         .catch(e => {
-          this.loading = false;
           console.log(e);
           throw e;
         });
     },
     async save() {
-      this.loading = true;
+      this.posting = true;
       if (
         this.$auth.user.designation_category == "new_client" ||
         this.$auth.user.designation_category == "current_client" ||
@@ -118,7 +116,7 @@ export default {
               comment: this.comment
             })
             .then(() => {
-              this.loading = false;
+              this.posting = false;
               this.success = true;
               this.comment = "";
               this.refresh(this.job.ticket_number);
@@ -126,7 +124,7 @@ export default {
         } catch (err) {
           console.log(err);
           this.success = false;
-          this.loading = false;
+          this.posting = false;
           this.error = err.response.data;
           this.errorMessage("danger", this.error);
         }
