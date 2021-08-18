@@ -379,6 +379,7 @@ export default {
     return {
       ticketKeyword: "",
       clientKeyword: "",
+      clientEmail: "",
       jobOrder: {},
       // jobOrders: [],
       callerInteractions: [],
@@ -490,6 +491,10 @@ export default {
         .get(`/api/auth/client-code/?search=${this.job.client}`)
         .then(res => {
           this.clientCodes = res.data.results;
+          this.clientCodes.forEach(item => {
+            console.log(item.client_email);
+            this.clientEmail = item.client_email;
+          })
           console.log(this.clientCodes);
         })
         .catch(err => {
@@ -586,6 +591,7 @@ export default {
         const jobOrderPayload = {
           caller_interaction_record: this.job.caller_interaction_record,
           client: this.job.client,
+          client_email: this.clientEmail,
           va_assigned: [this.staff.id],
           request_date: this.job.request_date,
           due_date: this.job.due_date,
