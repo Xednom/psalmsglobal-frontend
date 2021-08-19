@@ -18,7 +18,9 @@
                   >
                     Total minutes
                   </h5>
-                  <span class="h2 font-weight-bold mb-0 text-white"> {{ subTotal }} </span>
+                  <span class="h2 font-weight-bold mb-0 text-white">
+                    {{ subTotal }}
+                  </span>
                 </div>
                 <div class="col-auto">
                   <div
@@ -134,6 +136,24 @@
             </div>
           </template>
 
+          <template #cell(payment_reference)="row">
+            <div v-if="row.item.payment_reference">
+              {{ row.item.payment_reference }}
+            </div>
+            <div v-else>
+              -
+            </div>
+          </template>
+
+          <template #cell(date_paid)="row">
+            <div v-if="row.item.date_paid">
+              {{ row.item.date_paid }}
+            </div>
+            <div v-else>
+              -
+            </div>
+          </template>
+
           <template #cell(actions)="row">
             <b-button
               size="sm"
@@ -244,7 +264,8 @@ export default {
         { key: "cost_of_plan", sortable: true },
         { key: "total_minutes", sortable: true },
         { key: "payment_status", sortable: true },
-        { key: "payment_reference", sortable: true }
+        { key: "payment_reference", sortable: true },
+        { key: "date_paid", sortable: true }
       ]
     };
   },
