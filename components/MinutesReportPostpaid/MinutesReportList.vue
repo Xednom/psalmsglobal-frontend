@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header bg-transparent border-0">
-        <h3 class="mb-0">CI Minutes Summary Overview</h3>
+        <h3 class="mb-0">Month to Month Minutes Overview</h3>
       </div>
       <b-container fluid>
         <!-- User Interface controls -->
@@ -88,6 +88,15 @@
             </div>
             <div v-else>
               <b-icon icon="x-circle-fill" variant="danger"></b-icon>
+            </div>
+          </template>
+
+          <template #cell(monthly_usage)="row">
+            <div v-if="row.item.recurring_bill">
+              <b-icon icon="check-circle-fill" variant="success"></b-icon>
+            </div>
+            <div v-else>
+              -
             </div>
           </template>
 
@@ -199,9 +208,9 @@ export default {
       fields: [
         { key: "month_year", label: "Month/Year", sortable: true },
         { key: "plan_type", sortable: true },
-        { key: "plan_allocated_minutes", sortable: true },
         { key: "cost_of_plan", sortable: true },
-        { key: "monthly_usage", sortable: true },
+        { key: "plan_allocated_minutes", sortable: true },
+        { key: "monthly_usage", label:"Consumed minutes", sortable: true },
         { key: "total_minutes_unused", sortable: true }
       ]
     };
