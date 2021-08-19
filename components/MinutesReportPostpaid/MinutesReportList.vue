@@ -199,6 +199,7 @@ export default {
       fields: [
         { key: "month_year", label: "Month/Year", sortable: true },
         { key: "plan_type", sortable: true },
+        { key: "plan_allocated_minutes", sortable: true },
         { key: "cost_of_plan", sortable: true },
         { key: "monthly_usage", sortable: true },
         { key: "total_minutes_unused", sortable: true }
