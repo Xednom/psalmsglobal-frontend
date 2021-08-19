@@ -92,8 +92,8 @@
           </template>
 
           <template #cell(monthly_usage)="row">
-            <div v-if="row.item.recurring_bill">
-              <b-icon icon="check-circle-fill" variant="success"></b-icon>
+            <div v-if="row.item.monthly_usage">
+              {{ row.item.monthly_usage }}
             </div>
             <div v-else>
               -
