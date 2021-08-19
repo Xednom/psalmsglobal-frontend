@@ -31,6 +31,10 @@
             :title-link-class="linkClass(3)"
             ><charge-list></charge-list
           ></b-tab>
+          <b-tab title="Customer Registration Info"
+           :title-link-class="linkClass(4)">
+            <subscription-list></subscription-list>
+          </b-tab>
         </b-tabs>
       </b-card>
     </div>
@@ -42,6 +46,7 @@ import BalanceList from "@/components/AccountBalance/BalanceList.vue";
 import ReportList from "@/components/MinutesReportPostpaid/MinutesReportList.vue";
 import ChargeList from "@/components/MonthlyChargePostPaid/MonthlyChargeList.vue";
 import PlanList from "@/components/PlanDetails/PlanList.vue";
+import SubscriptionList from "@/components/Subscription/SubscriptionList.vue";
 
 export default {
   layout: "DashboardLayout",
@@ -49,7 +54,8 @@ export default {
     BalanceList,
     ReportList,
     ChargeList,
-    PlanList
+    PlanList,
+    SubscriptionList
   },
   data() {
     return {
