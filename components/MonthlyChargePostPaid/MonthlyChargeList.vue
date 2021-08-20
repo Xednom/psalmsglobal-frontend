@@ -282,6 +282,7 @@ export default {
         await this.$store
           .dispatch("monthlyCharge/fetchMontlhyCharges", this.pagination)
           .then(() => {
+            this.totalRows = this.monthlyCharges.length;
             this.isBusy = false;
           });
       } catch (e) {
@@ -307,7 +308,6 @@ export default {
   },
   mounted() {
     this.fetchMonthlyCharges();
-    this.totalRows = this.monthlyCharges.length;
   }
 };
 </script>

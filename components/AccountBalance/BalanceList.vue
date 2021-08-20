@@ -255,6 +255,7 @@ export default {
         await this.$store
           .dispatch("accountBalance/fetchAccountBalances", this.pagination)
           .then(() => {
+            this.totalRows = this.accountBalances.length;
             this.isBusy = false;
           });
       } catch (e) {
@@ -299,7 +300,6 @@ export default {
   },
   mounted() {
     this.fetchAccountBalances();
-    this.totalRows = this.accountBalances.length;
   }
 };
 </script>

@@ -228,6 +228,7 @@ export default {
         await this.$store
           .dispatch("minuteReport/fetchMinuteReports", this.pagination)
           .then(() => {
+            this.totalRows = this.minuteReports.length;
             this.isBusy = false;
           });
       } catch (e) {
@@ -253,7 +254,6 @@ export default {
   },
   mounted() {
     this.fetchMinuteReports();
-    this.totalRows = this.minuteReports.length;
   }
 };
 </script>
