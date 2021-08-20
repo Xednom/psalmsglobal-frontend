@@ -72,12 +72,6 @@
           @filtered="onFiltered"
           responsive
         >
-          <template #cell(company)="row">
-            <i class="ni ni-building"></i>
-            <nuxt-link :to="'/script/' + row.item.id">{{
-              row.item.company
-            }}</nuxt-link>
-          </template>
           <template #cell(from)="row">
             {{ row.item.form_scripts }}
           </template>
