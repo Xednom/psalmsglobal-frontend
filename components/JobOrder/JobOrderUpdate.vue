@@ -108,7 +108,7 @@
                       name="Job title"
                       v-model="jobOrder.job_title"
                       :rules="{ required: true }"
-                      disabled
+                      :disabled="jobOrder.status == 'complete'"
                     >
                     </base-input>
                   </div>
@@ -120,7 +120,7 @@
                         rows="3"
                         v-model="jobOrder.job_description"
                         :rules="{ required: true }"
-                        disabled
+                        :disabled="jobOrder.status == 'complete'"
                       ></textarea>
                     </base-input>
                   </div>
