@@ -8,7 +8,7 @@
         <!-- User Interface controls -->
 
         <b-row>
-          <b-col lg="2" class="my-1">
+          <b-col lg="3" class="my-1">
             <stats-card class="bg-gradient-default">
               <!-- Card body -->
               <div class="row">
@@ -27,6 +27,30 @@
                     class="icon icon-shape bg-white text-dark rounded-circle shadow"
                   >
                     <i class="ni ni-watch-time"></i>
+                  </div>
+                </div>
+              </div>
+            </stats-card>
+          </b-col>
+          <b-col lg="3" class="my-1">
+            <stats-card class="bg-gradient-success">
+              <!-- Card body -->
+              <div class="row">
+                <div class="col">
+                  <h5
+                    class="card-title text-uppercase text-muted mb-0 text-white"
+                  >
+                    Total cost of plan
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0 text-white">
+                    ${{ subTotalCostOfPlan }}
+                  </span>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                  >
+                    <i class="ni ni-money-coins"></i>
                   </div>
                 </div>
               </div>
@@ -235,7 +259,12 @@ export default {
       return this.monthlyCharges.reduce((acc, item) => {
         return acc + parseInt(item.total_minutes);
       }, 0);
-    }
+    },
+    subTotalCostOfPlan: function() {
+      return this.monthlyCharges.reduce((acc, item) => {
+        return acc + parseInt(item.cost_of_plan);
+      }, 0);
+    },
   },
   data() {
     return {
