@@ -66,7 +66,7 @@
               $auth.user.designation_category != 'staff'
           "
           :link="{
-            name: 'Postpaid',
+            name: 'Postpaid - Customer Interaction Board',
             icon: 'ni ni-single-copy-04 text-pink'
           }"
         >
@@ -76,6 +76,18 @@
               path: '/post-paid/customer-interaction'
             }"
           />
+        </sidebar-item>
+
+        <sidebar-item
+          v-if="
+            $auth.user.account_type == 'postpaid' &&
+              $auth.user.designation_category != 'staff'
+          "
+          :link="{
+            name: 'Postpaid - billing',
+            icon: 'ni ni-money-coins'
+          }"
+        >
           <sidebar-item
             :link="{
               name: 'Billing',
