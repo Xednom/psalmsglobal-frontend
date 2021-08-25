@@ -8,6 +8,106 @@
         <!-- User Interface controls -->
 
         <b-row>
+          <b-col lg="3" class="my-1">
+            <stats-card class="bg-gradient-default">
+              <!-- Card body -->
+              <div class="row">
+                <div class="col">
+                  <h5
+                    class="card-title text-uppercase text-muted mb-0 text-white"
+                  >
+                    Total CI minutes overview
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0 text-white">
+                    {{ subCiTotal }}
+                  </span>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                  >
+                    <i class="ni ni-watch-time"></i>
+                  </div>
+                </div>
+              </div>
+            </stats-card>
+          </b-col>
+          <b-col lg="3" class="my-1">
+            <stats-card class="bg-gradient-default">
+              <!-- Card body -->
+              <div class="row">
+                <div class="col">
+                  <h5
+                    class="card-title text-uppercase text-muted mb-0 text-white"
+                  >
+                    General request total minutes
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0 text-white">
+                    {{ subGeneralTotal }}
+                  </span>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                  >
+                    <i class="ni ni-watch-time"></i>
+                  </div>
+                </div>
+              </div>
+            </stats-card>
+          </b-col>
+          <b-col lg="3" class="my-1">
+            <stats-card class="bg-gradient-default">
+              <!-- Card body -->
+              <div class="row">
+                <div class="col">
+                  <h5
+                    class="card-title text-uppercase text-muted mb-0 text-white"
+                  >
+                    Total mins consumed
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0 text-white">
+                    {{ subTotalMins }}
+                  </span>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                  >
+                    <i class="ni ni-watch-time"></i>
+                  </div>
+                </div>
+              </div>
+            </stats-card>
+          </b-col>
+
+          <b-col lg="3" class="my-1">
+            <stats-card class="bg-gradient-success">
+              <!-- Card body -->
+              <div class="row">
+                <div class="col">
+                  <h5
+                    class="card-title text-uppercase text-muted mb-0 text-white"
+                  >
+                    Total cost of plan
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0 text-white">
+                    ${{ subTotalCost }}
+                  </span>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                  >
+                    <i class="ni ni-money-coins"></i>
+                  </div>
+                </div>
+              </div>
+            </stats-card>
+          </b-col>
+        </b-row>
+
+        <b-row>
           <b-col sm="5" md="6" class="my-1">
             <b-form-group
               label="Per page"
@@ -80,6 +180,31 @@
           </template>
           <template #cell(from)="row">
             {{ row.item.form_scripts }}
+          </template>
+          <template #cell(general_request_total_minutes)="row">
+            <span v-if="row.item.general_request_total_minutes">
+              {{ row.item.general_request_total_minutes }}
+            </span>
+            <span v-else>
+              -
+            </span>
+          </template>
+
+          <template #cell(ci_minutes_overview)="row">
+            <span v-if="row.item.ci_minutes_overview">
+              {{ row.item.ci_minutes_overview }}
+            </span>
+            <span v-else>
+              -
+            </span>
+          </template>
+          <template #cell(cost_of_plan)="row">
+            <span v-if="row.item.cost_of_plan">
+              ${{ row.item.cost_of_plan }}
+            </span>
+            <span v-else>
+              -
+            </span>
           </template>
 
           <template #cell(recurring_bill)="row">
@@ -182,7 +307,27 @@ export default {
       pagination: "minuteReport/minuteReportsPagination",
       user: "user/user",
       client: "user/clientUser"
-    })
+    }),
+    subCiTotal: function() {
+      return this.minuteReports.reduce((acc, item) => {
+        return acc + parseInt(item.ci_minutes_overview);
+      }, 0);
+    },
+    subGeneralTotal: function() {
+      return this.minuteReports.reduce((acc, item) => {
+        return acc + parseInt(item.general_request_total_minutes);
+      }, 0);
+    },
+    subTotalMins: function() {
+      return this.minuteReports.reduce((acc, item) => {
+        return acc + parseInt(item.monthly_usage);
+      }, 0);
+    },
+    subTotalCost: function() {
+      return this.minuteReports.reduce((acc, item) => {
+        return acc + parseInt(item.cost_of_plan);
+      }, 0);
+    },
   },
   data() {
     return {
@@ -210,6 +355,8 @@ export default {
         { key: "plan_type", sortable: true },
         { key: "cost_of_plan", sortable: true },
         { key: "plan_allocated_minutes", sortable: true },
+        { key: "ci_minutes_overview", sortable: true },
+        { key: "general_request_total_minutes", sortable: true },
         { key: "monthly_usage", label:"Consumed minutes", sortable: true },
         { key: "total_minutes_unused", sortable: true }
       ]
