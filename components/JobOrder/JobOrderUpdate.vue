@@ -78,7 +78,7 @@
                       name="Total time consumed"
                       v-model="jobOrder.total_time_consumed"
                       :rules="{ required: true }"
-                      disabled
+                      :disabled="jobOrder.status == 'complete'"
                     >
                     </base-input>
                   </div>
