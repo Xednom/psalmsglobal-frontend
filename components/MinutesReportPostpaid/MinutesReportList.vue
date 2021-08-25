@@ -16,10 +16,10 @@
                   <h5
                     class="card-title text-uppercase text-muted mb-0 text-white"
                   >
-                    Total CI minutes overview
+                    Total Allocated minutes
                   </h5>
                   <span class="h2 font-weight-bold mb-0 text-white">
-                    {{ subCiTotal }}
+                    {{ totalAllocatedMinutes }}
                   </span>
                 </div>
                 <div class="col-auto">
@@ -40,10 +40,10 @@
                   <h5
                     class="card-title text-uppercase text-muted mb-0 text-white"
                   >
-                    General request total minutes
+                    Total minutes unused
                   </h5>
                   <span class="h2 font-weight-bold mb-0 text-white">
-                    {{ subGeneralTotal }}
+                    {{ subTotalUnusedMins }}
                   </span>
                 </div>
                 <div class="col-auto">
@@ -308,9 +308,9 @@ export default {
       user: "user/user",
       client: "user/clientUser"
     }),
-    subCiTotal: function() {
+    totalAllocatedMinutes: function() {
       return this.minuteReports.reduce((acc, item) => {
-        return acc + parseInt(item.ci_minutes_overview);
+        return acc + parseInt(item.plan_allocated_minutes);
       }, 0);
     },
     subGeneralTotal: function() {
@@ -326,6 +326,11 @@ export default {
     subTotalCost: function() {
       return this.minuteReports.reduce((acc, item) => {
         return acc + parseInt(item.cost_of_plan);
+      }, 0);
+    },
+    subTotalUnusedMins: function() {
+      return this.minuteReports.reduce((acc, item) => {
+        return acc + parseInt(item.total_minutes_unused);
       }, 0);
     },
   },
