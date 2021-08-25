@@ -78,7 +78,7 @@
                       name="Total time consumed"
                       v-model="jobOrder.total_time_consumed"
                       :rules="{ required: true }"
-                      :disabled="jobOrder.status == 'complete'"
+                      :disabled="jobOrder.status == 'complete' || $auth.user.designation_category != 'staff'"
                     >
                     </base-input>
                   </div>
@@ -89,6 +89,7 @@
                         filterable
                         placeholder="Choose a Ticket"
                         rules="required"
+                        :disabled="jobOrder.status == 'complete'"
                       >
                         <el-option
                           v-for="option in StatusChoices.status"
@@ -108,7 +109,7 @@
                       name="Job title"
                       v-model="jobOrder.job_title"
                       :rules="{ required: true }"
-                      :disabled="jobOrder.status == 'complete'"
+                      disabled
                     >
                     </base-input>
                   </div>
@@ -120,7 +121,19 @@
                         rows="3"
                         v-model="jobOrder.job_description"
                         :rules="{ required: true }"
-                        :disabled="jobOrder.status == 'complete'"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input label="Client notes">
+                      <textarea
+                        class="form-control"
+                        id="client-notes"
+                        rows="3"
+                        v-model="jobOrder.client_notes"
+                        :rules="{ required: true }"
+                        :disabled="$auth.user.designation_category == 'staff'"
                       ></textarea>
                     </base-input>
                   </div>
