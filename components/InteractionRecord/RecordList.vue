@@ -12,6 +12,32 @@
             >
             <b-container fluid>
               <b-row>
+                <b-col lg="3" class="my-1">
+                  <stats-card class="bg-gradient-default">
+                    <!-- Card body -->
+                    <div class="row">
+                      <div class="col">
+                        <h5
+                          class="card-title text-uppercase text-muted mb-0 text-white"
+                        >
+                          Total minutes
+                        </h5>
+                        <span class="h2 font-weight-bold mb-0 text-white">
+                          {{ totalMinutes }}
+                        </span>
+                      </div>
+                      <div class="col-auto">
+                        <div
+                          class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                        >
+                          <i class="ni ni-watch-time"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </stats-card>
+                </b-col>
+              </b-row>
+              <b-row>
                 <b-col sm="12" md="4" lg="4" class="my-1 pull-right">
                   <b-form-group
                     label="Per page"
@@ -194,7 +220,12 @@ export default {
       } else {
         return this.fields.filter(field => !field.requiresClient);
       }
-    }
+    },
+    totalMinutes: function() {
+      return this.records.reduce((acc, item) => {
+        return acc + parseInt(item.total_minutes);
+      }, 0);
+    },
   },
   data() {
     return {
@@ -215,7 +246,11 @@ export default {
         },
         { key: "date_called", sortable: true },
         { key: "total_minutes", sortable: true },
-        { key: "client_feedback_status", label: "Dispute status", sortable: true },
+        {
+          key: "client_feedback_status",
+          label: "Dispute status",
+          sortable: true
+        },
         { key: "actions", label: "Actions" }
       ],
       totalRows: 1,
