@@ -152,6 +152,13 @@
             path: '/account-files'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Login credentials',
+            icon: 'ni ni-archive-2',
+            path: '/login-credentials'
+          }"
+        />
       </template>
     </side-bar>
     <div class="main-content">
