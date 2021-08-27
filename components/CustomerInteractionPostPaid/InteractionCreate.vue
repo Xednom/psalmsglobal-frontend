@@ -34,14 +34,14 @@
                           :ieCloseFix="false"
                           :data="companies"
                           :serializer="item => item.company_name"
-                          @hit="selectedCompany = $event"
+                          @hit="getCompany"
                           :disabledValues="
                             selectedCompany
                               ? [selectedCompany.company_name]
                               : []
                           "
                           placeholder="Search a Company"
-                          @input="getCompany"
+                          @input="onSearchInput"
                         />
                       </div>
                     </div>
@@ -628,7 +628,7 @@ export default {
           console.log(err);
         });
     }, 700),
-    getCompanyCrm() {
+    async getCompanyCrm() {
       this.companies.forEach(item => {
         this.company_crm = item.company_crm;
         this.crmOptions.forEach(item => {
