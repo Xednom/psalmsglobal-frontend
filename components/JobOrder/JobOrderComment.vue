@@ -47,7 +47,7 @@
             </div>
             <td v-else-if="!loading">
               <blockquote class="blockquote">
-                <p class="mb-0">
+                <p class="mb-0 comment-section">
                   {{ row.comment }}
                 </p>
                 <footer class="blockquote-footer">
@@ -161,3 +161,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.comment-section {
+  white-space: normal;
+}
+</style>
