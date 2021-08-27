@@ -40,7 +40,7 @@
                 <b-form-input
                   id="filter-input"
                   v-model="filter"
-                  :input="fetchForms"
+                  @input="fetchForms"
                   type="search"
                   placeholder="Type to Search"
                   disabled
@@ -270,7 +270,7 @@ export default {
   },
   computed: {
     async fetchForms() {
-      let endpoint = `/api/v1/form/?search=${this.filter}&limit=${this.limit}`;
+      let endpoint = `/api/v1/form/?company=${this.filter}&limit=${this.limit}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
