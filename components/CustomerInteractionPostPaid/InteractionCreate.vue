@@ -35,13 +35,8 @@
                           :data="companies"
                           :serializer="item => item.company_name"
                           @hit="getCompany"
-                          :disabledValues="
-                            selectedCompany
-                              ? [selectedCompany.company_name]
-                              : []
-                          "
-                          placeholder="Search a Company"
                           @input="onSearchInput"
+                          placeholder="Search a Company"
                         />
                       </div>
                     </div>
@@ -811,6 +806,15 @@ export default {
     this.fetchGeneralCalls();
     this.fetchStates();
     this.fetchMe();
+  },
+  watch: {
+    keyword: debounce(function(oldKeyword, newKeyword) {
+      if (newKeyword !== "" && newKeyword !== oldKeyword) {
+        this.getCompany();
+      } else if (!newKeyword) {
+        this.companies = [];
+      }
+    }, 500)
   }
 };
 </script>
