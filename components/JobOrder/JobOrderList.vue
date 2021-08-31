@@ -117,6 +117,14 @@
           <template #cell(job_title)="row">
             {{ row.item.job_title }}
           </template>
+          <template #cell(caller_interaction_record)="row">
+            <span v-if="row.item.caller_interaction_record">
+              {{ row.item.caller_interaction_record }}
+            </span>
+            <span v-else>
+              none
+            </span>
+          </template>
           <template #cell(url_of_the_completed_jo)="row">
             <span v-if="row.item.url_of_the_completed_jo">
               <a :href="row.item.url_of_the_completed_jo" target="_blank">
@@ -404,7 +412,7 @@ export default {
       return this.jobOrders.reduce((acc, item) => {
         return acc + parseInt(item.total_time_consumed);
       }, 0);
-    },
+    }
   },
   data() {
     return {
@@ -458,6 +466,7 @@ export default {
           label: "Job order ticket number",
           sortable: true
         },
+        { key: "caller_interaction_record", sortable: true },
         { key: "job_title", sortable: true },
         { key: "url_of_the_completed_jo", sortable: true },
         { key: "status", sortable: true },
@@ -525,7 +534,7 @@ export default {
           this.clientCodes.forEach(item => {
             console.log(item.client_email);
             this.clientEmail = item.client_email;
-          })
+          });
           console.log(this.clientCodes);
         })
         .catch(err => {
