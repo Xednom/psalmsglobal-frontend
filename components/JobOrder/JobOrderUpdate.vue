@@ -78,7 +78,10 @@
                       name="Total time consumed"
                       v-model="jobOrder.total_time_consumed"
                       :rules="{ required: true }"
-                      :disabled="jobOrder.status == 'complete' || $auth.user.designation_category != 'staff'"
+                      :disabled="
+                        jobOrder.status == 'complete' ||
+                          $auth.user.designation_category != 'staff'
+                      "
                     >
                     </base-input>
                   </div>
@@ -126,6 +129,17 @@
                     </base-input>
                   </div>
                   <div class="col-lg-12">
+                    <base-input
+                      type="text"
+                      label="URL of the completed JO"
+                      placeholder="URL"
+                      name="URL of the completed JO"
+                      v-model="jobOrder.url_of_the_completed_jo"
+                      :disabled="$auth.user.designation_category != 'staff'"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
                     <base-input label="Client notes">
                       <textarea
                         class="form-control"
@@ -134,6 +148,28 @@
                         v-model="jobOrder.client_notes"
                         :rules="{ required: true }"
                         :disabled="$auth.user.designation_category == 'staff'"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input label="VA notes">
+                      <textarea
+                        class="form-control"
+                        id="va-notes"
+                        rows="3"
+                        v-model="jobOrder.va_notes"
+                        disabled
+                      ></textarea>
+                    </base-input>
+                  </div>
+                  <div class="col-lg-12">
+                    <base-input label="Management notes">
+                      <textarea
+                        class="form-control"
+                        id="management-notes"
+                        rows="3"
+                        v-model="jobOrder.management_notes"
+                        disabled
                       ></textarea>
                     </base-input>
                   </div>
@@ -268,6 +304,7 @@ export default {
         status: this.jobOrder.status,
         job_title: this.jobOrder.job_title,
         total_time_consumed: this.jobOrder.total_time_consumed,
+        url_of_the_completed_jo: this.jobOrder.url_of_the_completed_jo,
         job_description: this.jobOrder.job_description
       };
       try {
