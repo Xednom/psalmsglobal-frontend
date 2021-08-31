@@ -99,6 +99,10 @@
             </div>
           </template>
 
+          <template #cell(url)="row">
+            <a :href="row.item.url" target="_blank">{{ row.item.url }}</a>
+          </template>
+
           <template #cell(status)="row">
             <div v-if="row.item.status">
               <b-icon icon="check-circle-fill" variant="success"></b-icon>

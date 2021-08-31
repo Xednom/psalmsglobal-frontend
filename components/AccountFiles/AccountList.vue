@@ -89,6 +89,10 @@
               <strong>Loading...</strong>
             </div>
           </template>
+
+          <template #cell(url)="row">
+            <a :href="row.item.url" target="_blank">{{ row.item.url }}</a>
+          </template>
           <template #cell(job_title)="row">
             {{ row.item.job_title }}
           </template>
