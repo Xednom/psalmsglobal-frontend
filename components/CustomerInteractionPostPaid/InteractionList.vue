@@ -249,6 +249,7 @@ export default {
         { key: "customer_interaction_post_paid_comments", label: "comments" },
         { key: "company", sortable: true },
         { key: "apn", sortable: true },
+        { key: "reference_number", sortable: true },
         { key: "crm", sortable: true },
         { key: "leads_transferred_crm", sortable: true },
         { key: "caller_full_name", sortable: true },
