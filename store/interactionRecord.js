@@ -35,7 +35,8 @@ export const getters = {
   client_feedback_status: state => state.client_feedback_status,
   other_feedback: state => state.other_feedback,
   client_notes: state => state.client_notes,
-  internal_management_ticket_status: state => state.internal_management_ticket_status,
+  internal_management_ticket_status: state =>
+    state.internal_management_ticket_status,
   other_ticket_status: state => state.other_ticket_status,
   summary: state => state.summary,
   recordsPagination: state => state.recordsPagination,
@@ -126,13 +127,9 @@ export const actions = {
   },
   async saveRecord({ commit }, payload) {
     let url = "/api/v1/post-paid/interaction-record/";
-    try {
-      return await this.$axios.post(url, payload).then(() => {
-        commit("setBasicField", payload);
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    return await this.$axios.post(url, payload).then(() => {
+      commit("setBasicField", payload);
+    });
   },
   async updateRecord({ commit }, payload) {
     let url = `/api/v1/post-paid/interaction-record/${payload.id}/`;
