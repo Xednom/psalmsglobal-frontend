@@ -111,6 +111,12 @@
             </b-button>
           </template>
 
+          <template #cell(reason_of_the_call)="row">
+            <span class="reason-of-the-call">
+              {{ row.item.reason_of_the_call }}
+            </span>
+          </template>
+
           <template #cell(customer_interaction_post_paid_forms)="row">
             <b-button
               size="sm"
@@ -159,7 +165,8 @@
 
       <b-modal id="comment-section" size="lg" centered hide-footer>
         <template #modal-title>
-          Comment section for Cust. Interaction of {{ interaction.ticket_number }}
+          Comment section for Cust. Interaction of
+          {{ interaction.ticket_number }}
         </template>
         <b-overlay :show="show" rounded="sm">
           <job-order-comment :interaction="interaction"></job-order-comment>
@@ -242,6 +249,8 @@ export default {
         { key: "customer_interaction_post_paid_comments", label: "comments" },
         { key: "company", sortable: true },
         { key: "apn", sortable: true },
+        { key: "crm", sortable: true },
+        { key: "leads_transferred_crm", sortable: true },
         { key: "caller_full_name", sortable: true },
         { key: "caller_phone", sortable: true },
         { key: "email", sortable: true },
@@ -345,5 +354,8 @@ export default {
 <style scoped>
 .company-info {
   float: right;
+}
+.reason-of-the-call {
+  white-space: normal;
 }
 </style>
