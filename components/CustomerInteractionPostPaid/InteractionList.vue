@@ -284,7 +284,7 @@ export default {
     },
     async fetchClientInteractions() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/`;
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?limit=10000`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
