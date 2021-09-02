@@ -246,7 +246,7 @@ export default {
       },
       fields: [
         { key: "ticket_number", sortable: true },
-        { key: "created_at", sortable: true },
+        { key: "created_at", label: "Date call received", sortable: true },
         { key: "customer_interaction_post_paid_comments", label: "comments" },
         { key: "company", sortable: true },
         { key: "apn", sortable: true },

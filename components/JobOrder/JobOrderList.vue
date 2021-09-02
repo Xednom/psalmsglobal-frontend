@@ -122,7 +122,7 @@
               {{ row.item.caller_interaction_record }}
             </span>
             <span v-else>
-              none
+              Independently created
             </span>
           </template>
           <template #cell(url_of_the_completed_jo)="row">
