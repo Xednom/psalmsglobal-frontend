@@ -25,27 +25,22 @@
           <div class="card bg-secondary border-0 mb-0">
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
-                <small
-                  >Put your email address so that we can send you a forgot
-                  password process.</small
-                >
+                <small>Reset password</small>
               </div>
               <validation-observer
                 v-slot="{ handleSubmit }"
                 ref="formValidator"
               >
-                <form
-                  role="form"
-                  @submit.prevent="handleSubmit(forgotPassword)"
-                >
+                <form role="form" @submit.prevent="handleSubmit(resetPassword)">
                   <base-input
                     alternative
                     class="mb-3"
-                    name="Email"
-                    :rules="{ required: true, email: true }"
+                    name="New password"
+                    :rules="{ required: true }"
+                    type="password"
                     prepend-icon="ni ni-email-83"
-                    placeholder="Email address"
-                    v-model="email"
+                    placeholder="New password"
+                    v-model="new_password"
                   >
                   </base-input>
                   <div class="text-center">
@@ -53,7 +48,16 @@
                       type="primary"
                       native-type="submit"
                       class="my-4"
-                      >Send</base-button
+                      loading
+                      v-if="loading"
+                      >Changing...</base-button
+                    >
+                    <base-button
+                      type="primary"
+                      native-type="submit"
+                      class="my-4"
+                      v-else
+                      >Change</base-button
                     >
                   </div>
                 </form>
@@ -78,49 +82,49 @@ export default {
   data() {
     return {
       loading: false,
-      email: "",
+      new_password: "",
       error: ""
     };
   },
   methods: {
-    async forgotPassword() {
+    async resetPassword() {
       this.loading = true;
+      let confirmation = {
+        uid: this.$route.params.uid,
+        token: this.$route.params.token,
+        new_password: this.new_password
+      };
       await this.$axios
-        .post(`/api/auth/users/reset_password/`, {
-          email: this.email
-        })
+        .post(`/api/auth/users/reset_password_confirm/`, confirmation)
         .then(res => {
           this.success = true;
           this.loading = false;
-          this.successMessage("success");
+          this.$router.push("/users/reset_password_confirm/success");
         })
         .catch(err => {
           this.loading = false;
           this.success = false;
-          this.errorMessage(err.response.data);
+          this.errorMessage("danger", err.response.data);
           console.log(err.response.data);
         });
     },
-    successMessage(variant = null) {
+    errorMessage(variant = null, error) {
       this.$bvToast.toast(
-        "We've sent you the link to reset your password. Please check your email, spam or All mail.",
+        error.password
+          ? "Password: " + error.password
+          : error.token
+          ? "Token: " + error.token
+          : error.detail
+          ? "Detail: " + error.detail
+          : error.non_field_errors
+          ? error.non_field_errors
+          : error,
         {
-          title: `Successful`,
+          title: `Error`,
           variant: variant,
           solid: true
         }
       );
-    },
-    errorMessage(error) {
-      if (error.password) {
-        return "Password: " + this.error.password;
-      } else if (error.username) {
-        return "Username: " + this.error.username;
-      } else if (error.detail) {
-        return "Detail: " + this.error.detail;
-      } else if (error.non_field_errors) {
-        return this.error.non_field_errors;
-      }
     }
   }
 };
