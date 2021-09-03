@@ -148,8 +148,8 @@
                     </div>
                     <div class="col-lg-3">
                       <base-input
-                        label="Leads status"
-                        name="Leads status"
+                        label="CRM Leads status"
+                        name="CRM Leads status"
                         rules="required"
                       >
                         <el-select
