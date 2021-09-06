@@ -53,7 +53,16 @@
                       type="primary"
                       native-type="submit"
                       class="my-4"
+                      v-if="!loading"
                       >Send</base-button
+                    >
+                    <base-button
+                      type="primary"
+                      native-type="submit"
+                      class="my-4"
+                      v-else-if="loading"
+                      loading
+                      >Sending...</base-button
                     >
                   </div>
                 </form>
