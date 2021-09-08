@@ -99,39 +99,43 @@
                       @end="drag = false"
                     >
                       <div v-for="item in form.attribute_forms" :key="item.id">
-                        <div class="col-sm-12 col-md-3 mt-3">
-                          <base-input label="Data Type">
-                            <el-select
-                              v-model="item.data_type"
-                              filterable
-                              placeholder="Choose a data type"
-                              rules="required"
-                            >
-                              <el-option
-                                v-for="option in dataTypeOptions"
-                                :key="option.id"
-                                :label="option.label"
-                                :value="option.value"
+                        <div class="card">
+                          <div class="col-sm-12 col-md-3 mt-3">
+                            <base-input label="Data Type">
+                              <el-select
+                                v-model="item.data_type"
+                                filterable
+                                placeholder="Choose a data type"
+                                rules="required"
                               >
-                              </el-option>
-                            </el-select>
-                          </base-input>
-                        </div>
-                        <div
-                          class="col-xs-12 col-md-12 mb-3"
-                          v-if="item.data_type == 'text'"
-                        >
-                          <label>Text</label>
-                          <html-editor v-model="item.value_text"></html-editor>
-                        </div>
-                        <div
-                          class="col-sm-12 col-md-12 mb-3"
-                          v-if="item.data_type == 'question'"
-                        >
-                          <label>Question</label>
-                          <html-editor
-                            v-model="item.value_question"
-                          ></html-editor>
+                                <el-option
+                                  v-for="option in dataTypeOptions"
+                                  :key="option.id"
+                                  :label="option.label"
+                                  :value="option.value"
+                                >
+                                </el-option>
+                              </el-select>
+                            </base-input>
+                          </div>
+                          <div
+                            class="col-xs-12 col-md-12 mb-3"
+                            v-if="item.data_type == 'text'"
+                          >
+                            <label>Text</label>
+                            <html-editor
+                              v-model="item.value_text"
+                            ></html-editor>
+                          </div>
+                          <div
+                            class="col-sm-12 col-md-12 mb-3"
+                            v-if="item.data_type == 'question'"
+                          >
+                            <label>Question</label>
+                            <html-editor
+                              v-model="item.value_question"
+                            ></html-editor>
+                          </div>
                         </div>
                       </div>
                     </draggable>
