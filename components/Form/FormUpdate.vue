@@ -92,22 +92,13 @@
                 </div>
                 <div class="row">
                   <div class="col-lg-12">
-                    <div
-                      v-for="(item, index) in form.attribute_forms"
-                      :key="index"
+                    <draggable
+                      v-model="form.attribute_forms"
+                      group="people"
+                      @start="drag = true"
+                      @end="drag = false"
                     >
-                      <div class="row">
-                        <div class="col-xs-1">
-                          <button
-                            class="btn btn-link"
-                            @click="deleteRow($event, item.form_id)"
-                          >
-                            <b-icon
-                              icon="x-circle-fill"
-                              variant="danger"
-                            ></b-icon>
-                          </button>
-                        </div>
+                      <div v-for="item in form.attribute_forms" :key="item.id">
                         <div class="col-sm-12 col-md-3 mt-3">
                           <base-input label="Data Type">
                             <el-select
@@ -127,14 +118,14 @@
                           </base-input>
                         </div>
                         <div
-                          class="col-xs-12 col-md-12"
+                          class="col-xs-12 col-md-12 mb-3"
                           v-if="item.data_type == 'text'"
                         >
                           <label>Text</label>
                           <html-editor v-model="item.value_text"></html-editor>
                         </div>
                         <div
-                          class="col-sm-12 col-md-12"
+                          class="col-sm-12 col-md-12 mb-3"
                           v-if="item.data_type == 'question'"
                         >
                           <label>Question</label>
@@ -143,7 +134,7 @@
                           ></html-editor>
                         </div>
                       </div>
-                    </div>
+                    </draggable>
                     <div class="row">
                       <div class="col-xs-12">
                         <button
@@ -189,6 +180,8 @@ import CreateFormMixin from "@/mixins/CreateFormMixin.js";
 import HtmlEditor from "@/components/argon-core/Inputs/HtmlEditor";
 import FormView from "@/components/Form/FormView";
 
+import draggable from "vuedraggable";
+
 export default {
   name: "crm_list",
   mixins: [CreateFormMixin],
@@ -196,7 +189,8 @@ export default {
     [Select.name]: Select,
     [Option.name]: Option,
     HtmlEditor,
-    FormView
+    FormView,
+    draggable
   },
   computed: {
     ...mapGetters({
