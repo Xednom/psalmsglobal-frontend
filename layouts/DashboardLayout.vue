@@ -14,6 +14,15 @@
 
         <sidebar-item
           :link="{
+            name: 'Newsfeed',
+            icon: 'ni ni-notification-70',
+            path: '/newsfeed'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+          :link="{
             name: 'Company account information',
             icon: 'ni ni-ui-04 text-info'
           }"

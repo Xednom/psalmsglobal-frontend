@@ -1,11 +1,12 @@
 <template>
   <div class="media media-comment">
-    <img alt="Image placeholder" class="avatar avatar-lg media-comment-avatar rounded-circle" :src="userImage">
+    <!-- <img alt="Image placeholder" class="avatar avatar-lg media-comment-avatar rounded-circle" :src="userImage"> -->
     <div class="media-body">
       <div class="media-comment-text">
         <h6 class="h5 mt-0">{{userName}}</h6>
         <p class="text-sm lh-160" v-html="text"></p>
-        <div class="icon-actions">
+        <!-- todo: might need in the future -->
+        <!-- <div class="icon-actions">
           <a href="#" class="like active">
             <i class="ni ni-like-2"></i>
             <span class="text-muted">{{likeCount}} likes</span>
@@ -14,7 +15,7 @@
             <i class="ni ni-curved-next"></i>
             <span class="text-muted">{{shareCount}} shares</span>
           </a>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -29,7 +30,6 @@
       },
       userName: {
         type: String,
-        default: 'Michael Lewis'
       },
       text: {
         type: String,
