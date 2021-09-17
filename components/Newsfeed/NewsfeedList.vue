@@ -1,6 +1,13 @@
 <template>
   <div class="container">
     <b-overlay :show="show" rounded="sm">
+        <div v-if="!newsFeeds.length">
+            <div class="card">
+                <span class="text-center">
+                    <h3>No News yet</h3>
+                </span>
+            </div>
+        </div>
       <div class="card" v-for="(newsFeed, index) in newsFeeds" :key="index">
         <div>
           <div class="card-header d-flex align-items-center">

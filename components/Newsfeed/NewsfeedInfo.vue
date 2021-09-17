@@ -126,7 +126,6 @@ export default {
           this.show = false;
           this.newsFeed = res.data;
           this.count = this.newsFeed.news_feed_comments.length;
-          console.log(this.count);
         })
         .catch(e => {
           this.show = false;
