@@ -291,6 +291,24 @@ export default {
           this.interactions = res.data.results;
           this.totalRows = this.interactions.length;
           this.isBusy = false;
+          this.interactions.forEach(item => {
+            if (item.interested_to_sell == "yes" && item.interested_to_buy == "yes") {
+              item._cellVariants = {
+                interested_to_sell: "success",
+                interested_to_buy: "info"
+              };
+            } else if (item.interested_to_buy == "yes" && item.interested_to_sell == "no") {
+              item._cellVariants = {
+                interested_to_buy: "success",
+                interested_to_sell: "danger"
+              };
+            } else if (item.interested_to_sell == "no" && item.interested_to_buy == "yes") {
+              item._cellVariants = {
+                interested_to_sell: "danger",
+                interested_to_buy: "info"
+              };
+            }
+          });
         })
         .catch(e => {
           throw e;
