@@ -13,7 +13,7 @@
             <base-button @click="modals.classic = true" type="primary"
               >Comments</base-button
             >
-            <nuxt-link to="/post-paid/customer-interaction/">
+            <nuxt-link to="/customer-interaction/">
               <base-button type="danger"
                 >Back to Interaction list</base-button
               ></nuxt-link
@@ -422,7 +422,7 @@
 import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
-import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
+import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection";
 import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
 

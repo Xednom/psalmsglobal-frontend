@@ -582,6 +582,7 @@ export default {
       clientUser: {},
       staffUser: {},
       user: {},
+      clientAccountType: {},
       isBusy: false,
       saving: false,
       loadingCounties: false,
@@ -606,6 +607,10 @@ export default {
   },
   methods: {
     ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
+    ...mapActions("prepaid/prepaidCustomerInteraction", [
+      "reset",
+      "savePrepaidInteraction"
+    ]),
     eventChild(form) {
       console.log("Event from child component emitted", (this.form = form));
     },
@@ -617,6 +622,10 @@ export default {
         .get(`/api/v1/company/?search=${this.company}`)
         .then(res => {
           this.companies = res.data.results;
+          this.companies.forEach(item => {
+            this.clientAccountType = item.company_client_account_type;
+            console.log(this.clientAccountType);
+          });
           this.getCompanyCrm();
         })
         .catch(err => {
@@ -724,7 +733,10 @@ export default {
         script_answer: this.script_answer,
         customer_interaction_post_paid_forms: formArray
       };
-      if (this.$auth.user.designation_category == "staff") {
+      if (
+        this.$auth.user.designation_category == "staff" &&
+        this.clientAccountType == "postpaid"
+      ) {
         try {
           this.saving = true;
           await this.saveInteraction(interactionPayload)
@@ -734,7 +746,29 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch((err) => {
+            .catch(err => {
+              this.saving = false;
+              console.log(err);
+              this.errorMessage("danger", err.response.data);
+            });
+        } catch (e) {
+          throw e;
+        }
+        this.saving = false;
+      } else if (
+        this.$auth.user.designation_category == "staff" &&
+        this.clientAccountType == "prepaid"
+      ) {
+        try {
+          this.saving = true;
+          await this.savePrepaidInteraction(interactionPayload)
+            .then(() => {
+              this.saving = false;
+              this.reset();
+              this.$refs.formValidator.reset();
+              this.successMessage("success");
+            })
+            .catch(err => {
               this.saving = false;
               console.log(err);
               this.errorMessage("danger", err.response.data);

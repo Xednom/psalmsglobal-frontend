@@ -52,7 +52,7 @@
           v-if="$auth.user.designation_category == 'staff'"
           :link="{
             name: 'List of Interaction',
-            path: '/post-paid/customer-interaction'
+            path: '/customer-interaction'
           }"
         />
         <sidebar-item
@@ -82,7 +82,7 @@
           <sidebar-item
             :link="{
               name: 'List of Interaction',
-              path: '/post-paid/customer-interaction'
+              path: '/customer-interaction'
             }"
           />
         </sidebar-item>
@@ -118,7 +118,7 @@
           <sidebar-item
             :link="{
               name: 'List of Interaction',
-              path: '/prepaid/customer-interaction'
+              path: '/customer-interaction'
             }"
           />
           <sidebar-item

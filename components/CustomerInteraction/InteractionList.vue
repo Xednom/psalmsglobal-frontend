@@ -81,7 +81,7 @@
           </template>
           <template #cell(ticket_number)="row">
             <nuxt-link
-              :to="'/post-paid/customer-interaction/' + row.item.ticket_number"
+              :to="'/customer-interaction/' + row.item.ticket_number"
               >{{ row.item.ticket_number }}</nuxt-link
             >
           </template>
@@ -195,7 +195,7 @@ import { mapGetters } from "vuex";
 
 import FormView from "@/components/Form/FormView";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
-import JobOrderComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
+import JobOrderComment from "@/components/CustomerInteraction/InteractionCommentSection";
 
 export default {
   name: "interaction_list",
@@ -221,6 +221,7 @@ export default {
     return {
       interaction: {},
       form: {},
+      clientUser: {},
       interactions: [],
       isBusy: false,
       saving: false,
@@ -282,7 +283,7 @@ export default {
           throw e;
         });
     },
-    async fetchClientInteractions() {
+    async fetchClientPostpaidInteractions() {
       this.isBusy = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?limit=10000`;
       return await this.$axios
@@ -292,17 +293,68 @@ export default {
           this.totalRows = this.interactions.length;
           this.isBusy = false;
           this.interactions.forEach(item => {
-            if (item.interested_to_sell == "yes" && item.interested_to_buy == "yes") {
+            if (
+              item.interested_to_sell == "yes" &&
+              item.interested_to_buy == "yes"
+            ) {
               item._cellVariants = {
                 interested_to_sell: "success",
                 interested_to_buy: "info"
               };
-            } else if (item.interested_to_buy == "yes" && item.interested_to_sell == "no") {
+            } else if (
+              item.interested_to_buy == "yes" &&
+              item.interested_to_sell == "no"
+            ) {
               item._cellVariants = {
                 interested_to_buy: "success",
                 interested_to_sell: "danger"
               };
-            } else if (item.interested_to_sell == "no" && item.interested_to_buy == "yes") {
+            } else if (
+              item.interested_to_sell == "no" &&
+              item.interested_to_buy == "yes"
+            ) {
+              item._cellVariants = {
+                interested_to_sell: "danger",
+                interested_to_buy: "info"
+              };
+            }
+          });
+        })
+        .catch(e => {
+          throw e;
+        });
+    },
+    async fetchClientPrepaidInteractions() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/prepaid/customer-interaction/?limit=10000`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          this.totalRows = this.interactions.length;
+          this.isBusy = false;
+          console.log(this.interactions);
+          this.interactions.forEach(item => {
+            if (
+              item.interested_to_sell == "yes" &&
+              item.interested_to_buy == "yes"
+            ) {
+              item._cellVariants = {
+                interested_to_sell: "success",
+                interested_to_buy: "info"
+              };
+            } else if (
+              item.interested_to_buy == "yes" &&
+              item.interested_to_sell == "no"
+            ) {
+              item._cellVariants = {
+                interested_to_buy: "success",
+                interested_to_sell: "danger"
+              };
+            } else if (
+              item.interested_to_sell == "no" &&
+              item.interested_to_buy == "yes"
+            ) {
               item._cellVariants = {
                 interested_to_sell: "danger",
                 interested_to_buy: "info"
@@ -365,7 +417,11 @@ export default {
       this.$auth.user.designation_category == "current_client" ||
       this.$auth.user.designation_category == "affiliate_partner"
     ) {
-      this.fetchClientInteractions();
+      if (this.$auth.user.account_type == "postpaid") {
+        this.fetchClientPostpaidInteractions();
+      } else if (this.$auth.user.account_type == "prepaid") {
+        this.fetchClientPrepaidInteractions();
+      }
     }
   }
 };

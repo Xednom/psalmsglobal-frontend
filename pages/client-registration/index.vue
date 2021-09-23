@@ -117,11 +117,9 @@
                   </base-input>
 
                   <base-input label="Account type" name="Account Type">
-                  <b-alert variant="success" show>Currently we're accepting Postpaid accounts.</b-alert>
                     <el-select
                       v-model="register.account_type"
                       placeholder="Account type"
-                      disabled
                     >
                       <el-option
                         v-for="option in accountOptions"
@@ -182,7 +180,7 @@ export default {
         password: "",
         designation_category: "",
         company_category: "",
-        account_type: "postpaid"
+        account_type: ""
       },
       designationOptions: [
         { value: "new_client", label: "New client" },
