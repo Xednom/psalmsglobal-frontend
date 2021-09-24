@@ -713,7 +713,7 @@ export default {
           status: true
         }
       ];
-      const interactionPayload = {
+      const interactionPostpaidPayload = {
         company: this.company,
         agent: this.staffUser.id,
         apn: this.apn,
@@ -730,8 +730,26 @@ export default {
         general_call: this.general_call,
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm,
-        script_answer: this.script_answer,
         customer_interaction_post_paid_forms: formArray
+      };
+      const interactionPrepaidPayload = {
+        company: this.company,
+        agent: this.staffUser.id,
+        apn: this.apn,
+        state: this.callMe.property_state,
+        county: this.callMe.property_county,
+        address: this.callMe.property_address,
+        reference_number: this.callMe.reference,
+        caller_full_name: this.callMe.full_name,
+        caller_phone: this.caller_phone,
+        email: this.email,
+        reason_of_the_call: this.reason_of_the_call,
+        interested_to_sell: this.interested_to_sell,
+        interested_to_buy: this.interested_to_buy,
+        general_call: this.general_call,
+        crm: this.crm,
+        leads_transferred_crm: this.leads_transferred_crm,
+        customer_interaction_prepaid_forms: formArray
       };
       if (
         this.$auth.user.designation_category == "staff" &&
@@ -739,7 +757,7 @@ export default {
       ) {
         try {
           this.saving = true;
-          await this.saveInteraction(interactionPayload)
+          await this.saveInteraction(interactionPostpaidPayload)
             .then(() => {
               this.saving = false;
               this.reset();
@@ -761,7 +779,7 @@ export default {
       ) {
         try {
           this.saving = true;
-          await this.savePrepaidInteraction(interactionPayload)
+          await this.savePrepaidInteraction(interactionPrepaidPayload)
             .then(() => {
               this.saving = false;
               this.reset();

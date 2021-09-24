@@ -270,9 +270,22 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetchInteractions() {
+    async fetchPostpaidInteractions() {
       this.isBusy = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          this.isBusy = false;
+        })
+        .catch(e => {
+          throw e;
+        });
+    },
+    async fetchPrepaidInteractions() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/prepaid/customer-interaction/?search=${this.filter}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
@@ -393,6 +406,10 @@ export default {
           this.show = false;
           throw e;
         });
+    },
+    fetchInteractions() {
+      this.fetchPostpaidInteractions();
+      this.fetchPrepaidInteractions();
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
