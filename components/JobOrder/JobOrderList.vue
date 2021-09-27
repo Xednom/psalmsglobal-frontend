@@ -5,356 +5,37 @@
         <h3 class="mb-0">Job Order Request</h3>
       </div>
       <b-container fluid>
-        <!-- User Interface controls -->
-        <b-row>
-          <b-col lg="3" class="my-1">
-            <stats-card class="bg-gradient-default">
-              <!-- Card body -->
-              <div class="row">
-                <div class="col">
-                  <h5
-                    class="card-title text-uppercase text-muted mb-0 text-white"
-                  >
-                    Total minutes
-                  </h5>
-                  <span class="h2 font-weight-bold mb-0 text-white">
-                    {{ totalMinutes }}
-                  </span>
-                </div>
-                <div class="col-auto">
-                  <div
-                    class="icon icon-shape bg-white text-dark rounded-circle shadow"
-                  >
-                    <i class="ni ni-watch-time"></i>
-                  </div>
-                </div>
-              </div>
-            </stats-card>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col></b-col>
-          <b-col lg="6" class="my-1">
-            <base-button
-              class="btn-job-order"
-              size="md"
-              type="neutral"
-              @click="modals.form = true"
-              >Create a Job Order</base-button
-            >
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col sm="5" md="6" class="my-1">
-            <b-form-group
-              label="Per page"
-              label-for="per-page-select"
-              label-cols-sm="6"
-              label-cols-md="4"
-              label-cols-lg="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-form-select
-                id="per-page-select"
-                v-model="perPage"
-                :options="pageOptions"
-                size="sm"
-              ></b-form-select>
-            </b-form-group>
-          </b-col>
-
-          <b-col lg="6" class="my-1">
-            <b-form-group
-              label="Filter"
-              label-for="filter-input"
-              label-cols-sm="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-input-group size="sm">
-                <b-form-input
-                  id="filter-input"
-                  v-model="filter"
-                  type="search"
-                  placeholder="Type to Search"
-                ></b-form-input>
-                <b-input-group-append>
-                  <b-button :disabled="!filter" @click="filter = ''"
-                    >Clear</b-button
-                  >
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-group>
-          </b-col>
-        </b-row>
-
-        <!-- Main table element -->
-        <b-table
-          :items="jobOrders"
-          :fields="fields"
-          :current-page="currentPage"
-          :per-page="perPage"
-          :filter="filter"
-          :filter-included-fields="filterOn"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          :sort-direction="sortDirection"
-          :busy="isBusy"
-          stacked="md"
-          show-empty
-          small
-          @filtered="onFiltered"
-        >
-          <template #table-busy>
-            <div class="text-center text-default my-2">
-              <b-spinner class="align-middle"></b-spinner>
-              <strong>Loading...</strong>
-            </div>
-          </template>
-          <template #cell(job_title)="row">
-            {{ row.item.job_title }}
-          </template>
-          <template #cell(caller_interaction_record)="row">
-            <span v-if="row.item.caller_interaction_record">
-              {{ row.item.caller_interaction_record }}
-            </span>
-            <span v-else>
-              Independently created
-            </span>
-          </template>
-          <template #cell(url_of_the_completed_jo)="row">
-            <span v-if="row.item.url_of_the_completed_jo">
-              <a :href="row.item.url_of_the_completed_jo" target="_blank">
-                {{ row.item.url_of_the_completed_jo }}
-              </a>
-            </span>
-            <span v-else-if="!row.item.url_of_the_completed_jo">
-              -
-            </span>
-          </template>
-
-          <template #cell(actions)="row">
-            <b-button
-              size="sm"
-              @click="
-                {
-                  fetchJobOrder(row.item.id, row.index, $event.target),
-                    (modals.update = true);
-                }
-              "
-              class="mr-1"
-              variant="info"
-            >
-              Update
-            </b-button>
-          </template>
-        </b-table>
-
-        <!--Form modal-->
-        <modal :show.sync="modals.form" size="lg" body-classes="p-0">
-          <h6 slot="header" class="modal-title">Create Job Order Request</h6>
-          <card
-            type="secondary"
-            header-classes="bg-transparent pb-5"
-            body-classes="px-lg-5 py-lg-5"
-            class="border-0 mb-0"
+        <b-card no-body>
+          <b-tabs
+            v-model="tabIndex"
+            card
+            v-if="this.$auth.user.designation_category == 'staff'"
           >
-            <template>
-              <div class="text-center text-muted mb-4">
-                <small></small>
-              </div>
-              <form role="form" @submit.prevent="save">
-                <div class="row">
-                  <div class="col-md-4">
-                    <base-input label="Request date">
-                      <flat-picker
-                        slot-scope="{ focus, blur }"
-                        @on-open="focus"
-                        @on-close="blur"
-                        :config="{ allowInput: true }"
-                        class="form-control datepicker"
-                        format="yyyy-MM-dd"
-                        value-format="yyyy-MM-dd"
-                        v-model="job.request_date"
-                        placeholder="Request date"
-                      >
-                      </flat-picker>
-                    </base-input>
-                  </div>
-                  <div class="col-md-4">
-                    <base-input label="Due date">
-                      <flat-picker
-                        slot-scope="{ focus, blur }"
-                        @on-open="focus"
-                        @on-close="blur"
-                        :config="{ allowInput: true }"
-                        class="form-control datepicker"
-                        format="yyyy-MM-dd"
-                        value-format="yyyy-MM-dd"
-                        v-model="job.due_date"
-                        placeholder="Due date"
-                      >
-                      </flat-picker>
-                    </base-input>
-                  </div>
-                  <div
-                    class="col-md-4"
-                    v-if="$auth.user.designation_category == 'staff'"
-                  >
-                    <base-input
-                      label="Total time consumed"
-                      alternative
-                      class="mb-3"
-                      placeholder="Total time consumed"
-                      v-model="job.total_time_consumed"
-                      @input="onlyNumbers"
-                    >
-                    </base-input>
-                  </div>
-                  <div
-                    class="col-md-6"
-                    v-if="$auth.user.designation_category == 'staff'"
-                  >
-                    <base-input
-                      label="Job title"
-                      alternative
-                      class="mb-3"
-                      placeholder="Job title"
-                      v-model="job.job_title"
-                    >
-                    </base-input>
-                  </div>
-                  <div
-                    class="col-md-12"
-                    v-if="$auth.user.designation_category != 'staff'"
-                  >
-                    <base-input
-                      label="Job title"
-                      alternative
-                      class="mb-3"
-                      placeholder="Job title"
-                      v-model="job.job_title"
-                    >
-                    </base-input>
-                  </div>
-                  <div
-                    class="col-md-6"
-                    v-if="$auth.user.designation_category == 'staff'"
-                  >
-                    <div class="col-lg-12" v-if="haveTicket">
-                      <label>Caller interaction ticket</label>
-                      <vue-typeahead-bootstrap
-                        v-model="job.caller_interaction_record"
-                        :ieCloseFix="false"
-                        :data="callerInteractions"
-                        :serializer="item => item.ticket_number"
-                        :value="ticketKeyword"
-                        @hit="getCallerInteraction"
-                        @input="onSearchInputTicket"
-                        placeholder="Search a Caller Interaction"
-                      />
-                      <div class="row">
-                        <div class="col-md-6 mt-2" v-if="haveTicket">
-                          <b-button
-                            variant="primary"
-                            size="sm"
-                            @click="assignToClient"
-                            >I have a Client</b-button
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-12" v-if="haveClient">
-                      <label>Client Codes</label>
-                      <vue-typeahead-bootstrap
-                        v-model="job.client"
-                        :ieCloseFix="false"
-                        :data="clientCodes"
-                        :serializer="item => item.client_code"
-                        :value="clientKeyword"
-                        @hit="getClient"
-                        @input="onSearchInputClient"
-                        placeholder="Search a Client code"
-                      />
+            <b-tab title="Job order(Postpaid)" :title-link-class="linkClass(0)">
+              <job-order-postpaid></job-order-postpaid>
+            </b-tab>
+            <b-tab title="Job order(Prepaid)" :title-link-class="linkClass(1)"
+              ><job-order-prepaid></job-order-prepaid
+            ></b-tab>
+          </b-tabs>
 
-                      <div class="row">
-                        <div class="col-md-6 mt-2" v-if="haveClient">
-                          <b-button
-                            variant="primary"
-                            size="sm"
-                            @click="assignToTicket"
-                            >I have a Ticket</b-button
-                          >
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <base-input label="Job description">
-                      <textarea
-                        class="form-control"
-                        id="jobDescription"
-                        rows="3"
-                        v-model="job.job_description"
-                        placeholder="Job Description"
-                      ></textarea>
-                    </base-input>
-                  </div>
-                </div>
-
-                <div class="text-center">
-                  <base-button
-                    type="primary"
-                    native-type="submit"
-                    loading
-                    v-if="saving"
-                    >Submit</base-button
-                  >
-                  <base-button type="primary" native-type="submit" v-else
-                    >Submit</base-button
-                  >
-                </div>
-              </form>
-            </template>
-          </card>
-        </modal>
-
-        <!-- update modal -->
-        <modal
-          :show.sync="modals.update"
-          size="lg"
-          headerClasses="justify-content-center"
-          class="white-content"
-        >
-          <b-overlay :show="show" rounded="sm">
-            <div class="container">
-              <job-order-update
-                :jobOrder="jobOrder"
-                :refresh="refresh"
-              ></job-order-update>
-            </div>
-          </b-overlay>
-        </modal>
-
-        <div
-          slot="footer"
-          class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap"
-        >
-          <div class="">
-            <p class="card-category"></p>
+          <div
+            v-if="
+              this.$auth.user.designation_category != 'staff' &&
+                this.$auth.user.account_type == 'postpaid'
+            "
+          >
+            <job-order-postpaid></job-order-postpaid>
           </div>
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            align="fill"
-            size="sm"
-            class="my-0 mb-3"
-          ></b-pagination>
-        </div>
+          <div
+            v-else-if="
+              this.$auth.user.designation_category != 'staff' &&
+                this.$auth.user.account_type == 'prepaid'
+            "
+          >
+            <job-order-prepaid></job-order-prepaid>
+          </div>
+        </b-card>
       </b-container>
     </div>
   </div>
@@ -379,6 +60,9 @@ import { mapGetters, mapActions } from "vuex";
 import JobOrderView from "@/components/JobOrder/JobOrderView";
 import JobOrderUpdate from "@/components/JobOrder/JobOrderUpdate";
 
+import JobOrderPrepaid from "@/components/JobOrder/Prepaid/JobOrderList";
+import JobOrderPostpaid from "@/components/JobOrder/Postpaid/JobOrderList";
+
 export default {
   name: "job_order_list",
   components: {
@@ -392,6 +76,8 @@ export default {
     flatPicker,
     JobOrderView,
     JobOrderUpdate,
+    JobOrderPrepaid,
+    JobOrderPostpaid,
     VueTypeaheadBootstrap
   },
   props: {
@@ -416,6 +102,7 @@ export default {
   },
   data() {
     return {
+      tabIndex: 0,
       ticketKeyword: "",
       clientKeyword: "",
       clientEmail: "",
@@ -476,6 +163,13 @@ export default {
   },
   methods: {
     ...mapActions("jobOrder", ["reset", "saveJobOrder"]),
+    linkClass(idx) {
+      if (this.tabIndex === idx) {
+        return ["bg-dark", "text-light"];
+      } else {
+        return ["bg-light", "text-dark"];
+      }
+    },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
@@ -510,7 +204,7 @@ export default {
       this.haveTicket = true;
       this.haveClient = false;
     },
-    getCallerInteraction: debounce(function() {
+    getCallerInteractionPostpaid: debounce(function() {
       this.$axios
         .get(
           `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.job.caller_interaction_record}`

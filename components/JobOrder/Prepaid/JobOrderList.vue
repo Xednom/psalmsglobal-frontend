@@ -1,14 +1,37 @@
 <template>
   <div>
     <div class="card">
-      <div class="card-header bg-transparent border-0">
-        <h3 class="mb-0">Job Order Request</h3>
-      </div>
       <b-container fluid>
         <!-- User Interface controls -->
         <b-row>
+          <b-col lg="3" class="my-1 mt-2">
+            <stats-card class="bg-gradient-default">
+              <!-- Card body -->
+              <div class="row">
+                <div class="col">
+                  <h5
+                    class="card-title text-uppercase text-muted mb-0 text-white"
+                  >
+                    Total minutes
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0 text-white">
+                    {{ totalMinutes }}
+                  </span>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                  >
+                    <i class="ni ni-watch-time"></i>
+                  </div>
+                </div>
+              </div>
+            </stats-card>
+          </b-col>
+        </b-row>
+        <b-row>
           <b-col></b-col>
-          <b-col lg="6" class="my-1">
+          <b-col lg="6" class="my-1 mt-3">
             <base-button
               class="btn-job-order"
               size="md"
@@ -91,6 +114,24 @@
           <template #cell(job_title)="row">
             {{ row.item.job_title }}
           </template>
+          <template #cell(caller_interaction_record)="row">
+            <span v-if="row.item.caller_interaction_record">
+              {{ row.item.caller_interaction_record }}
+            </span>
+            <span v-else>
+              Independently created
+            </span>
+          </template>
+          <template #cell(url_of_the_completed_jo)="row">
+            <span v-if="row.item.url_of_the_completed_jo">
+              <a :href="row.item.url_of_the_completed_jo" target="_blank">
+                {{ row.item.url_of_the_completed_jo }}
+              </a>
+            </span>
+            <span v-else-if="!row.item.url_of_the_completed_jo">
+              -
+            </span>
+          </template>
 
           <template #cell(actions)="row">
             <b-button
@@ -124,7 +165,7 @@
               </div>
               <form role="form" @submit.prevent="save">
                 <div class="row">
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <base-input label="Request date">
                       <flat-picker
                         slot-scope="{ focus, blur }"
@@ -140,7 +181,7 @@
                       </flat-picker>
                     </base-input>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <base-input label="Due date">
                       <flat-picker
                         slot-scope="{ focus, blur }"
@@ -157,8 +198,22 @@
                     </base-input>
                   </div>
                   <div
-                    class="col-md-12"
-                    v-if="$auth.user.designation_category != 'staff'"
+                    class="col-md-4"
+                    v-if="$auth.user.designation_category == 'staff'"
+                  >
+                    <base-input
+                      label="Total time consumed"
+                      alternative
+                      class="mb-3"
+                      placeholder="Total time consumed"
+                      v-model="job.total_time_consumed"
+                      @input="onlyNumbers"
+                    >
+                    </base-input>
+                  </div>
+                  <div
+                    class="col-md-6"
+                    v-if="$auth.user.designation_category == 'staff'"
                   >
                     <base-input
                       label="Job title"
@@ -171,7 +226,7 @@
                   </div>
                   <div
                     class="col-md-12"
-                    v-if="$auth.user.designation_category == 'staff'"
+                    v-if="$auth.user.designation_category != 'staff'"
                   >
                     <base-input
                       label="Job title"
@@ -194,7 +249,7 @@
                         :data="callerInteractions"
                         :serializer="item => item.ticket_number"
                         :value="ticketKeyword"
-                        @hit="getCallerInteraction"
+                        @hit="getCallerInteractionPrepaid"
                         @input="onSearchInputTicket"
                         placeholder="Search a Caller Interaction"
                       />
@@ -209,7 +264,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-12" v-if="haveClient">
+                    <div class="col-lg-12" v-else-if="haveClient">
                       <label>Client Codes</label>
                       <vue-typeahead-bootstrap
                         v-model="job.client"
@@ -271,12 +326,14 @@
           headerClasses="justify-content-center"
           class="white-content"
         >
-          <div class="container">
-            <job-order-update
-              :jobOrder="jobOrder"
-              :refresh="refresh"
-            ></job-order-update>
-          </div>
+          <b-overlay :show="show" rounded="sm">
+            <div class="container">
+              <job-order-update
+                :jobOrder="jobOrder"
+                :refresh="refresh"
+              ></job-order-update>
+            </div>
+          </b-overlay>
         </modal>
 
         <div
@@ -320,7 +377,7 @@ import JobOrderView from "@/components/JobOrder/JobOrderView";
 import JobOrderUpdate from "@/components/JobOrder/JobOrderUpdate";
 
 export default {
-  name: "job_order_list",
+  name: "prepaid_job_order_list",
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
@@ -342,28 +399,45 @@ export default {
   },
   computed: {
     ...mapGetters({
-      pagination: "jobOrder/jobOrdersPagination",
+      jobOrders: "prepaid/jobOrder/jobOrders",
+      pagination: "prepaid/jobOrder/jobOrdersPagination",
       staff: "user/staff",
       user: "user/user",
       client: "user/clientUser"
-    })
+    }),
+    totalMinutes: function() {
+      return this.jobOrders.reduce((acc, item) => {
+        return acc + parseInt(item.total_time_consumed);
+      }, 0);
+    }
   },
   data() {
     return {
-      keyword: "",
+      ticketKeyword: "",
+      clientKeyword: "",
+      clientEmail: "",
       jobOrder: {},
-      jobOrders: [],
+      // jobOrders: [],
       callerInteractions: [],
+      clientCodes: [],
       job: {
         caller_interaction_record: null,
         due_date: "",
         request_date: "",
         job_title: "",
-        job_description: ""
+        total_time_consumed: "",
+        job_description: "",
+        url_of_the_completed_jo: "",
+        client: null
       },
+      haveClient: false,
+      haveTicket: true,
+      isPrepaid: false,
+      isPostpaid: true,
       clientUser: {},
       isBusy: false,
       saving: false,
+      show: false,
       modals: {
         form: false,
         info: false,
@@ -371,7 +445,7 @@ export default {
       },
       totalRows: 1,
       currentPage: 1,
-      perPage: 10,
+      perPage: 5,
       pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
       sortBy: "",
       sortDesc: false,
@@ -384,101 +458,117 @@ export default {
         content: ""
       },
       fields: [
-        {
-          key: "caller_interaction_record",
-          label: " Caller interaction ticket ",
-          sortable: true
-        },
+        { key: "client", sortable: true },
+        { key: "agent_code", sortable: true },
         {
           key: "ticket_number",
           label: "Job order ticket number",
           sortable: true
         },
+        { key: "caller_interaction_record", sortable: true },
         { key: "job_title", sortable: true },
+        { key: "url_of_the_completed_jo", sortable: true },
+        { key: "status", sortable: true },
         { key: "actions" }
       ]
     };
   },
   methods: {
-    ...mapActions("jobOrder", ["reset", "saveJobOrder"]),
     ...mapActions("prepaid/jobOrder", ["reset", "savePrepaidJobOrder"]),
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
+    onlyNumbers: function() {
+      this.job.total_time_consumed = this.job.total_time_consumed.replace(
+        /[^0-9.]/g,
+        ""
+      );
+    },
     reset() {
       this.job.caller_interaction_record = null;
+      this.job.client = null;
       this.job.due_date = "";
       this.job.request_date = "";
       this.job.job_title = "";
+      this.job.total_time_consumed = "";
       this.job.job_description = "";
     },
-    onSearchInput(text) {
-      this.keyword = text;
+    onSearchInputTicket(text) {
+      this.ticketKeyword = text;
     },
-    getCallerInteraction: debounce(function() {
+    onSearchInputClient(text) {
+      this.clientKeyword = text;
+    },
+    assignToClient() {
+      this.haveClient = true;
+      this.haveTicket = false;
+    },
+    assignToTicket() {
+      this.haveTicket = true;
+      this.haveClient = false;
+    },
+    getCallerInteractionPrepaid: debounce(function() {
       this.$axios
         .get(
-          `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.job.caller_interaction_record}`
+          `/api/v1/prepaid/customer-interaction/?search=${this.job.caller_interaction_record}`
         )
         .then(res => {
           this.callerInteractions = res.data.results;
+          console.log(this.callerInteractions);
+          if (this.callerInteractions.length == 0) {
+            this.haveClient = true;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }, 700),
+    getClient: debounce(function() {
+      this.$axios
+        .get(`/api/auth/client-code/?search=${this.job.client}`)
+        .then(res => {
+          this.clientCodes = res.data.results;
+          this.clientCodes.forEach(item => {
+            console.log(item.client_email);
+            this.clientEmail = item.client_email;
+          });
+          console.log(this.clientCodes);
         })
         .catch(err => {
           console.log(err);
         });
     }, 700),
     async fetchJobOrders() {
-      if (this.interaction.client_account_type == "postpaid") {
-        this.fetchPostpaidJobOrders();
-      } else if (this.interaction.client_account_type == "prepaid") {
-        this.fetchPrepaidJobOrders();
-      }
-    },
-    async fetchPostpaidJobOrders() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/job-order-general/?search=${this.interaction.ticket_number}`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.jobOrders = res.data.results;
+      await this.$store
+        .dispatch("prepaid/jobOrder/fetchJobOrders", this.pagination)
+        .then(() => {
+          this.totalRows = this.jobOrders.length;
           this.isBusy = false;
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    async fetchPrepaidJobOrders() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/job-order-general/?search=${this.interaction.ticket_number}`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.jobOrders = res.data.results;
-          this.isBusy = false;
-        })
-        .catch(e => {
-          throw e;
         });
     },
     async refresh() {
       this.fetchJobOrders();
     },
     async fetchJobOrder(id) {
+      this.show = true;
       let endpoint = `/api/v1/post-paid/job-order/${id}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
+          this.show = false;
           this.jobOrder = res.data;
         })
         .catch(e => {
+          this.show = false;
           throw e;
         });
     },
     async fetchClient(id) {
       try {
-        await this.$store.dispatch("user/fetchClient", id).then(() => {});
+        await this.$store.dispatch("user/fetchClientUser", id).then(() => {});
       } catch (err) {
         console.error(err);
       }
@@ -514,8 +604,8 @@ export default {
         this.$auth.user.designation_category == "affiliate_partner"
       ) {
         const jobOrderPayload = {
-          client: this.clientUser.client_code,
-          caller_interaction_record: this.interaction.ticket_number,
+          client: this.client.client_code,
+          caller_interaction_record: this.job.caller_interaction_record,
           request_date: this.job.request_date,
           due_date: this.job.due_date,
           job_title: this.job.job_title,
@@ -523,7 +613,7 @@ export default {
         };
         try {
           this.saving = true;
-          await this.saveJobOrder(jobOrderPayload)
+          await this.savePrepaidJobOrder(jobOrderPayload)
             .then(() => {
               this.saving = false;
               this.reset();
@@ -538,33 +628,32 @@ export default {
         }
       } else if (this.$auth.user.designation_category == "staff") {
         const jobOrderPayload = {
-          caller_interaction_record: this.interaction.ticket_number,
+          caller_interaction_record: this.job.caller_interaction_record,
+          client: this.job.client,
+          client_email: this.clientEmail,
           va_assigned: [this.staff.id],
           request_date: this.job.request_date,
           due_date: this.job.due_date,
+          total_time_consumed: this.job.total_time_consumed,
           job_title: this.job.job_title,
           job_description: this.job.job_description
         };
         try {
-          if (this.interaction.client_account_type == "postpaid") {
-            this.saving = true;
-            await this.saveJobOrder(jobOrderPayload).then(() => {
+          this.saving = true;
+          await this.savePrepaidJobOrder(jobOrderPayload)
+            .then(() => {
               this.saving = false;
               this.reset();
               this.successMessage("success");
               this.fetchJobOrders();
-            });
-          } else if (this.interaction.client_account_type == "prepaid") {
-            this.saving = true;
-            await this.savePrepaidJobOrder(jobOrderPayload).then(() => {
+            })
+            .catch(e => {
               this.saving = false;
-              this.reset();
-              this.successMessage("success");
-              this.fetchJobOrders();
+              console.log(e.response.data);
+              this.errorMessage("danger", e.response.data);
             });
-          }
         } catch (e) {
-          throw e;
+          this.saving = false;
         }
       }
     },
@@ -579,8 +668,14 @@ export default {
       this.$bvToast.toast(
         error.caller_interaction_record
           ? "Caller interaction record: " + error.caller_interaction_record
-          : error.detail
-          ? "Detail: " + error.detail
+          : error.due_date
+          ? "Due date: " + error.due_date
+          : error.request_date
+          ? "Request date: " + error.request_date
+          : error.job_description
+          ? "Job Description: " + error.job_description
+          : error.job_title
+          ? "Job title: " + error.job_title
           : error.non_field_errors
           ? error.non_field_errors
           : error,
@@ -594,13 +689,20 @@ export default {
   },
   mounted() {
     this.fetchMe();
-    setTimeout(() => this.fetchJobOrders(), 1000);
-    this.totalRows = this.jobOrders.length;
+    this.fetchJobOrders();
+    // setTimeout(() => this.fetchJobOrders(), 1000);
   },
   watch: {
-    keyword: debounce(function(oldKeyword, newKeyword) {
+    ticketKeyword: debounce(function(oldKeyword, newKeyword) {
       if (newKeyword !== "" && newKeyword !== oldKeyword) {
-        this.getCallerInteraction();
+        this.getCallerInteractionPrepaid();
+      } else if (!newKeyword) {
+        this.jobOrders = [];
+      }
+    }, 500),
+    clientKeyword: debounce(function(oldKeyword, newKeyword) {
+      if (newKeyword !== "" && newKeyword !== oldKeyword) {
+        this.getClient();
       } else if (!newKeyword) {
         this.jobOrders = [];
       }
