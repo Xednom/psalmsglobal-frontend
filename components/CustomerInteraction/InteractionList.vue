@@ -29,6 +29,21 @@
 
           <b-col lg="6" class="my-1">
             <b-form-group
+              label="Select Account type"
+              label-for="initial-sort-select"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-2"
+            >
+              <b-form-select
+                id="account-type-select"
+                v-model="accountType"
+                :options="['Postpaid', 'Prepaid']"
+                size="sm"
+              ></b-form-select>
+            </b-form-group>
+            <b-form-group
               label="Filter"
               label-for="filter-input"
               label-cols-sm="3"
@@ -222,7 +237,10 @@ export default {
       interaction: {},
       form: {},
       clientUser: {},
+      accountType: "",
       interactions: [],
+      postPaidInteractions: [],
+      prepaidInteractions: [],
       isBusy: false,
       saving: false,
       show: false,
@@ -276,7 +294,16 @@ export default {
       return await this.$axios
         .get(endpoint)
         .then(res => {
-          this.interactions = res.data.results;
+          this.postPaidInteractions = res.data.results;
+          if (this.postPaidInteractions.length == "1") {
+            this.postPaidInteractions.forEach(item => {
+              this.accountType = item.client_account_type;
+              console.log(this.accountType);
+            });
+          }
+          if (this.accountType == "postpaid") {
+            this.interactions = res.data.results;
+          }
           this.isBusy = false;
         })
         .catch(e => {
@@ -290,6 +317,16 @@ export default {
         .get(endpoint)
         .then(res => {
           this.interactions = res.data.results;
+          if (this.prepaidInteractions.length == "1") {
+            this.prepaidInteractions.forEach(item => {
+              this.interactions = res.data.results;
+              this.accountType = item.client_account_type;
+              console.log(this.accountType);
+            });
+          }
+          if (this.accountType == "prepaid") {
+            this.interactions = res.data.results;
+          }
           this.isBusy = false;
         })
         .catch(e => {
@@ -408,8 +445,12 @@ export default {
         });
     },
     fetchInteractions() {
-      this.fetchPostpaidInteractions();
-      this.fetchPrepaidInteractions();
+      console.log(this.accountType);
+      if (this.accountType == "Prepaid") {
+        this.fetchPrepaidInteractions();
+      } else if (this.accountType == "Postpaid") {
+        this.fetchPostpaidInteractions();
+      }
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
