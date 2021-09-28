@@ -374,7 +374,7 @@ import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 import { mapGetters, mapActions } from "vuex";
 
 import JobOrderView from "@/components/JobOrder/JobOrderView";
-import JobOrderUpdate from "@/components/JobOrder/JobOrderUpdate";
+import JobOrderUpdate from "@/components/JobOrder/Prepaid/JobOrderUpdate";
 
 export default {
   name: "prepaid_job_order_list",
@@ -554,7 +554,7 @@ export default {
     },
     async fetchJobOrder(id) {
       this.show = true;
-      let endpoint = `/api/v1/post-paid/job-order/${id}`;
+      let endpoint = `/api/v1/prepaid/job-order/${id}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
