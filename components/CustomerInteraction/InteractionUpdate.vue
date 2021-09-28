@@ -386,7 +386,7 @@
                   </div>
                 </div>
                 <div
-                  v-if="
+                  v-else-if="
                     interaction.customer_interaction_prepaid_forms &&
                       interaction.customer_interaction_prepaid_forms.length
                   "

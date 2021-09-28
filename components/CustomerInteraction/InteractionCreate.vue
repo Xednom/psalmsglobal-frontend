@@ -7,7 +7,7 @@
             <h3 class="mb-0">Add new Interaction</h3>
           </div>
           <div class="col-4 text-right">
-            <nuxt-link to="/post-paid/customer-interaction/">
+            <nuxt-link to="/customer-interaction/">
               <base-button type="info"
                 >Back to Interaction list</base-button
               ></nuxt-link
