@@ -3,33 +3,175 @@
     <div class="row mt-5">
       <div class="col-12">
         <card card-body-classes="table-full-width">
-          <b-tabs v-model="tabIndex" card v-if="this.$auth.user.designation_category == 'staff'">
-            <b-tab title="Call log report(Postpaid)" :title-link-class="linkClass(0)">
-              <record-postpaid-list></record-postpaid-list>
-            </b-tab>
-            <b-tab title="Call log report(Prepaid)" :title-link-class="linkClass(1)" lazy>
-              <record-prepaid-list></record-prepaid-list>
-            </b-tab>
-          </b-tabs>
-          <div
-            v-if="
-              this.$auth.user.designation_category != 'staff' &&
-                this.$auth.user.account_type == 'postpaid'
-            "
-          >
-            <record-postpaid-list></record-postpaid-list>
+          <div>
+            <b-button
+              variant="success"
+              @click="modals.create = true"
+              v-if="$auth.user.designation_category == 'staff'"
+              >Add interaction record</b-button
+            >
+            <b-container fluid>
+              <b-row>
+                <b-col lg="3" class="my-1">
+                  <stats-card class="bg-gradient-default">
+                    <!-- Card body -->
+                    <div class="row">
+                      <div class="col">
+                        <h5
+                          class="card-title text-uppercase text-muted mb-0 text-white"
+                        >
+                          Total minutes
+                        </h5>
+                        <span class="h2 font-weight-bold mb-0 text-white">
+                          {{ totalMinutes }}
+                        </span>
+                      </div>
+                      <div class="col-auto">
+                        <div
+                          class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                        >
+                          <i class="ni ni-watch-time"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </stats-card>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col sm="12" md="4" lg="4" class="my-1 pull-right">
+                  <b-form-group
+                    label="Per page"
+                    label-for="per-page-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                  >
+                    <b-form-select
+                      id="per-page-select"
+                      v-model="perPage"
+                      :options="pageOptions"
+                      size="sm"
+                    ></b-form-select>
+                  </b-form-group>
+                </b-col>
+                <b-col lg="6" class="my-1 pull-right">
+                  <b-form-group
+                    label="Filter"
+                    label-for="filter-input"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                  >
+                    <b-input-group size="sm">
+                      <b-form-input
+                        id="filter-input"
+                        v-model="filter"
+                        type="search"
+                        placeholder="Type to Search"
+                      ></b-form-input>
+
+                      <b-input-group-append>
+                        <b-button :disabled="!filter" @click="filter = ''"
+                          >Clear</b-button
+                        >
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+
+              <!-- Main table element -->
+              <b-table
+                :items="records"
+                :fields="computedFields"
+                :current-page="currentPage"
+                :per-page="perPage"
+                :filter="filter"
+                :busy="isBusy"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                :sort-direction="sortDirection"
+                stacked="md"
+                show-empty
+                small
+                @filtered="onFiltered"
+              >
+                <template #table-busy>
+                  <div class="text-center text-default my-2">
+                    <b-spinner class="align-middle"></b-spinner>
+                    <strong>Loading...</strong>
+                  </div>
+                </template>
+                <template #cell(apn)="row">
+                  <nuxt-link
+                    :to="'/job-order/property-detail/' + row.item.apn"
+                    >{{ row.item.apn }}</nuxt-link
+                  >
+                </template>
+
+                <template #cell(actions)="row">
+                  <b-button
+                    size="sm"
+                    variant="info"
+                    v-b-modal.record-update
+                    @click="fetchInteractionRecord(row.item.id)"
+                    class="mr-1"
+                  >
+                    Update
+                  </b-button>
+                </template>
+              </b-table>
+            </b-container>
           </div>
           <div
-            v-else-if="
-              this.$auth.user.designation_category != 'staff' &&
-                this.$auth.user.account_type == 'prepaid'
-            "
+            slot="footer"
+            class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap"
           >
-            <record-prepaid-list></record-prepaid-list>
+            <div class="">
+              <p class="card-category"></p>
+            </div>
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="fill"
+              size="sm"
+              class="my-0"
+            ></b-pagination>
           </div>
         </card>
       </div>
     </div>
+    <!-- info modal -->
+    <b-modal id="record-update" centered hide-footer>
+      <template #modal-title>
+        Update interaction record for {{ record.ticket_number }}
+      </template>
+      <record-update
+        :interaction="record"
+        :refresh="refresh"
+        :loading="loading"
+      ></record-update>
+    </b-modal>
+
+    <modal
+      :show.sync="modals.info"
+      headerClasses="justify-content-center"
+      class="white-content"
+    >
+    </modal>
+
+    <modal
+      :show.sync="modals.create"
+      headerClasses="justify-content-center"
+      class="white-content"
+    >
+      <record-create :refresh="refresh"></record-create>
+    </modal>
   </div>
 </template>
 <script>
@@ -39,9 +181,6 @@ import swal from "sweetalert2";
 import RecordCreate from "@/components/InteractionRecord/Create";
 import RecordUpdate from "@/components/InteractionRecord/RecordUpdate";
 
-import RecordPostpaidList from "@/components/InteractionRecord/Postpaid/RecordList";
-import RecordPrepaidList from "@/components/InteractionRecord/Prepaid/RecordList";
-
 export default {
   name: "record_list",
   components: {
@@ -50,9 +189,7 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     RecordCreate,
-    RecordUpdate,
-    RecordPostpaidList,
-    RecordPrepaidList
+    RecordUpdate
   },
   computed: {
     /***
@@ -138,13 +275,6 @@ export default {
     };
   },
   methods: {
-    linkClass(idx) {
-      if (this.tabIndex === idx) {
-        return ["bg-dark", "text-light"];
-      } else {
-        return ["bg-light", "text-dark"];
-      }
-    },
     handleLike(index, row) {
       swal({
         title: `You liked ${row.name}`,

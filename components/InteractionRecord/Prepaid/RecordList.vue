@@ -4,10 +4,39 @@
       <div class="col-12">
         <card card-body-classes="table-full-width">
           <div>
-            <b-button variant="success" @click="modals.create = true" v-if="$auth.user.designation_category == 'staff'"
+            <b-button
+              variant="success"
+              @click="modals.create = true"
+              v-if="$auth.user.designation_category == 'staff'"
               >Add interaction record</b-button
             >
             <b-container fluid>
+              <b-row>
+                <b-col lg="3" class="my-1">
+                  <stats-card class="bg-gradient-default">
+                    <!-- Card body -->
+                    <div class="row">
+                      <div class="col">
+                        <h5
+                          class="card-title text-uppercase text-muted mb-0 text-white"
+                        >
+                          Total minutes
+                        </h5>
+                        <span class="h2 font-weight-bold mb-0 text-white">
+                          {{ totalMinutes }}
+                        </span>
+                      </div>
+                      <div class="col-auto">
+                        <div
+                          class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                        >
+                          <i class="ni ni-watch-time"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </stats-card>
+                </b-col>
+              </b-row>
               <b-row>
                 <b-col sm="12" md="4" lg="4" class="my-1 pull-right">
                   <b-form-group
@@ -87,15 +116,12 @@
                 <template #cell(actions)="row">
                   <b-button
                     size="sm"
-                    @click="
-                      {
-                        fetchInteractionRecord(row.item.id),
-                          (modals.info = true);
-                      }
-                    "
+                    variant="info"
+                    v-b-modal.prepaid-record-update
+                    @click="fetchInteractionRecord(row.item.id)"
                     class="mr-1"
                   >
-                    Info
+                    Update
                   </b-button>
                 </template>
               </b-table>
@@ -110,7 +136,7 @@
             </div>
             <b-pagination
               v-model="currentPage"
-              :total-rows="interactionRecordCount"
+              :total-rows="totalRows"
               :per-page="perPage"
               align="fill"
               size="sm"
@@ -121,12 +147,22 @@
       </div>
     </div>
     <!-- info modal -->
+    <b-modal id="prepaid-record-update" centered hide-footer>
+      <template #modal-title>
+        Update interaction record for {{ record.ticket_number }}
+      </template>
+      <record-update
+        :interaction="record"
+        :refresh="refresh"
+        :loading="loading"
+      ></record-update>
+    </b-modal>
+
     <modal
       :show.sync="modals.info"
       headerClasses="justify-content-center"
       class="white-content"
     >
-    <record-view :interaction="record"></record-view>
     </modal>
 
     <modal
@@ -134,10 +170,7 @@
       headerClasses="justify-content-center"
       class="white-content"
     >
-      <record-create
-        :interaction="interactionRecord"
-        :refresh="refresh"
-      ></record-create>
+      <record-create :refresh="refresh"></record-create>
     </modal>
   </div>
 </template>
@@ -145,23 +178,18 @@
 import { Table, TableColumn, Select, Option } from "element-ui";
 import swal from "sweetalert2";
 
-import RecordCreate from "@/components/InteractionRecord/RecordInteractionCreate";
-import RecordView from "@/components/InteractionRecord/RecordInfo";
+import RecordCreate from "@/components/InteractionRecord/Prepaid/RecordCreate";
+import RecordUpdate from "@/components/InteractionRecord/Prepaid/RecordUpdate";
 
 export default {
-  name: "interaction_record_list",
+  name: "record_list",
   components: {
     [Select.name]: Select,
     [Option.name]: Option,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     RecordCreate,
-    RecordView
-  },
-  props: {
-    interactionRecord: {
-      Type: Object
-    }
+    RecordUpdate
   },
   computed: {
     /***
@@ -193,11 +221,11 @@ export default {
         return this.fields.filter(field => !field.requiresClient);
       }
     },
-    interactionRecordCount() {
-      if (this.records) {
-        return this.records.length;
-      }
-    }
+    totalMinutes: function() {
+      return this.records.reduce((acc, item) => {
+        return acc + parseInt(item.total_minutes);
+      }, 0);
+    },
   },
   data() {
     return {
@@ -208,11 +236,21 @@ export default {
       user: {},
       fuseSearch: null,
       isBusy: false,
+      loading: false,
       error: "",
       fields: [
-        { key: "ticket_number", sortable: true },
+        {
+          key: "customer_interaction_prepaid",
+          label: "Customer Interaction ticket",
+          sortable: true
+        },
         { key: "date_called", sortable: true },
         { key: "total_minutes", sortable: true },
+        {
+          key: "client_feedback_status",
+          label: "Dispute status",
+          sortable: true
+        },
         { key: "actions", label: "Actions" }
       ],
       totalRows: 1,
@@ -268,69 +306,31 @@ export default {
       this.currentPage = 1;
     },
     async fetchInteractionRecord(id) {
-      if (this.interactionRecord.client_account_type == "postpaid") {
-        this.fetchPostpaidInteractionRecord(id)
-      } else if (this.interactionRecord.client_account_type == "prepaid") {
-        this.fetchPrepaidInteractionRecord(id);
-      }
-    },
-    async fetchPostpaidInteractionRecord(id) {
-      let endpoint = `/api/v1/post-paid/interaction-record/${id}/`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.record = res.data;
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    async fetchPrepaidInteractionRecord(id) {
+      this.loading = true;
       let endpoint = `/api/v1/prepaid/interaction-record/${id}/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
+          this.loading = false;
           this.record = res.data;
         })
         .catch(e => {
           throw e;
         });
     },
-    fetchPostpaidInteractionRecords() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/interaction-record/?search=${this.interactionRecord.id}`;
-      return this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.isBusy = false;
-          this.records = res.data.results;
-        })
-        .catch(e => {
-          this.isBusy = false;
-          console.error(e);
-        });
-    },
-    fetchPrepaidInteractionRecords() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/interaction-record/?search=${this.interactionRecord.id}`;
-      return this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.isBusy = false;
-          this.records = res.data.results;
-          console.log(this.records);
-        })
-        .catch(e => {
-          this.isBusy = false;
-          console.error(e);
-        });
-    },
     fetchInteractionRecords() {
-      if (this.interactionRecord.client_account_type == "postpaid") {
-        this.fetchPostpaidInteractionRecords();
-      } else if (this.interactionRecord.client_account_type == "prepaid") {
-        this.fetchPrepaidInteractionRecords();
-      }
+      this.isBusy = true;
+      let endpoint = `/api/v1/prepaid/interaction-record/`;
+      return this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.isBusy = false;
+          this.records = res.data.results;
+        })
+        .catch(e => {
+          this.isBusy = false;
+          console.error(e);
+        });
     },
     refresh() {
       this.fetchInteractionRecords();

@@ -197,7 +197,7 @@ export default {
         console.error(err.response.data);
       }
     },
-    async fetchCustInteractions() {
+    async fetchPostpaidCustInteractions() {
       this.loading = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/`;
       try {
@@ -284,7 +284,7 @@ export default {
   },
   mounted() {
     this.fetchMe();
-    this.fetchCustInteractions();
+    this.fetchPostpaidCustInteractions();
   }
 };
 </script>
