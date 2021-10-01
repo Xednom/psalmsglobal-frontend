@@ -27,7 +27,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col lg="6" class="my-1">
+          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category == 'staff'">
             <b-form-group
               label="Select Account type"
               label-for="initial-sort-select"
@@ -56,6 +56,59 @@
                   id="filter-input"
                   v-model="filter"
                   @keyup.enter="fetchInteractions"
+                  type="search"
+                  placeholder="Type to Search"
+                ></b-form-input>
+
+                <b-input-group-append>
+                  <b-button :disabled="!filter" @click="filter = ''"
+                    >Clear</b-button
+                  >
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+
+          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'prepaid'">
+            <b-form-group
+              label="Filter"
+              label-for="filter-input"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-input-group size="sm">
+                <b-form-input
+                  id="filter-input"
+                  v-model="filter"
+                  @keyup.enter="fetchPrepaidInteractions"
+                  type="search"
+                  placeholder="Type to Search"
+                ></b-form-input>
+
+                <b-input-group-append>
+                  <b-button :disabled="!filter" @click="filter = ''"
+                    >Clear</b-button
+                  >
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'postpaid'">
+            <b-form-group
+              label="Filter"
+              label-for="filter-input"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-input-group size="sm">
+                <b-form-input
+                  id="filter-input"
+                  v-model="filter"
+                  @keyup.enter="fetchPostpaidInteractions"
                   type="search"
                   placeholder="Type to Search"
                 ></b-form-input>
@@ -297,11 +350,11 @@ export default {
           this.postPaidInteractions = res.data.results;
           if (this.postPaidInteractions.length == "1") {
             this.postPaidInteractions.forEach(item => {
-              this.accountType = item.client_account_type;
-              console.log(this.accountType);
+              this.interactions = res.data.results;
+              this.accountType = "Postpaid";
             });
           }
-          if (this.accountType == "postpaid") {
+          if (this.accountType == "Postpaid") {
             this.interactions = res.data.results;
           }
           this.isBusy = false;
@@ -320,8 +373,7 @@ export default {
           if (this.prepaidInteractions.length == "1") {
             this.prepaidInteractions.forEach(item => {
               this.interactions = res.data.results;
-              this.accountType = item.client_account_type;
-              console.log(this.accountType);
+              this.accountType = "Postpaid";
             });
           }
           if (this.accountType == "prepaid") {
@@ -383,7 +435,6 @@ export default {
           this.interactions = res.data.results;
           this.totalRows = this.interactions.length;
           this.isBusy = false;
-          console.log(this.interactions);
           this.interactions.forEach(item => {
             if (
               item.interested_to_sell == "yes" &&
@@ -445,11 +496,16 @@ export default {
         });
     },
     fetchInteractions() {
-      console.log(this.accountType);
       if (this.accountType == "Prepaid") {
         this.fetchPrepaidInteractions();
       } else if (this.accountType == "Postpaid") {
         this.fetchPostpaidInteractions();
+      } else {
+        if (this.$auth.user.account_type == "Prepaid") {
+        this.fetchPrepaidInteractions();
+      } else if (this.$auth.user.account_type == "Postpaid") {
+        this.fetchPostpaidInteractions();
+      }
       }
     },
     errorMessage(variant = null, error) {
