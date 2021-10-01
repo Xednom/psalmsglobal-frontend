@@ -45,6 +45,9 @@
           <b-tab title="Plan Details" :title-link-class="linkClass(1)" lazy
             ><prepaid-plan-detail-list></prepaid-plan-detail-list
           ></b-tab>
+          <b-tab title="Month to Month Minutes Overview" :title-link-class="linkClass(2)" lazy
+            ><prepaid-minutes-report-list></prepaid-minutes-report-list
+          ></b-tab>
         </b-tabs>
       </b-card>
     </div>
@@ -60,6 +63,7 @@ import SubscriptionList from "@/components/Subscription/SubscriptionList.vue";
 
 import PrepaidBalanceList from "@/components/AccountBalance/Prepaid/BalanceList";
 import PrepaidPlanDetailList from "@/components/PlanDetails/Prepaid/PlanList.vue";
+import PrepaidMinutesReportList from "@/components/MinutesReportPrepaid/MinutesReportList";
 
 export default {
   layout: "DashboardLayout",
@@ -70,7 +74,8 @@ export default {
     PlanList,
     SubscriptionList,
     PrepaidBalanceList,
-    PrepaidPlanDetailList
+    PrepaidPlanDetailList,
+    PrepaidMinutesReportList
   },
   data() {
     return {
