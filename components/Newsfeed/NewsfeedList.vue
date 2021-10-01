@@ -36,8 +36,7 @@
           </div>
 
           <div class="card-body">
-            <p class="mb-4">
-              {{ newsFeed.body }}
+            <p class="mb-4" v-html="newsFeed.body">
             </p>
             <hr />
 
