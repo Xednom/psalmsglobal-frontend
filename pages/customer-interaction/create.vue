@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import InteractionCreate from "@/components/CustomerInteractionPostPaid/InteractionCreate.vue";
+import InteractionCreate from "@/components/CustomerInteraction/InteractionCreate.vue";
 export default {
   layout: "DashboardLayout",
   components: {

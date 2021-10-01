@@ -29,6 +29,21 @@
 
           <b-col lg="6" class="my-1">
             <b-form-group
+              label="Select Account type"
+              label-for="initial-sort-select"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-2"
+            >
+              <b-form-select
+                id="account-type-select"
+                v-model="accountType"
+                :options="['Postpaid', 'Prepaid']"
+                size="sm"
+              ></b-form-select>
+            </b-form-group>
+            <b-form-group
               label="Filter"
               label-for="filter-input"
               label-cols-sm="3"
@@ -81,7 +96,7 @@
           </template>
           <template #cell(ticket_number)="row">
             <nuxt-link
-              :to="'/post-paid/customer-interaction/' + row.item.ticket_number"
+              :to="'/customer-interaction/' + row.item.ticket_number"
               >{{ row.item.ticket_number }}</nuxt-link
             >
           </template>
@@ -195,7 +210,7 @@ import { mapGetters } from "vuex";
 
 import FormView from "@/components/Form/FormView";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
-import JobOrderComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
+import JobOrderComment from "@/components/CustomerInteraction/InteractionCommentSection";
 
 export default {
   name: "interaction_list",
@@ -221,7 +236,11 @@ export default {
     return {
       interaction: {},
       form: {},
+      clientUser: {},
+      accountType: "",
       interactions: [],
+      postPaidInteractions: [],
+      prepaidInteractions: [],
       isBusy: false,
       saving: false,
       show: false,
@@ -269,20 +288,52 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetchInteractions() {
+    async fetchPostpaidInteractions() {
       this.isBusy = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
-          this.interactions = res.data.results;
+          this.postPaidInteractions = res.data.results;
+          if (this.postPaidInteractions.length == "1") {
+            this.postPaidInteractions.forEach(item => {
+              this.accountType = item.client_account_type;
+              console.log(this.accountType);
+            });
+          }
+          if (this.accountType == "postpaid") {
+            this.interactions = res.data.results;
+          }
           this.isBusy = false;
         })
         .catch(e => {
           throw e;
         });
     },
-    async fetchClientInteractions() {
+    async fetchPrepaidInteractions() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/prepaid/customer-interaction/?search=${this.filter}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          if (this.prepaidInteractions.length == "1") {
+            this.prepaidInteractions.forEach(item => {
+              this.interactions = res.data.results;
+              this.accountType = item.client_account_type;
+              console.log(this.accountType);
+            });
+          }
+          if (this.accountType == "prepaid") {
+            this.interactions = res.data.results;
+          }
+          this.isBusy = false;
+        })
+        .catch(e => {
+          throw e;
+        });
+    },
+    async fetchClientPostpaidInteractions() {
       this.isBusy = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?limit=10000`;
       return await this.$axios
@@ -292,17 +343,68 @@ export default {
           this.totalRows = this.interactions.length;
           this.isBusy = false;
           this.interactions.forEach(item => {
-            if (item.interested_to_sell == "yes" && item.interested_to_buy == "yes") {
+            if (
+              item.interested_to_sell == "yes" &&
+              item.interested_to_buy == "yes"
+            ) {
               item._cellVariants = {
                 interested_to_sell: "success",
                 interested_to_buy: "info"
               };
-            } else if (item.interested_to_buy == "yes" && item.interested_to_sell == "no") {
+            } else if (
+              item.interested_to_buy == "yes" &&
+              item.interested_to_sell == "no"
+            ) {
               item._cellVariants = {
                 interested_to_buy: "success",
                 interested_to_sell: "danger"
               };
-            } else if (item.interested_to_sell == "no" && item.interested_to_buy == "yes") {
+            } else if (
+              item.interested_to_sell == "no" &&
+              item.interested_to_buy == "yes"
+            ) {
+              item._cellVariants = {
+                interested_to_sell: "danger",
+                interested_to_buy: "info"
+              };
+            }
+          });
+        })
+        .catch(e => {
+          throw e;
+        });
+    },
+    async fetchClientPrepaidInteractions() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/prepaid/customer-interaction/?limit=10000`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          this.totalRows = this.interactions.length;
+          this.isBusy = false;
+          console.log(this.interactions);
+          this.interactions.forEach(item => {
+            if (
+              item.interested_to_sell == "yes" &&
+              item.interested_to_buy == "yes"
+            ) {
+              item._cellVariants = {
+                interested_to_sell: "success",
+                interested_to_buy: "info"
+              };
+            } else if (
+              item.interested_to_buy == "yes" &&
+              item.interested_to_sell == "no"
+            ) {
+              item._cellVariants = {
+                interested_to_buy: "success",
+                interested_to_sell: "danger"
+              };
+            } else if (
+              item.interested_to_sell == "no" &&
+              item.interested_to_buy == "yes"
+            ) {
               item._cellVariants = {
                 interested_to_sell: "danger",
                 interested_to_buy: "info"
@@ -342,6 +444,14 @@ export default {
           throw e;
         });
     },
+    fetchInteractions() {
+      console.log(this.accountType);
+      if (this.accountType == "Prepaid") {
+        this.fetchPrepaidInteractions();
+      } else if (this.accountType == "Postpaid") {
+        this.fetchPostpaidInteractions();
+      }
+    },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
         error.company
@@ -365,7 +475,11 @@ export default {
       this.$auth.user.designation_category == "current_client" ||
       this.$auth.user.designation_category == "affiliate_partner"
     ) {
-      this.fetchClientInteractions();
+      if (this.$auth.user.account_type == "postpaid") {
+        this.fetchClientPostpaidInteractions();
+      } else if (this.$auth.user.account_type == "prepaid") {
+        this.fetchClientPrepaidInteractions();
+      }
     }
   }
 };

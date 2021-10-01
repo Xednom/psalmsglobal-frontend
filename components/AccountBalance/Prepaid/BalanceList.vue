@@ -1,12 +1,12 @@
 <template>
   <div class="content">
-    <div class="row mt-5">
+    <div class="row">
       <div class="col-12">
         <card card-body-classes="table-full-width">
           <div>
-            <b-button variant="success" @click="modals.create = true" v-if="$auth.user.designation_category == 'staff'"
-              >Add interaction record</b-button
-            >
+            <div class="card-header bg-transparent border-0">
+              <h3 class="mb-0">Account balance</h3>
+            </div>
             <b-container fluid>
               <b-row>
                 <b-col sm="12" md="4" lg="4" class="my-1 pull-right">
@@ -57,7 +57,7 @@
 
               <!-- Main table element -->
               <b-table
-                :items="records"
+                :items="accountBalances"
                 :fields="computedFields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -87,6 +87,7 @@
                 <template #cell(actions)="row">
                   <b-button
                     size="sm"
+                    variant="info"
                     @click="
                       {
                         fetchInteractionRecord(row.item.id),
@@ -95,7 +96,7 @@
                     "
                     class="mr-1"
                   >
-                    Info
+                    Update
                   </b-button>
                 </template>
               </b-table>
@@ -110,7 +111,7 @@
             </div>
             <b-pagination
               v-model="currentPage"
-              :total-rows="interactionRecordCount"
+              :total-rows="totalRows"
               :per-page="perPage"
               align="fill"
               size="sm"
@@ -120,53 +121,35 @@
         </card>
       </div>
     </div>
-    <!-- info modal -->
-    <modal
-      :show.sync="modals.info"
-      headerClasses="justify-content-center"
-      class="white-content"
-    >
-    <record-view :interaction="record"></record-view>
-    </modal>
-
-    <modal
-      :show.sync="modals.create"
-      headerClasses="justify-content-center"
-      class="white-content"
-    >
-      <record-create
-        :interaction="interactionRecord"
-        :refresh="refresh"
-      ></record-create>
-    </modal>
   </div>
 </template>
 <script>
 import { Table, TableColumn, Select, Option } from "element-ui";
 import swal from "sweetalert2";
 
-import RecordCreate from "@/components/InteractionRecord/RecordInteractionCreate";
-import RecordView from "@/components/InteractionRecord/RecordInfo";
+import RecordCreate from "@/components/InteractionRecord/Create";
+import RecordUpdate from "@/components/InteractionRecord/RecordUpdate";
+
+import { mapGetters } from "vuex";
 
 export default {
-  name: "interaction_record_list",
+  name: "record_list",
   components: {
     [Select.name]: Select,
     [Option.name]: Option,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     RecordCreate,
-    RecordView
-  },
-  props: {
-    interactionRecord: {
-      Type: Object
-    }
+    RecordUpdate
   },
   computed: {
     /***
      * Returns a page from the searched data or the whole data. Search is performed in the watch section below
      */
+    ...mapGetters({
+      accountBalances: "prepaid/accountBalance/accountBalances",
+      pagination: "prepaid/accountBalance/accountBalancesPagination"
+    }),
     queriedData() {
       let result = this.tableData;
       if (this.searchedData.length > 0) {
@@ -192,11 +175,6 @@ export default {
       } else {
         return this.fields.filter(field => !field.requiresClient);
       }
-    },
-    interactionRecordCount() {
-      if (this.records) {
-        return this.records.length;
-      }
     }
   },
   data() {
@@ -208,12 +186,16 @@ export default {
       user: {},
       fuseSearch: null,
       isBusy: false,
+      loading: false,
       error: "",
       fields: [
-        { key: "ticket_number", sortable: true },
-        { key: "date_called", sortable: true },
-        { key: "total_minutes", sortable: true },
-        { key: "actions", label: "Actions" }
+        {
+          key: "account_total_aquired_minutes",
+          sortable: true
+        },
+        { key: "account_total_spending", sortable: true },
+        { key: "account_total_mins_used", sortable: true },
+        { key: "account_total_mins_unused", sortable: true }
       ],
       totalRows: 1,
       currentPage: 1,
@@ -267,69 +249,17 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetchInteractionRecord(id) {
-      if (this.interactionRecord.client_account_type == "postpaid") {
-        this.fetchPostpaidInteractionRecord(id)
-      } else if (this.interactionRecord.client_account_type == "prepaid") {
-        this.fetchPrepaidInteractionRecord(id);
-      }
-    },
-    async fetchPostpaidInteractionRecord(id) {
-      let endpoint = `/api/v1/post-paid/interaction-record/${id}/`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.record = res.data;
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    async fetchPrepaidInteractionRecord(id) {
-      let endpoint = `/api/v1/prepaid/interaction-record/${id}/`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.record = res.data;
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    fetchPostpaidInteractionRecords() {
+    async fetchAccountBalances() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/interaction-record/?search=${this.interactionRecord.id}`;
-      return this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.isBusy = false;
-          this.records = res.data.results;
-        })
-        .catch(e => {
-          this.isBusy = false;
-          console.error(e);
-        });
-    },
-    fetchPrepaidInteractionRecords() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/interaction-record/?search=${this.interactionRecord.id}`;
-      return this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.isBusy = false;
-          this.records = res.data.results;
-          console.log(this.records);
-        })
-        .catch(e => {
-          this.isBusy = false;
-          console.error(e);
-        });
-    },
-    fetchInteractionRecords() {
-      if (this.interactionRecord.client_account_type == "postpaid") {
-        this.fetchPostpaidInteractionRecords();
-      } else if (this.interactionRecord.client_account_type == "prepaid") {
-        this.fetchPrepaidInteractionRecords();
+      try {
+        await this.$store
+          .dispatch("prepaid/accountBalance/fetchAccountBalances", this.pagination)
+          .then(() => {
+            this.totalRows = this.accountBalances.length;
+            this.isBusy = false;
+          });
+      } catch (e) {
+        this.errorMessage("danger", e);
       }
     },
     refresh() {
@@ -337,26 +267,18 @@ export default {
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
-        error.apn
-          ? "APN: " + error.apn
-          : error.state
-          ? "State: " + errors.state
-          : errors.county
-          ? "County" + error.county
-          : error.size
-          ? "Size: " + error.username
-          : error.property_status
-          ? "Property status: " + error.property_status
-          : error.asking_price
-          ? "Asking price: " + error.asking_price
-          : error.finance_terms
-          ? "Finance terms: " + error.finance_terms
-          : error.cash_terms
-          ? "Cash terms: " + error.cash_terms
-          : error.other_terms
-          ? "Other terms: " + error.other_terms
-          : error.notes
-          ? "Notes: " + error.notes
+        error.client
+          ? "Client: " + error.client
+          : error.account_total_aquired_minutes
+          ? "Account total aquired: " + error.account_total_aquired_minutes
+          : error.account_total_spending
+          ? "Account total spending: " + error.account_total_spending
+          : error.account_total_mins_used
+          ? "Account total minutes used: " + error.account_total_mins_used
+          : error.account_total_mins_unused
+          ? "Account total minutes unused: " + error.account_total_mins_unused
+          : error.total_spending
+          ? "Account total spending: " + error.total_spending
           : error.non_field_errors
           ? error.non_field_errors
           : error,
@@ -369,7 +291,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchInteractionRecords();
+    this.fetchAccountBalances();
   }
 };
 </script>

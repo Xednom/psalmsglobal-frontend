@@ -7,7 +7,7 @@
             <h3 class="mb-0">Add new Interaction</h3>
           </div>
           <div class="col-4 text-right">
-            <nuxt-link to="/post-paid/customer-interaction/">
+            <nuxt-link to="/customer-interaction/">
               <base-button type="info"
                 >Back to Interaction list</base-button
               ></nuxt-link
@@ -582,6 +582,7 @@ export default {
       clientUser: {},
       staffUser: {},
       user: {},
+      clientAccountType: {},
       isBusy: false,
       saving: false,
       loadingCounties: false,
@@ -606,6 +607,10 @@ export default {
   },
   methods: {
     ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
+    ...mapActions("prepaid/prepaidCustomerInteraction", [
+      "reset",
+      "savePrepaidInteraction"
+    ]),
     eventChild(form) {
       console.log("Event from child component emitted", (this.form = form));
     },
@@ -617,6 +622,10 @@ export default {
         .get(`/api/v1/company/?search=${this.company}`)
         .then(res => {
           this.companies = res.data.results;
+          this.companies.forEach(item => {
+            this.clientAccountType = item.company_client_account_type;
+            console.log(this.clientAccountType);
+          });
           this.getCompanyCrm();
         })
         .catch(err => {
@@ -704,7 +713,7 @@ export default {
           status: true
         }
       ];
-      const interactionPayload = {
+      const interactionPostpaidPayload = {
         company: this.company,
         agent: this.staffUser.id,
         apn: this.apn,
@@ -721,20 +730,63 @@ export default {
         general_call: this.general_call,
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm,
-        script_answer: this.script_answer,
         customer_interaction_post_paid_forms: formArray
       };
-      if (this.$auth.user.designation_category == "staff") {
+      const interactionPrepaidPayload = {
+        company: this.company,
+        agent: this.staffUser.id,
+        apn: this.apn,
+        state: this.callMe.property_state,
+        county: this.callMe.property_county,
+        address: this.callMe.property_address,
+        reference_number: this.callMe.reference,
+        caller_full_name: this.callMe.full_name,
+        caller_phone: this.caller_phone,
+        email: this.email,
+        reason_of_the_call: this.reason_of_the_call,
+        interested_to_sell: this.interested_to_sell,
+        interested_to_buy: this.interested_to_buy,
+        general_call: this.general_call,
+        crm: this.crm,
+        leads_transferred_crm: this.leads_transferred_crm,
+        customer_interaction_prepaid_forms: formArray
+      };
+      if (
+        this.$auth.user.designation_category == "staff" &&
+        this.clientAccountType == "postpaid"
+      ) {
         try {
           this.saving = true;
-          await this.saveInteraction(interactionPayload)
+          await this.saveInteraction(interactionPostpaidPayload)
             .then(() => {
               this.saving = false;
               this.reset();
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch((err) => {
+            .catch(err => {
+              this.saving = false;
+              console.log(err);
+              this.errorMessage("danger", err.response.data);
+            });
+        } catch (e) {
+          throw e;
+        }
+        this.saving = false;
+      } else if (
+        this.$auth.user.designation_category == "staff" &&
+        this.clientAccountType == "prepaid"
+      ) {
+        try {
+          this.saving = true;
+          await this.savePrepaidInteraction(interactionPrepaidPayload)
+            .then(() => {
+              this.saving = false;
+              this.reset();
+              this.$refs.formValidator.reset();
+              this.successMessage("success");
+            })
+            .catch(err => {
               this.saving = false;
               console.log(err);
               this.errorMessage("danger", err.response.data);

@@ -13,17 +13,34 @@
       </div>
     </base-header>
     <div class="container-fluid mt--6">
-      <balance-list></balance-list>
+      <div
+        v-if="
+          this.$auth.user.designation_category != 'staff' &&
+            this.$auth.user.account_type == 'postpaid'
+        "
+      >
+        <balance-list></balance-list>
+      </div>
+      <div
+        v-else-if="
+          this.$auth.user.designation_category != 'staff' &&
+            this.$auth.user.account_type == 'prepaid'
+        "
+      >
+        <prepaid-balance-list></prepaid-balance-list>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import BalanceList from "@/components/AccountBalance/BalanceList.vue";
+import PrepaidBalanceList from "@/components/AccountBalance/Prepaid/BalanceList.vue";
 export default {
   layout: "DashboardLayout",
   components: {
-    BalanceList
+    BalanceList,
+    PrepaidBalanceList
   }
 };
 </script>

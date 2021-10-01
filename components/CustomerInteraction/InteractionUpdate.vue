@@ -13,7 +13,7 @@
             <base-button @click="modals.classic = true" type="primary"
               >Comments</base-button
             >
-            <nuxt-link to="/post-paid/customer-interaction/">
+            <nuxt-link to="/customer-interaction/">
               <base-button type="danger"
                 >Back to Interaction list</base-button
               ></nuxt-link
@@ -320,7 +320,7 @@
                       </div>
                     </div>
                   </div>
-                  <base-button
+                  <!-- <base-button
                     type="primary"
                     native-type="submit"
                     loading
@@ -334,7 +334,7 @@
                       !saving && $auth.user.designation_category == 'staff'
                     "
                     >Submit</base-button
-                  >
+                  > -->
                 </form>
               </validation-observer>
             </b-tab>
@@ -361,6 +361,40 @@
                     class="col-lg-12 mb-3"
                     v-for="(interaction_forms,
                     index) in interaction.customer_interaction_post_paid_forms"
+                    :key="index"
+                  >
+                    <h6 class="heading-small text-muted">
+                      {{ interaction_forms.form_title }} of
+                      {{ interaction_forms.company }}
+                    </h6>
+                    <div
+                      v-for="(form, index) in interaction_forms.attribute_forms"
+                      :key="index"
+                    >
+                      <div v-if="form.data_type == 'question'">
+                        <span v-dompurify-html="form.value_question"></span>
+                        <textarea
+                          class="form-control"
+                          name="input-question"
+                          v-model="form.input_question"
+                          id=""
+                          cols="30"
+                          disabled
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  v-else-if="
+                    interaction.customer_interaction_prepaid_forms &&
+                      interaction.customer_interaction_prepaid_forms.length
+                  "
+                >
+                  <div
+                    class="col-lg-12 mb-3"
+                    v-for="(interaction_forms,
+                    index) in interaction.customer_interaction_prepaid_forms"
                     :key="index"
                   >
                     <h6 class="heading-small text-muted">
@@ -422,7 +456,7 @@
 import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
-import InteractionComment from "@/components/CustomerInteractionPostPaid/InteractionCommentSection";
+import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection";
 import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
 
@@ -524,9 +558,34 @@ export default {
         });
     }, 700),
     
-    async fetchInteraction(payload) {
+    async fetchPostpaidInteraction(payload) {
       this.loading = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${payload}/`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.loading = false;
+          this.interaction = res.data;
+          console.log(this.interaction);
+          this.interaction.customer_interaction_post_paid_forms.forEach(
+            item => {
+              if (item) {
+                console.log("yes");
+              } else if (!item) {
+                console.log("no");
+              }
+            }
+          );
+        })
+        .catch(e => {
+          this.loading = false;
+          console.log(e);
+          throw e;
+        });
+    },
+    async fetchPrepaidInteraction(payload) {
+      this.loading = true;
+      let endpoint = `/api/v1/prepaid/customer-interaction/${payload}/`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
@@ -622,6 +681,10 @@ export default {
         }
         this.saving = false;
       }
+    },
+    fetchInteraction(param) {
+      this.fetchPostpaidInteraction(param);
+      this.fetchPrepaidInteraction(param);
     },
     successMessage(variant = null) {
       this.$bvToast.toast("Successfully updated the interaction information!", {

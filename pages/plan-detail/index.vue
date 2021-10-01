@@ -19,18 +19,23 @@
         </div>
       </div>
     </base-header>
-    <div class="container-fluid mt--6">
+    <div class="container-fluid mt--6" v-if="this.$auth.user.account_type == 'postpaid'">
       <plan-detail-list></plan-detail-list>
+    </div>
+    <div class="container-fluid mt--6" v-else-if="this.$auth.user.account_type == 'prepaid'">
+      <prepaid-plan-detail-list></prepaid-plan-detail-list>
     </div>
   </div>
 </template>
 
 <script>
 import PlanDetailList from "@/components/PlanDetails/PlanList.vue";
+import PrepaidPlanDetailList from "@/components/PlanDetails/Prepaid/PlanList.vue";
 export default {
   layout: "DashboardLayout",
   components: {
-    PlanDetailList
+    PlanDetailList,
+    PrepaidPlanDetailList
   }
 };
 </script>

@@ -13,7 +13,7 @@
       </div>
     </base-header>
     <div>
-      <b-card no-body>
+      <b-card no-body v-if="this.$auth.user.account_type == 'postpaid'">
         <b-tabs v-model="tabIndex" card>
           <b-tab title="Plan Details" :title-link-class="linkClass(0)">
             <plan-list></plan-list>
@@ -37,6 +37,22 @@
           </b-tab>
         </b-tabs>
       </b-card>
+      <b-card v-else-if="this.$auth.user.account_type == 'prepaid'">
+        <b-tabs v-model="tabIndex" card>
+          <b-tab title="Account balance" :title-link-class="linkClass(0)" lazy
+            ><prepaid-balance-list></prepaid-balance-list
+          ></b-tab>
+          <b-tab title="Plan Details" :title-link-class="linkClass(1)" lazy
+            ><prepaid-plan-detail-list></prepaid-plan-detail-list
+          ></b-tab>
+          <b-tab title="Month to Month Minutes Overview" :title-link-class="linkClass(2)" lazy
+            ><prepaid-minutes-report-list></prepaid-minutes-report-list
+          ></b-tab>
+          <b-tab title="Payment Summary" :title-link-class="linkClass(3)" lazy
+            ><prepaid-payment-summary-list></prepaid-payment-summary-list
+          ></b-tab>
+        </b-tabs>
+      </b-card>
     </div>
   </div>
 </template>
@@ -48,6 +64,11 @@ import ChargeList from "@/components/MonthlyChargePostPaid/MonthlyChargeList.vue
 import PlanList from "@/components/PlanDetails/PlanList.vue";
 import SubscriptionList from "@/components/Subscription/SubscriptionList.vue";
 
+import PrepaidBalanceList from "@/components/AccountBalance/Prepaid/BalanceList";
+import PrepaidPlanDetailList from "@/components/PlanDetails/Prepaid/PlanList.vue";
+import PrepaidMinutesReportList from "@/components/MinutesReportPrepaid/MinutesReportList";
+import PrepaidPaymentSummaryList from "@/components/PaymentSummaryPrepaid/PaymentList";
+
 export default {
   layout: "DashboardLayout",
   components: {
@@ -55,7 +76,11 @@ export default {
     ReportList,
     ChargeList,
     PlanList,
-    SubscriptionList
+    SubscriptionList,
+    PrepaidBalanceList,
+    PrepaidPlanDetailList,
+    PrepaidMinutesReportList,
+    PrepaidPaymentSummaryList
   },
   data() {
     return {

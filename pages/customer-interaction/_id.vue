@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import InteractionUpdate from "@/components/CustomerInteractionPostPaid/InteractionUpdate.vue";
+import InteractionUpdate from "@/components/CustomerInteraction/InteractionUpdate.vue";
 export default {
   layout: "DashboardLayout",
   components: {

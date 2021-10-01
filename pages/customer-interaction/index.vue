@@ -9,7 +9,7 @@
           </nav>
         </div>
         <div class="col-lg-6 col-5 text-right" v-if="$auth.user.designation_category == 'staff'">
-          <nuxt-link to="/post-paid/customer-interaction/create" size="md" type="neutral">
+          <nuxt-link to="/customer-interaction/create" size="md" type="neutral">
             <base-button size="md" type="neutral">Create an interaction</base-button>
           </nuxt-link>
         </div>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import InteractionList from "@/components/CustomerInteractionPostPaid/InteractionList.vue";
+import InteractionList from "@/components/CustomerInteraction/InteractionList.vue";
 export default {
   layout: "DashboardLayout",
   components: {

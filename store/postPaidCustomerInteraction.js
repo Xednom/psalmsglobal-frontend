@@ -198,7 +198,7 @@ export const actions = {
     let url = "/api/v1/post-paid/customer-interaction-post-paid/";
     return await this.$axios.post(url, payload).then(res => {
       this.$router.push({
-        name: "post-paid-customer-interaction-id",
+        name: "customer-interaction-id",
         params: { id: res.data.ticket_number }
       });
       commit("setBasicField", payload);
