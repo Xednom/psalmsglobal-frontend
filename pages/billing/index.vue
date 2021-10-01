@@ -13,7 +13,7 @@
       </div>
     </base-header>
     <div>
-      <b-card no-body>
+      <b-card no-body v-if="this.$auth.user.account_type == 'postpaid'">
         <b-tabs v-model="tabIndex" card>
           <b-tab title="Plan Details" :title-link-class="linkClass(0)">
             <plan-list></plan-list>
@@ -37,6 +37,13 @@
           </b-tab>
         </b-tabs>
       </b-card>
+      <b-card v-else-if="this.$auth.user.account_type == 'prepaid'">
+        <b-tabs v-model="tabIndex" card>
+          <b-tab title="Account balance" :title-link-class="linkClass(1)"
+            ><prepaid-balance-list></prepaid-balance-list
+          ></b-tab>
+        </b-tabs>
+      </b-card>
     </div>
   </div>
 </template>
@@ -48,6 +55,8 @@ import ChargeList from "@/components/MonthlyChargePostPaid/MonthlyChargeList.vue
 import PlanList from "@/components/PlanDetails/PlanList.vue";
 import SubscriptionList from "@/components/Subscription/SubscriptionList.vue";
 
+import PrepaidBalanceList from "@/components/AccountBalance/Prepaid/BalanceList";
+
 export default {
   layout: "DashboardLayout",
   components: {
@@ -55,7 +64,8 @@ export default {
     ReportList,
     ChargeList,
     PlanList,
-    SubscriptionList
+    SubscriptionList,
+    PrepaidBalanceList
   },
   data() {
     return {
