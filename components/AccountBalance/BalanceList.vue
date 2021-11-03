@@ -9,6 +9,15 @@
             </div>
             <b-container fluid>
               <b-row>
+                <nuxt-link
+                  class="btn btn-primary"
+                  to="/account-balance/create-payment"
+                >
+                  <i class="fas fa-plus"></i>
+                  Make a payment
+                </nuxt-link>
+              </b-row>
+              <b-row>
                 <b-col sm="12" md="4" lg="4" class="my-1 pull-right">
                   <b-form-group
                     label="Per page"
