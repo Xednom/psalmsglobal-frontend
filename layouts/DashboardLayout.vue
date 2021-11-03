@@ -133,6 +133,12 @@
               path: '/billing'
             }"
           />
+          <sidebar-item
+            :link="{
+              name: 'Make a payment',
+              path: '/account-balance/create-payment'
+            }"
+          />
         </sidebar-item>
 
         <sidebar-item
