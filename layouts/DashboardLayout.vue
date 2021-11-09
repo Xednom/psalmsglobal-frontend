@@ -112,6 +112,21 @@
         </sidebar-item>
 
         <sidebar-item
+          v-if="$auth.user.designation_category != 'staff'"
+          :link="{
+            name: 'Vodaconnect',
+            icon: 'ni ni-align-left-2'
+          }"
+        >
+          <sidebar-item
+            :link="{
+              name: 'Your Vodaconnect',
+              path: '/vodaconnect'
+            }"
+          />
+        </sidebar-item>
+
+        <sidebar-item
           v-if="
             $auth.user.designation_category != 'staff' &&
               $auth.user.account_type == 'prepaid'
