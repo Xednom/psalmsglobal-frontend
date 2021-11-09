@@ -38,7 +38,7 @@
             title="Vodaconnect signup"
             :title-link-class="linkClass(4)"
             lazy
-          >
+            ><sign-up></sign-up>
           </b-tab>
         </b-tabs>
       </b-card>
@@ -51,6 +51,7 @@ import ActivePlanList from "@/components/Vodaconnect/ActivePlanDetail/ActivePlan
 import OtherCharge from "@/components/Vodaconnect/OtherCharge/OtherCharge.vue";
 import PlanSummary from "@/components/Vodaconnect/PlanSummaryAndPayment/PaymentList.vue";
 import SubscribersList from "@/components/Vodaconnect/SubscribersInventory/SubscribersInventory.vue";
+import SignUp from "@/components/Vodaconnect/VodaconnectSignUp/SignUp.vue";
 
 export default {
   layout: "DashboardLayout",
@@ -58,7 +59,8 @@ export default {
     ActivePlanList,
     OtherCharge,
     PlanSummary,
-    SubscribersList
+    SubscribersList,
+    SignUp
   },
   data() {
     return {
