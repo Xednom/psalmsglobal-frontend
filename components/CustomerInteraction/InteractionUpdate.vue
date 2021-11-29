@@ -27,7 +27,8 @@
         >
           <h4 class="alert-heading">Memo!</h4>
           <p>
-            1. PLEASE DO NOT FORGET TO PROVIDE THE CALLER OF HIS/HER TICKET # ONCE YOU ARE COMPLETE WITH THE CALL.
+            1. PLEASE DO NOT FORGET TO PROVIDE THE CALLER OF HIS/HER TICKET #
+            ONCE YOU ARE COMPLETE WITH THE CALL.
           </p>
           <p>
             2. PLEASE DO NOT FORGET TO ADD CALL LOG REPORT IN EVERY CALL.
@@ -447,7 +448,10 @@
       <h6 slot="header" class="modal-title">
         Comment Section for ticket {{ interaction.ticket_number }}
       </h6>
-      <interaction-comment :interaction="interaction"></interaction-comment>
+      <interaction-comment
+        :interaction="interaction"
+        :accountType="interaction.client_account_type"
+      ></interaction-comment>
     </modal>
   </div>
 </template>
@@ -469,7 +473,7 @@ import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 import { debounce } from "lodash";
 
 export default {
-  name: "customer_interaction_create",
+  name: "customer_interaction_update",
   mixins: [CreateCustomerInteractionMixin],
   components: {
     StatsCard,
@@ -490,13 +494,12 @@ export default {
       client: "user/company"
     }),
     fieldDisable() {
-      console.log(this.interaction);
       if (this.interaction) {
         return false;
       } else {
         return true;
       }
-    },
+    }
   },
   data() {
     return {
@@ -508,6 +511,7 @@ export default {
       error: "",
       interaction: {},
       clientUser: {},
+      clientAccountType: {},
       isBusy: false,
       saving: false,
       loading: false,
@@ -548,16 +552,21 @@ export default {
       this.interaction.script_answer = html;
     },
     getCompany: debounce(function() {
+      console.log(this.interaction);
       this.$axios
         .get(`/api/v1/company/?search=${this.interaction.company}`)
         .then(res => {
           this.companies = res.data.results;
+          this.companies.forEach(item => {
+            this.clientAccountType = item.company_client_account_type;
+            console.log(this.clientAccountType);
+          });
         })
         .catch(err => {
           console.log(err);
         });
     }, 700),
-    
+
     async fetchPostpaidInteraction(payload) {
       this.loading = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${payload}/`;
@@ -566,7 +575,6 @@ export default {
         .then(res => {
           this.loading = false;
           this.interaction = res.data;
-          console.log(this.interaction);
           this.interaction.customer_interaction_post_paid_forms.forEach(
             item => {
               if (item) {
@@ -592,15 +600,13 @@ export default {
           this.loading = false;
           this.interaction = res.data;
           console.log(this.interaction);
-          this.interaction.customer_interaction_post_paid_forms.forEach(
-            item => {
-              if (item) {
-                console.log("yes");
-              } else if (!item) {
-                console.log("no");
-              }
+          this.interaction.customer_interaction_prepaid_forms.forEach(item => {
+            if (item) {
+              console.log("yes");
+            } else if (!item) {
+              console.log("no");
             }
-          );
+          });
         })
         .catch(e => {
           this.loading = false;
@@ -735,6 +741,7 @@ export default {
     this.fetchGeneralCalls();
     this.fetchInteraction(this.$route.params.id);
     this.fetchStates();
+    this.getCompany();
   }
 };
 </script>
