@@ -176,13 +176,10 @@ export default {
           key: "month_year",
           sortable: true
         },
-        { key: "date_of_paid", sortable: true },
+        { key: "vodaconnect_number", sortable: true },
         { key: "client_name", sortable: true },
-        { key: "plan_type", sortable: true },
-        { key: "total_minutes", sortable: true },
-        { key: "cost_of_plan", sortable: true },
-        { key: "payment_reference", sortable: true },
-        { key: "status", sortable: true }
+        { key: "client_code", sortable: true },
+        { key: "company_name", sortable: true },
       ],
       totalRows: 1,
       currentPage: 1,
