@@ -172,17 +172,10 @@ export default {
       loading: false,
       error: "",
       fields: [
-        {
-          key: "month_year",
-          sortable: true
-        },
-        { key: "date_of_paid", sortable: true },
         { key: "client_name", sortable: true },
-        { key: "plan_type", sortable: true },
-        { key: "total_minutes", sortable: true },
-        { key: "cost_of_plan", sortable: true },
-        { key: "payment_reference", sortable: true },
-        { key: "status", sortable: true }
+        { key: "status_in_production", sortable: true },
+        { key: "type_of_request", sortable: true },
+        { key: "testimony", sortable: true },
       ],
       totalRows: 1,
       currentPage: 1,
