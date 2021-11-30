@@ -39,25 +39,54 @@
         </div>
       </form>
       <div class="form-row">
-        <base-table :data="job.job_order_comments" thead-classes="text-primary">
-          <template slot-scope="{ row }">
-            <div v-if="loading">
-              <b-spinner type="grow" label="Loading..."></b-spinner>
-              loading...
-            </div>
-            <td v-else-if="!loading">
-              <blockquote class="blockquote">
-                <p class="mb-0 comment-section">
-                  {{ row.comment }}
-                </p>
-                <footer class="blockquote-footer">
-                  {{ row.commenter }}
-                  commented at <strong>{{ row.created_at }}</strong>
-                </footer>
-              </blockquote>
-            </td>
-          </template>
-        </base-table>
+        <div class="col-sm-12 col-md-12" v-if="accountType == 'postpaid'">
+          <base-table
+            :data="job.job_order_comments"
+            thead-classes="text-primary"
+          >
+            <template slot-scope="{ row }">
+              <div v-if="loading">
+                <b-spinner type="grow" label="Loading..."></b-spinner>
+                loading...
+              </div>
+              <td v-else-if="!loading">
+                <blockquote class="blockquote">
+                  <p class="mb-0 comment-section">
+                    {{ row.comment }}
+                  </p>
+                  <footer class="blockquote-footer">
+                    {{ row.commenter }}
+                    commented at <strong>{{ row.created_at }}</strong>
+                  </footer>
+                </blockquote>
+              </td>
+            </template>
+          </base-table>
+        </div>
+        <div class="col-sm-12 col-md-12" v-else-if="accountType == 'prepaid'">
+          <base-table
+            :data="job.prepaid_job_order_comments"
+            thead-classes="text-primary"
+          >
+            <template slot-scope="{ row }">
+              <div v-if="loading">
+                <b-spinner type="grow" label="Loading..."></b-spinner>
+                loading...
+              </div>
+              <td v-else-if="!loading">
+                <blockquote class="blockquote">
+                  <p class="mb-0 comment-section">
+                    {{ row.comment }}
+                  </p>
+                  <footer class="blockquote-footer">
+                    {{ row.commenter }}
+                    commented at <strong>{{ row.created_at }}</strong>
+                  </footer>
+                </blockquote>
+              </td>
+            </template>
+          </base-table>
+        </div>
       </div>
     </div>
   </div>
@@ -67,6 +96,7 @@
 import BaseTable from "~/components/argon-core/BaseTable.vue";
 
 import CreateJobOrderMixin from "@/mixins/CreateJobOrderMixin.js";
+import { mapActions } from "vuex";
 
 export default {
   components: {
@@ -79,6 +109,10 @@ export default {
     },
     fetch: {
       type: Function
+    },
+    accountType: {
+      type: String,
+      description: "Account type data"
     }
   },
   data() {
@@ -90,7 +124,9 @@ export default {
     };
   },
   methods: {
-    async refresh(payload) {
+    ...mapActions("jobOrder", ["addPostpaidComment"]),
+    ...mapActions("prepaid/jobOrder", ["addPrepaidComment"]),
+    async refreshPostpaid(payload) {
       let endpoint = `/api/v1/post-paid/job-order-general/${payload}/`;
       return await this.$axios
         .get(endpoint)
@@ -102,8 +138,32 @@ export default {
           throw e;
         });
     },
+    async refreshPrepaid(payload) {
+      let endpoint = `/api/v1/prepaid/job-order-general/${payload}/`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.job = res.data;
+        })
+        .catch(e => {
+          console.log(e);
+          throw e;
+        });
+    },
+    async refresh(payload) {
+      if (this.accountType === "postpaid") {
+        await this.refreshPostpaid(payload);
+      } else if (this.accountType === "prepaid") {
+        await this.refreshPrepaid(payload);
+      }
+    },
     async save() {
       this.posting = true;
+      const payload = {
+        id: this.job.id,
+        comment: this.comment,
+        job_order: this.job.id
+      };
       if (
         this.$auth.user.designation_category == "new_client" ||
         this.$auth.user.designation_category == "current_client" ||
@@ -111,16 +171,29 @@ export default {
         this.$auth.user.designation_category == "staff"
       ) {
         try {
-          await this.$axios
-            .post(`/api/v1/job-order/${this.job.id}/comment/`, {
-              comment: this.comment
-            })
-            .then(() => {
-              this.posting = false;
-              this.success = true;
-              this.comment = "";
-              this.refresh(this.job.ticket_number);
-            });
+          if (this.accountType == "postpaid") {
+            const payload = {
+              id: this.job.id,
+              comment: this.comment,
+              job_order: this.job.id
+            };
+            await this.addPostpaidComment(payload);
+            this.posting = false;
+            this.success = true;
+            this.comment = "";
+            this.refresh(this.job.ticket_number);
+          } else if (this.accountType == "prepaid") {
+            const payload = {
+              id: this.job.id,
+              comment: this.comment,
+              job_order: this.job.id
+            };
+            await this.addPrepaidComment(payload);
+            this.posting = false;
+            this.success = true;
+            this.comment = "";
+            this.refresh(this.job.ticket_number);
+          }
         } catch (err) {
           console.log(err);
           this.success = false;
@@ -152,12 +225,23 @@ export default {
   computed: {
     comment: {
       get() {
-        return this.$store.getters["jobOrder/comment"];
+        if (this.accountType == "postpaid") {
+          return this.$store.getters["jobOrder/comment"];
+        } else if (this.accountType == "prepaid") {
+          return this.$store.getters["prepaid/jobOrder/comment"];
+        }
       },
       set(value) {
-        this.setBasicStoreValue("comment", value);
+        if (this.accountType == "postpaid") {
+          this.setBasicStoreValue("comment", value);
+        } else if (this.accountType == "prepaid") {
+          this.setPrepaidBasicStoreValue("comment", value);
+        }
       }
     }
+  },
+  mounted() {
+    this.refresh(this.job.ticket_number);
   }
 };
 </script>

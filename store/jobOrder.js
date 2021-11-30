@@ -136,11 +136,17 @@ export const actions = {
       commit("setBasicField", payload);
     });
   },
-  async updateJobOrder({ commit }, payload) {
+  async updatePostpaidJobOrder({ commit }, payload) {
     let url = `/api/v1/post-paid/job-order-general/${payload.ticket_number}/`;
     let method = "put";
     return await this.$axios[method](url, payload).then(res => {
       return res.data;
+    });
+  },
+  async addPostpaidComment({ commit }, payload) {
+    let url = `/api/v1/job-order/${payload.id}/comment/`;
+    return await this.$axios.post(url, payload).then(res => {
+      commit("setBasicField", payload);
     });
   },
   reset({ commit }) {

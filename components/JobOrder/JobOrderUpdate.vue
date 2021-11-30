@@ -193,6 +193,7 @@
           <job-order-comment
             :job="jobOrder"
             :fetch="refresh"
+            :accountType="accountType"
           ></job-order-comment>
         </b-tab>
       </b-tabs>
@@ -209,7 +210,7 @@ import CreateInteractionRecordMixin from "@/mixins/CreateInteractionRecordMixin.
 import JobOrderComment from "@/components/JobOrder/JobOrderComment";
 
 export default {
-  name: "jobOrder_record_view",
+  name: "postPaid_jobOrder_update",
   mixins: [CreateInteractionRecordMixin],
   components: {
     [Select.name]: Select,
@@ -224,6 +225,10 @@ export default {
     refresh: {
       Type: Function,
       description: "Refresh the list data"
+    },
+    accountType: {
+      Type: String,
+      description: "Account type"
     }
   },
   data() {
@@ -268,7 +273,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions("jobOrder", ["updateJobOrder"]),
+    ...mapActions("jobOrder", ["updatePostpaidJobOrder"]),
+    ...mapActions("prepaid/jobOrder", ["updatePrepaidJobOrder"]),
     onlyNumbers: function() {
       this.jobOrder.total_time_consumed = this.job.total_time_consumed.replace(
         /[^0-9.]/g,
@@ -305,21 +311,23 @@ export default {
         job_title: this.jobOrder.job_title,
         total_time_consumed: this.jobOrder.total_time_consumed,
         url_of_the_completed_jo: this.jobOrder.url_of_the_completed_jo,
-        job_description: this.jobOrder.job_description
+        job_description: this.jobOrder.job_description,
+        client_notes: this.jobOrder.client_notes
       };
       try {
-        this.saving = true;
-        await this.updateJobOrder(jobOrderPayload)
-          .then(() => {
-            this.saving = false;
-            this.successMessage("success");
-            this.refresh();
-          })
-          .catch(e => {
-            this.saving = false;
-            this.errorMessage("danger", e.response.data);
-            console.log(e);
-          });
+        if (this.accountType == "postpaid") {
+          this.saving = true;
+          await this.updatePostpaidJobOrder(jobOrderPayload);
+          this.saving = false;
+          this.successMessage("success");
+          this.refresh();
+        } else if (this.accountType == "prepaid") {
+          this.saving = true;
+          await this.updatePrepaidJobOrder(jobOrderPayload);
+          this.saving = false;
+          this.successMessage("success");
+          this.refresh();
+        }
       } catch (e) {
         throw e;
       }

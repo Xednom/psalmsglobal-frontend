@@ -275,6 +275,7 @@
             <job-order-update
               :jobOrder="jobOrder"
               :refresh="refresh"
+              :accountType="interaction.client_account_type"
             ></job-order-update>
           </div>
         </modal>
@@ -466,7 +467,25 @@ export default {
       this.fetchJobOrders();
     },
     async fetchJobOrder(id) {
+      if (this.interaction.client_account_type == "postpaid") {
+        this.fetchPostpaidJobOrder(id);
+      } else if (this.interaction.client_account_type == "prepaid") {
+        this.fetchPrepaidJobOrder(id);
+      }
+    },
+    async fetchPostpaidJobOrder(id) {
       let endpoint = `/api/v1/post-paid/job-order/${id}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.jobOrder = res.data;
+        })
+        .catch(e => {
+          throw e;
+        });
+    },
+    async fetchPrepaidJobOrder(id) {
+      let endpoint = `/api/v1/prepaid/job-order/${id}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
@@ -478,7 +497,7 @@ export default {
     },
     async fetchClient(id) {
       try {
-        await this.$store.dispatch("user/fetchClient", id).then(() => {});
+        await this.$store.dispatch("user/fetchClientUser", id).then(() => {});
       } catch (err) {
         console.error(err);
       }
@@ -522,17 +541,21 @@ export default {
           job_description: this.job.job_description
         };
         try {
-          this.saving = true;
-          await this.saveJobOrder(jobOrderPayload)
-            .then(() => {
-              this.saving = false;
-              this.reset();
-              this.successMessage("success");
-              this.fetchJobOrders();
-            })
-            .catch(e => {
-              console.log(e);
-            });
+          if (this.interaction.client_account_type == "postpaid") {
+            this.saving = true;
+            await this.saveJobOrder(jobOrderPayload);
+            this.saving = false;
+            this.reset();
+            this.successMessage("success");
+            this.fetchJobOrders();
+          } else if (this.interaction.client_account_type == "prepaid") {
+            this.saving = true;
+            await this.savePrepaidJobOrder(jobOrderPayload);
+            this.saving = false;
+            this.reset();
+            this.successMessage("success");
+            this.fetchJobOrders();
+          }
         } catch (e) {
           throw e;
         }
@@ -593,6 +616,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.interaction.client_account_type);
     this.fetchMe();
     setTimeout(() => this.fetchJobOrders(), 1000);
     this.totalRows = this.jobOrders.length;
