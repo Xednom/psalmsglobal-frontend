@@ -181,7 +181,7 @@ export default {
           key: "month_year",
           sortable: true
         },
-        { key: "date_of_paid", sortable: true },
+        { key: "created_at", sortable: true },
         { key: "client_name", sortable: true },
         { key: "plan_type", sortable: true },
         { key: "total_minutes", sortable: true },
