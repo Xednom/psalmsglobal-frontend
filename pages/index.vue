@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="col-md-12 col-sm-12 mt-5">
+      <news-feed></news-feed>
+    </div>
     <!-- <base-header class="pb-6">
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
@@ -128,10 +131,10 @@
           </card>
         </div>
       </div> -->
-      <!-- End charts-->
+    <!-- End charts-->
 
-      <!--Lists-->
-      <!-- <div class="row">
+    <!--Lists-->
+    <!-- <div class="row">
         <div class="col-xl-4">
           <card>
             <h5 class="h3 mb-0" slot="header">Team members</h5>
@@ -156,10 +159,10 @@
           </card>
         </div>
       </div> -->
-      <!--End lists-->
+    <!--End lists-->
 
-      <!--Widgets-->
-      <!-- <div class="row">
+    <!--Widgets-->
+    <!-- <div class="row">
         <div class="col-xl-5">
           <activity-feed></activity-feed>
         </div>
@@ -226,9 +229,9 @@
           </div>
         </div>
       </div> -->
-      <!--End Widgets-->
+    <!--End Widgets-->
 
-      <!-- <div class="row">
+    <!-- <div class="row">
         <div class="col-xl-8">
           <page-visits-table></page-visits-table>
         </div>
@@ -237,95 +240,100 @@
         </div>
       </div> -->
     <!-- </div> -->
-
   </div>
 </template>
 <script>
-  // Charts
-  import * as chartConfigs from '@/components/argon-core/Charts/config';
-  import LineChart from '@/components/argon-core/Charts/LineChart';
-  import BarChart from '@/components/argon-core/Charts/BarChart';
+// Charts
+import * as chartConfigs from "@/components/argon-core/Charts/config";
+import LineChart from "@/components/argon-core/Charts/LineChart";
+import BarChart from "@/components/argon-core/Charts/BarChart";
 
-  // Components
-  import BaseProgress from '@/components/argon-core/BaseProgress';
-  import RouteBreadCrumb from '@/components/argon-core/Breadcrumb/RouteBreadcrumb';
-  import StatsCard from '@/components/argon-core/Cards/StatsCard';
+// Components
+import BaseProgress from "@/components/argon-core/BaseProgress";
+import RouteBreadCrumb from "@/components/argon-core/Breadcrumb/RouteBreadcrumb";
+import StatsCard from "@/components/argon-core/Cards/StatsCard";
 
-  // Lists
-  import ActivityFeed from '@/components/pages/dashboard/ActivityFeed.vue';
-  import TaskList from '@/components/pages/dashboard/TaskList.vue';
-  import UserList from '@/components/pages/dashboard/UserList.vue';
-  import ProgressTrackList from '@/components/pages/dashboard/ProgressTrackList.vue';
+// Lists
+import ActivityFeed from "@/components/pages/dashboard/ActivityFeed.vue";
+import TaskList from "@/components/pages/dashboard/TaskList.vue";
+import UserList from "@/components/pages/dashboard/UserList.vue";
+import ProgressTrackList from "@/components/pages/dashboard/ProgressTrackList.vue";
 
-  // Tables
-  import LightTable from '@/components/pages/dashboard/LightTable.vue';
-  import SocialTrafficTable from '@/components/pages/dashboard/SocialTrafficTable.vue';
-  import PageVisitsTable from '@/components/pages/dashboard/PageVisitsTable.vue';
+// Tables
+import LightTable from "@/components/pages/dashboard/LightTable.vue";
+import SocialTrafficTable from "@/components/pages/dashboard/SocialTrafficTable.vue";
+import PageVisitsTable from "@/components/pages/dashboard/PageVisitsTable.vue";
 
-  export default {
-    layout: 'DashboardLayout',
-    components: {
-      ActivityFeed,
-      LineChart,
-      BarChart,
-      BaseProgress,
-      RouteBreadCrumb,
-      StatsCard,
-      TaskList,
-      PageVisitsTable,
-      SocialTrafficTable,
-      LightTable,
-      UserList,
-      ProgressTrackList
-    },
-    data() {
-      return {
-        bigLineChart: {
-          allData: [
-            [0, 20, 10, 30, 15, 40, 20, 60, 60],
-            [0, 20, 5, 25, 10, 30, 15, 40, 40]
-          ],
-          activeIndex: 0,
-          chartData: {
-            datasets: [
-              {
-                label: 'Performance',
-                data: [0, 20, 10, 30, 15, 40, 20, 60, 60],
-              }
-            ],
-            labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          },
-          extraOptions: chartConfigs.blueChartOptions,
-        },
-        redBarChart: {
-          chartData: {
-            labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-              label: 'Sales',
-              data: [25, 20, 30, 22, 17, 29]
-            }]
-          }
-        }
-      };
-    },
-    methods: {
-      initBigChart(index) {
-        let chartData = {
+// Newsfeed
+import NewsFeed from "@/components/Newsfeed/NewsfeedList.vue";
+
+export default {
+  layout: "DashboardLayout",
+  components: {
+    ActivityFeed,
+    LineChart,
+    BarChart,
+    BaseProgress,
+    RouteBreadCrumb,
+    StatsCard,
+    TaskList,
+    PageVisitsTable,
+    SocialTrafficTable,
+    LightTable,
+    UserList,
+    ProgressTrackList,
+    NewsFeed
+  },
+  data() {
+    return {
+      bigLineChart: {
+        allData: [
+          [0, 20, 10, 30, 15, 40, 20, 60, 60],
+          [0, 20, 5, 25, 10, 30, 15, 40, 40]
+        ],
+        activeIndex: 0,
+        chartData: {
           datasets: [
             {
-              label: 'Performance',
-              data: this.bigLineChart.allData[index]
+              label: "Performance",
+              data: [0, 20, 10, 30, 15, 40, 20, 60, 60]
             }
           ],
-          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        };
-        this.bigLineChart.chartData = chartData;
-        this.bigLineChart.activeIndex = index;
+          labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        },
+        extraOptions: chartConfigs.blueChartOptions
+      },
+      redBarChart: {
+        chartData: {
+          labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          datasets: [
+            {
+              label: "Sales",
+              data: [25, 20, 30, 22, 17, 29]
+            }
+          ]
+        }
       }
-    },
-    mounted() {
-      this.initBigChart(0);
+    };
+  },
+  methods: {
+    initBigChart(index) {
+      let chartData = {
+        datasets: [
+          {
+            label: "Performance",
+            data: this.bigLineChart.allData[index]
+          }
+        ],
+        labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+      };
+      this.bigLineChart.chartData = chartData;
+      this.bigLineChart.activeIndex = index;
     }
-  };
+  },
+  mounted() {
+    this.initBigChart(0);
+  }
+};
 </script>
 <style></style>
