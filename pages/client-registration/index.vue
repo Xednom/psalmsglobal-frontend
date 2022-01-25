@@ -86,36 +86,6 @@
                   >
                   </base-input>
 
-                  <base-input label="Designation Category" name="Designation Category" :rules="{ required: true }">
-                    <el-select
-                      v-model="register.designation_category"
-                      placeholder="Designation Category"
-                    >
-                      <el-option
-                        v-for="option in designationOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-
-                  <base-input label="Company Category" name="Company Category" :rules="{ required: true }">
-                    <el-select
-                      v-model="register.company_category"
-                      placeholder="Company Category"
-                    >
-                      <el-option
-                        v-for="option in companyOptions"
-                        :key="option.label"
-                        :label="option.label"
-                        :value="option.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </base-input>
-
                   <base-input label="Account type" name="Account Type">
                     <el-select
                       v-model="register.account_type"
@@ -178,8 +148,8 @@ export default {
         last_name: "",
         email: "",
         password: "",
-        designation_category: "",
-        company_category: "",
+        designation_category: "new_client",
+        company_category: "psalms_global",
         account_type: ""
       },
       designationOptions: [
