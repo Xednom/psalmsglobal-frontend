@@ -195,6 +195,13 @@
             path: '/login-credentials'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Resolution',
+            icon: 'ni ni-archive-2',
+            path: '/resolution'
+          }"
+        />
       </template>
     </side-bar>
     <div class="main-content">
