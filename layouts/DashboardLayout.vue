@@ -198,7 +198,7 @@
         <sidebar-item
           :link="{
             name: 'Resolution',
-            icon: 'ni ni-archive-2',
+            icon: 'ni ni-bulb-61',
             path: '/resolution'
           }"
         />

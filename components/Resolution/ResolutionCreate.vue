@@ -7,7 +7,7 @@
             <h3 class="mb-0">Add a Resolution</h3>
           </div>
           <div class="col-4 text-right">
-            <nuxt-link to="/crm/">
+            <nuxt-link to="/resolution/">
               <base-button type="info"
                 >Back to Resolution list</base-button
               ></nuxt-link
@@ -42,7 +42,6 @@
                   <base-input label="Description">
                     <textarea
                       class="form-control"
-                      id="typeOfCrm"
                       rows="3"
                       v-model="description"
                     ></textarea>
@@ -152,7 +151,7 @@ export default {
       this.saving = false;
     },
     successMessage(variant = null) {
-      this.$bvToast.toast("Successfully added a CRM information!", {
+      this.$bvToast.toast("Successfully added a Resolution!", {
         title: `Successful`,
         variant: variant,
         solid: true

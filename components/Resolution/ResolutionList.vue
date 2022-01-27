@@ -67,7 +67,7 @@
 
         <!-- Main table element -->
         <b-table
-          :items="accountFiles"
+          :items="resolutions"
           :fields="fields"
           :current-page="currentPage"
           :per-page="perPage"
@@ -89,38 +89,12 @@
             </div>
           </template>
 
-          <template #cell(url)="row">
-            <a :href="row.item.url" target="_blank">{{ row.item.url }}</a>
-          </template>
-          <template #cell(job_title)="row">
-            {{ row.item.job_title }}
-          </template>
-          <template #cell(url_of_the_completed_jo)="row">
-            <span v-if="row.item.url_of_the_completed_jo">
-              <a :href="row.item.url_of_the_completed_jo" target="_blank">
-                {{ row.item.url_of_the_completed_jo }}
-              </a>
-            </span>
-            <span v-else-if="!row.item.url_of_the_completed_jo">
-              -
-            </span>
+          <template #cell(id)="row">
+            <nuxt-link :to="'/resolution/' + row.item.id">{{
+              row.item.id
+            }}</nuxt-link>
           </template>
 
-          <template #cell(actions)="row">
-            <b-button
-              size="sm"
-              @click="
-                {
-                  fetchAccountFile(row.item.id, row.index, $event.target),
-                    (modals.update = true);
-                }
-              "
-              class="mr-1"
-              variant="info"
-            >
-              Update
-            </b-button>
-          </template>
         </b-table>
 
         <div
@@ -154,8 +128,23 @@ export default {
   components: {},
   data() {
     return {
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 100,
+      pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
+      sortBy: "",
+      sortDesc: false,
+      sortDirection: "asc",
+      isBusy: false,
+      filter: null,
       posting: false,
       show: false,
+      fields: [
+        { key: "id", sortable: true },
+        { key: "category", sortable: true },
+        { key: "description", sortable: true },
+        { key: "status", sortable: true }
+      ],
       modals: {
         form: false,
         update: false
@@ -165,7 +154,6 @@ export default {
   computed: {
     ...mapGetters({
       resolutions: "resolution/resolutions",
-      resolution: "resolution/resolution",
       pagination: "resolution/resolutionsPagination",
       staff: "user/staff",
       user: "user/user",
@@ -176,17 +164,14 @@ export default {
     async fetchResolutions() {
       this.show = true;
       await this.$store.dispatch("resolution/fetchResolutions").then(() => {
-        console.log(this.resolutions);
+        this.totalRows = this.resolutions.length;
         this.show = false;
       });
     },
     async fetchNewsFeed(id) {
-      await this.$store.dispatch("newsfeed/fetchNewsFeed", id).then(() => {
-        console.log(this.newsFeed.id);
-      });
+      await this.$store.dispatch("newsfeed/fetchNewsFeed", id).then(() => {});
     },
     async save() {
-      console.log();
       let isValidForm = await this.$validator.validateAll();
       if (isValidForm) {
         this.loading = true;
@@ -233,6 +218,26 @@ export default {
           this.fetchNewsFeeds();
         }
       }
+    },
+    queriedData() {
+      let result = this.tableData;
+      if (this.searchedData.length > 0) {
+        result = this.searchedData;
+      }
+      return result.slice(this.from, this.to);
+    },
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => {
+          return { text: f.label, value: f.key };
+        });
+    },
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length;
+      this.currentPage = 1;
     },
     errorMessage(error) {
       if (error.newsfeed) {

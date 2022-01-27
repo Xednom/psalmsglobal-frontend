@@ -18,7 +18,7 @@ export const state = () => ({
   resolutions: [],
   resolutionConversations: [],
   resolutionCategory: [],
-  resolution: {},
+  resolutionObj: {},
   resolutionConversation: {},
   resolutionsPagination: {
     offset: 0,
@@ -49,8 +49,8 @@ export const getters = {
   resolutionsPagination: state => state.resolutionsPagination,
   resolutionConvertionsPagination: state =>
     state.resolutionConvertionsPagination,
-  resolution: state => {
-    return state.resolution;
+  resolutionObj: state => {
+    return state.resolutionObj;
   },
   resolutionConversation: state => {
     return state.resolutionConversation;
@@ -62,7 +62,7 @@ export const mutations = {
     state.resolutions = payload.resolutions;
   },
   setResolution(state, payload) {
-    state.resolution = payload.resolutions;
+    state.resolutionObj = payload.resolutionObj;
   },
   setResolutionConversations(state, payload) {
     state.resolutionConversations = payload.resolutionConversations;
@@ -157,6 +157,16 @@ export const actions = {
         throw e;
       });
   },
+  async fetchResolution({ commit, dispatch }, payload) {
+    let endpoint = `/api/v1/resolution/${payload}/`;
+    return await this.$axios
+      .get(endpoint)
+      .then(res => {
+        commit("setResolution", { resolutionObj: res.data });
+        return res;
+      })
+      .catch(e => {});
+  },
   async fetchAdminUser({ commit, dispatch }, payload) {
     let endpoint = `/auth/admin-users-list/${payload}/`;
     return await this.$axios
@@ -191,12 +201,7 @@ export const actions = {
       url += `${payload.id}/`;
       return await this.$axios[method](url, payload);
     }
-    return await this.$axios[method](url, payload).then(res => {
-      this.$router.push({
-        name: "resolution-id___en",
-        params: { id: res.data.id }
-      });
-    });
+    return await this.$axios[method](url, payload).then(res => {});
   },
   resetResolution({ commit }) {
     commit("resetResolution");
