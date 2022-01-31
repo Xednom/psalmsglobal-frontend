@@ -439,6 +439,13 @@
             <b-tab lazy title="Job Order" :disabled="loading">
               <job-order-list :interaction="interaction"></job-order-list>
             </b-tab>
+            <b-tab lazy title="Rating" :disabled="loading">
+              <interaction-rate
+                :interaction="interaction"
+                :rate="rateCount"
+                @refresh="refresh"
+              ></interaction-rate>
+            </b-tab>
           </b-tabs>
         </b-card>
       </card>
@@ -463,6 +470,7 @@ import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection";
 import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
+import InteractionRate from "@/components/Rating/AddRating.vue";
 
 import { mapGetters, mapActions } from "vuex";
 
@@ -483,7 +491,8 @@ export default {
     InteractionComment,
     InteractionRecordList,
     HtmlEditor,
-    JobOrderList
+    JobOrderList,
+    InteractionRate
   },
   computed: {
     ...mapGetters({
@@ -512,6 +521,7 @@ export default {
       interaction: {},
       clientUser: {},
       clientAccountType: {},
+      rateCount: "",
       isBusy: false,
       saving: false,
       loading: false,
@@ -575,6 +585,7 @@ export default {
         .then(res => {
           this.loading = false;
           this.interaction = res.data;
+          this.rateCount = this.interaction.post_paid_interaction_rates.length;
           this.interaction.customer_interaction_post_paid_forms.forEach(
             item => {
               if (item) {
@@ -590,6 +601,31 @@ export default {
           console.log(e);
           throw e;
         });
+    },
+    async refreshPostpaidInteraction(payload) {
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${payload}/`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interaction = res.data;
+          this.rateCount = this.interaction.post_paid_interaction_rates.length;
+          this.interaction.customer_interaction_post_paid_forms.forEach(
+            item => {
+              if (item) {
+                console.log("yes");
+              } else if (!item) {
+                console.log("no");
+              }
+            }
+          );
+        })
+        .catch(e => {
+          console.log(e);
+          throw e;
+        });
+    },
+    refresh() {
+      this.refreshPostpaidInteraction(this.$route.params.id);
     },
     async fetchPrepaidInteraction(payload) {
       this.loading = true;
