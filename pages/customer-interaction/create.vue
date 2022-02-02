@@ -10,7 +10,7 @@
         </div>
       </div>
     </base-header>
-    <div class="container-fluid mt--6">
+    <div class="container mt--6">
       <interaction-create></interaction-create>
     </div>
   </div>

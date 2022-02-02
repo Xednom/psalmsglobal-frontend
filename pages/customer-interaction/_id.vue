@@ -12,7 +12,7 @@
         </div>
       </div>
     </base-header>
-    <div class="container-fluid mt--6">
+    <div class="container mt--6">
       <interaction-update></interaction-update>
     </div>
   </div>

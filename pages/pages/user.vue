@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container-fluid mt-6">
+    <div class="container mt-6">
       <div class="row">
         <div
           v-if="
