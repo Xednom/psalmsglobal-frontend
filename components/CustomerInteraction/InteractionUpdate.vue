@@ -758,6 +758,7 @@ export default {
       }
     },
     fetchInteraction(param) {
+      console.log(this.interaction);
       this.fetchPostpaidInteraction(param);
       this.fetchPrepaidInteraction(param);
     },
