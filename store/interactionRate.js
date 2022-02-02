@@ -46,9 +46,16 @@ const blankState = {
   }
   
   export const actions = {
-    async saveRating({ commit }, payload) {
+    async savePostpaidRating({ commit }, payload) {
       console.log(payload);
       let url = `/api/v1/postpaid/${payload.post_paid}/rate/`;
+      return await this.$axios.post(url, payload).then(() => {
+        commit("setBasicField", payload);
+      });
+    },
+    async savePrepaidRating({ commit }, payload) {
+      console.log(payload);
+      let url = `/api/v1/prepaid/${payload.prepaid}/rate/`;
       return await this.$axios.post(url, payload).then(() => {
         commit("setBasicField", payload);
       });

@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <div class="col-xl-12 col-md-12 col-sm-12" v-if="rate == 0">
+    <div
+      class="col-xl-12 col-md-12 col-sm-12"
+      v-if="rate == 0 && $auth.user.designation_category != 'staff'"
+    >
       <div slot="header" class="row align-items-center">
         <div class="col-8">
           <h3 class="mb-0">Add a rating for this Interaction</h3>
@@ -41,6 +44,16 @@
         </form>
       </validation-observer>
     </div>
+    <div
+      class="col-xl-12 col-md-12 col-sm-12"
+      v-if="rate == 0 && $auth.user.designation_category == 'staff'"
+    >
+      <div slot="header" class="row align-items-center">
+        <div class="col-md-12 col-lg-12">
+          <span class="align-items-center">No ratings given.</span>
+        </div>
+      </div>
+    </div>
     <div class="col-xl-12 col-md-12 col-sm-12" v-else>
       <div
         v-for="(rate, index) in interaction.post_paid_interaction_rates"
@@ -49,6 +62,40 @@
         <div class="col-sm-12 col-md-12 col-lg-12">
           <label for="rating-md-no-border" class="mt-3"
             >You rated this interaction with:</label
+          >
+          <b-form-rating
+            id="rating-md-no-border"
+            v-model="rate.rating"
+            no-border
+            color="#ff8800"
+            readonly
+          ></b-form-rating>
+          <base-input label="Comment">
+            <textarea
+              class="form-control"
+              rows="3"
+              v-model="rate.comment"
+              readonly
+            ></textarea>
+          </base-input>
+        </div>
+      </div>
+      <div
+        v-for="(rate, index) in interaction.prepaid_interaction_rates"
+        :key="index"
+      >
+        <div class="col-sm-12 col-md-12 col-lg-12">
+          <label
+            for="rating-md-no-border"
+            class="mt-3"
+            v-if="$auth.user.designation_category != 'staff'"
+            >You rated this interaction with:</label
+          >
+          <label
+            for="rating-md-no-border"
+            class="mt-3"
+            v-else-if="$auth.user.designation_category == 'staff'"
+            >This interaction was rated with:</label
           >
           <b-form-rating
             id="rating-md-no-border"
@@ -98,6 +145,9 @@ export default {
     },
     rate: {
       type: Number
+    },
+    accountType: {
+      type: String
     }
   },
   data() {
@@ -111,7 +161,11 @@ export default {
     };
   },
   methods: {
-    ...mapActions("interactionPostPaidRate", ["reset", "saveRating"]),
+    ...mapActions("interactionRate", [
+      "reset",
+      "savePostpaidRating",
+      "savePrepaidRating"
+    ]),
     async fetchClient(id) {
       let endpoint = `/api/auth/client/${id}/`;
       try {
@@ -123,38 +177,65 @@ export default {
       }
     },
     async save() {
-      console.log(this.interaction.id);
-      const payload = {
-        post_paid: this.interaction.id,
-        rating: this.rating,
-        comment: this.comment,
-        client: this.clientUser.id
-      };
-
       if (
         this.$auth.user.designation_category == "current_client" ||
         this.$auth.user.designation_category == "new_client" ||
         this.$auth.user.designation_category == "affiliate_partner"
       ) {
-        try {
-          this.saving = true;
-          await this.saveRating(payload)
-            .then(() => {
-              this.saving = false;
-              this.reset();
-              this.$emit("refresh", this.interaction);
-              this.$refs.formValidator.reset();
-              this.successMessage("success");
-            })
-            .catch(e => {
-              this.saving = false;
-              this.error = e.response.data;
-              this.errorMessage("danger", this.error);
-            });
-        } catch (e) {
-          this.saving = false;
-          this.error = e.response.data;
-          this.errorMessage("danger", this.error);
+        if (this.accountType == "post_paid") {
+          const payload = {
+            post_paid: this.interaction.id,
+            rating: this.rating,
+            comment: this.comment,
+            client: this.clientUser.id
+          };
+          try {
+            this.saving = true;
+            await this.savePostpaidRating(payload)
+              .then(() => {
+                this.saving = false;
+                this.reset();
+                this.$emit("refresh", this.interaction);
+                this.$refs.formValidator.reset();
+                this.successMessage("success");
+              })
+              .catch(e => {
+                this.saving = false;
+                this.error = e.response.data;
+                this.errorMessage("danger", this.error);
+              });
+          } catch (e) {
+            this.saving = false;
+            this.error = e.response.data;
+            this.errorMessage("danger", this.error);
+          }
+        } else if (this.accountType == "prepaid") {
+          const payload = {
+            prepaid: this.interaction.id,
+            rating: this.rating,
+            comment: this.comment,
+            client: this.clientUser.id
+          };
+          try {
+            this.saving = true;
+            await this.savePrepaidRating(payload)
+              .then(() => {
+                this.saving = false;
+                this.reset();
+                this.$emit("refresh", this.interaction);
+                this.$refs.formValidator.reset();
+                this.successMessage("success");
+              })
+              .catch(e => {
+                this.saving = false;
+                this.error = e.response.data;
+                this.errorMessage("danger", this.error);
+              });
+          } catch (e) {
+            this.saving = false;
+            this.error = e.response.data;
+            this.errorMessage("danger", this.error);
+          }
         }
       }
       this.saving = false;
@@ -184,6 +265,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.rate);
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||

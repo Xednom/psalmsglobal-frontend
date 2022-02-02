@@ -1,7 +1,7 @@
 export default {
   methods: {
     setBasicStoreValue(fieldName, value) {
-      this.$store.commit("interactionPostPaidRate/setBasicField", {
+      this.$store.commit("interactionRate/setBasicField", {
         field: fieldName,
         value: value
       });
@@ -10,7 +10,7 @@ export default {
   computed: {
     client: {
       get() {
-        return this.$store.getters["interactionPostPaidRate/client"];
+        return this.$store.getters["interactionRate/client"];
       },
       set(value) {
         this.setBasicStoreValue("client", value);
@@ -18,7 +18,7 @@ export default {
     },
     rating: {
       get() {
-        return this.$store.getters["interactionPostPaidRate/rating"];
+        return this.$store.getters["interactionRate/rating"];
       },
       set(value) {
         this.setBasicStoreValue("rating", value);
@@ -26,7 +26,7 @@ export default {
     },
     postPaid: {
       get() {
-        return this.$store.getters["interactionPostPaidRate/post_paid"];
+        return this.$store.getters["interactionRate/post_paid"];
       },
       set(value) {
         this.setBasicStoreValue("post_paid", value);
@@ -34,7 +34,7 @@ export default {
     },
     comment: {
       get() {
-        return this.$store.getters["interactionPostPaidRate/comment"];
+        return this.$store.getters["interactionRate/comment"];
       },
       set(value) {
         this.setBasicStoreValue("comment", value);
