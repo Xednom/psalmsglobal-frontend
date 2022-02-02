@@ -580,14 +580,12 @@ export default {
       this.interaction.script_answer = html;
     },
     getCompany: debounce(function() {
-      console.log(this.interaction);
       this.$axios
         .get(`/api/v1/company/?search=${this.interaction.company}`)
         .then(res => {
           this.companies = res.data.results;
           this.companies.forEach(item => {
             this.clientAccountType = item.company_client_account_type;
-            console.log(this.clientAccountType);
           });
         })
         .catch(err => {
@@ -656,7 +654,7 @@ export default {
         });
     },
     refresh() {
-      if (this.interaction.client_account_type == "post_paid") {
+      if (this.interaction.client_account_type == "postpaid") {
         this.refreshPostpaidInteraction(this.$route.params.id);
       } else if (this.interaction.client_account_type == "prepaid") {
         this.refreshPrepaidInteraction(this.$route.params.id);
@@ -670,7 +668,6 @@ export default {
         .then(res => {
           this.loading = false;
           this.interaction = res.data;
-          console.log(this.interaction);
           this.rateCount = this.interaction.prepaid_interaction_rates.length;
           this.interaction.customer_interaction_prepaid_forms.forEach(item => {
             if (item) {

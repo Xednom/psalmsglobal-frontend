@@ -182,7 +182,7 @@ export default {
         this.$auth.user.designation_category == "new_client" ||
         this.$auth.user.designation_category == "affiliate_partner"
       ) {
-        if (this.accountType == "post_paid") {
+        if (this.accountType == "postpaid") {
           const payload = {
             post_paid: this.interaction.id,
             rating: this.rating,
@@ -265,7 +265,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.rate);
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||
