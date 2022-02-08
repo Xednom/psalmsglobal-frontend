@@ -305,6 +305,7 @@
                     <form-view-list
                       :filter="company"
                       @form-script="eventChild"
+                      ref="formViewList"
                     ></form-view-list>
                   </div>
                 </div>
@@ -622,6 +623,7 @@ export default {
         .get(`/api/v1/company/?search=${this.company}`)
         .then(res => {
           this.companies = res.data.results;
+          this.$refs.formViewList.clearForm();
           this.companies.forEach(item => {
             this.clientAccountType = item.company_client_account_type;
             console.log(this.clientAccountType);

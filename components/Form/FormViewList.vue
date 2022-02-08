@@ -325,6 +325,9 @@ export default {
         solid: true
       });
     },
+    clearForm() {
+      this.form = "";
+    },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
         error.company
