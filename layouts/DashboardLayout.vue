@@ -202,6 +202,13 @@
             path: '/resolution'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Forum',
+            icon: 'ni ni-collection',
+            path: '/forum'
+          }"
+        />
       </template>
     </side-bar>
     <div class="main-content">
