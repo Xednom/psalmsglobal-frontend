@@ -11,9 +11,14 @@ const commentState = {
   comment: ""
 };
 
+const replyState = {
+  content: ""
+};
+
 export const state = () => ({
   ...threadState,
   ...commentState,
+  ...replyState,
   threads: [],
   thread: {},
   threadsPagination: {
@@ -33,6 +38,7 @@ export const getters = {
   is_active: state => state.is_active,
   threads: state => state.threads,
   comment: state => state.comment,
+  content: state => state.content,
   threadsPagination: state => state.threadsPagination,
   thread: state => {
     return state.thread;
@@ -54,6 +60,9 @@ export const mutations = {
   },
   resetComment(state) {
     Object.assign(state, commentState);
+  },
+  resetContent(state) {
+    Object.assign(state, replyState);
   }
 };
 
@@ -112,10 +121,23 @@ export const actions = {
       throw e;
     }
   },
+  async saveReply({ commit }, payload) {
+    let url = `/api/v1/reply/${payload.id}/`;
+    try {
+      await this.$axios.post(url, payload).then(res => {
+        return res.data;
+      });
+    } catch (e) {
+      throw e;
+    }
+  },
   resetThread({ commit }) {
     commit("resetThread");
   },
   resetComment({ commit }) {
     commit("resetComment");
-  }
+  },
+  resetReply({ commit }) {
+    commit("resetContent");
+  },
 };
