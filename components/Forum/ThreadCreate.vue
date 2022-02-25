@@ -4,12 +4,12 @@
       <card>
         <div slot="header" class="row align-items-center">
           <div class="col-8">
-            <h3 class="mb-0">Create a Resolution</h3>
+            <h3 class="mb-0">Create a Thread</h3>
           </div>
           <div class="col-4 text-right">
             <nuxt-link to="/resolution/">
               <base-button type="info"
-                >Back to Resolution list</base-button
+                >Back to Thread list</base-button
               ></nuxt-link
             >
           </div>
