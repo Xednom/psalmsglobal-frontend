@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import ForumCreate from "../../components/Forum/ForumCreate.vue";
+import ForumCreate from "../../components/Forum/ThreadCreate.vue";
 export default {
   layout: "DashboardLayout",
   components: {

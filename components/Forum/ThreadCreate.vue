@@ -16,21 +16,52 @@
         </div>
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
           <form @submit.prevent="handleSubmit(save)">
-            <div class="pl-lg-4">
+            <div class="pl-lg-6">
               <div class="row">
-                <div class="col-lg-3">
-                  <base-input label="Category">
+                <div class="col-lg-12">
+                  <base-input
+                    type="text"
+                    label="Title"
+                    placeholder="Title"
+                    v-model="title"
+                    name="Title"
+                    rules="required"
+                  >
+                  </base-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <base-input label="Staff carbon copy">
                     <el-select
-                      v-model="category"
+                      v-model="optionStaffs"
+                      multiple
                       filterable
-                      placeholder="Choose a category"
-                      rules="required"
+                      placeholder="Search here"
                     >
                       <el-option
-                        v-for="option in categories"
+                        v-for="option in staffs"
                         :key="option.id"
-                        :label="option.name"
-                        :value="option.name"
+                        :label="option.staff_id"
+                        :value="option.staff_id"
+                      >
+                      </el-option>
+                    </el-select>
+                  </base-input>
+                </div>
+                <div class="col-md-6" v-if="$auth.user.designation_category == 'staff'">
+                  <base-input label="Client carbon copy">
+                    <el-select
+                      v-model="optionClients"
+                      multiple
+                      filterable
+                      placeholder="Search here"
+                    >
+                      <el-option
+                        v-for="option in clients"
+                        :key="option.id"
+                        :label="option.client_code"
+                        :value="option.client_code"
                       >
                       </el-option>
                     </el-select>
@@ -43,7 +74,7 @@
                     <textarea
                       class="form-control"
                       rows="3"
-                      v-model="description"
+                      v-model="content"
                     ></textarea>
                   </base-input>
                 </div>
@@ -70,57 +101,54 @@
 import { Select, Option } from "element-ui";
 import { mapGetters, mapActions } from "vuex";
 
-import ResolutionMixin from "@/mixins/ResolutionMixin.js";
+import ForumMixin from "@/mixins/ForumMixin.js";
 
 export default {
-  name: "crm_list",
-  mixins: [ResolutionMixin],
+  name: "thread-create",
+  mixins: [ForumMixin],
   components: {
     [Select.name]: Select,
     [Option.name]: Option
   },
   computed: {
     ...mapGetters({
-      categories: "resolution/resolutionCategory",
-      user: "user/user",
-      client: "user/company"
+      staffs: "user/staffs",
+      clients: "user/clients",
     })
   },
   data() {
     return {
-      clientUser: {},
       isBusy: false,
       saving: false,
-      modals: {
-        form: false
-      }
+      optionStaffs: [],
+      optionClients: [],
     };
   },
   methods: {
-    ...mapActions("resolution", ["resetResolution", "saveResolution"]),
-    async fetchCategories() {
-      this.isBusy = true;
-      await this.$store
-        .dispatch("resolution/fetchResolutionCategory", this.pagination)
-        .then(() => {
-          this.isBusy = false;
-        });
-    },
-    async fetchClient(id) {
-      let endpoint = `/api/auth/client/${id}/`;
+    ...mapActions("forum", ["resetThread", "saveThread"]),
+    async fetchStaffCodes() {
       try {
-        await this.$axios.get(endpoint).then(res => {
-          this.clientUser = res.data;
-        });
-      } catch (err) {
-        console.error(err.response.data);
+        await this.$store.dispatch("user/fetchStaffCodes");
+        this.optionStaffs = this.staffs;
+      } catch (e) {
+        throw e;
+      }
+    },
+    async fetchClientCodes() {
+      try {
+        await this.$store.dispatch("user/fetchClientCodes");
+        this.optionClients = this.clients;
+      } catch (e) {
+        throw e;
       }
     },
     async save() {
       const payload = {
-        category: this.category,
-        description: this.description,
-        client: this.clientUser.id
+        author: this.$auth.user.id,
+        title: this.title,
+        content: this.content,
+        staff_carbon_copy: this.staff_carbon_copy,
+        client_carbon_copy: this.client_carbon_copy
       };
 
       if (
@@ -130,10 +158,10 @@ export default {
       ) {
         try {
           this.saving = true;
-          await this.saveResolution(payload)
+          await this.saveThread(payload)
             .then(() => {
               this.saving = false;
-              this.resetResolution();
+              this.resetThread();
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
@@ -185,15 +213,9 @@ export default {
     }
   },
   mounted() {
-    this.fetchCategories();
-    if (
-      this.$auth.user.designation_category == "new_client" ||
-      this.$auth.user.designation_category == "current_client" ||
-      this.$auth.user.designation_category == "affiliate_partner"
-    ) {
-      this.fetchClient(this.$auth.user.id);
-    }
-  }
+    this.fetchStaffCodes();
+    this.fetchClientCodes();
+  },
 };
 </script>
 

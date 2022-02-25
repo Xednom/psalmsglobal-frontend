@@ -12,7 +12,6 @@
                 size="md"
                 type="neutral"
                 @click="modals.form = true"
-                v-if="$auth.user.designation_category != 'staff'"
                 >Create a Thread</base-button
               ></nuxt-link
             >

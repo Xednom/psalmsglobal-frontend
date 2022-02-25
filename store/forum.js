@@ -102,7 +102,7 @@ export const actions = {
     try {
       return await this.$axios.post(url, payload).then(res => {
         this.$router.push({
-          name: "forums-id___en",
+          name: "forum-id",
           params: { id: res.data.id }
         });
         commit("setBasicField", payload);
