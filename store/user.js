@@ -25,6 +25,7 @@ const blankState = {
     users: [],
     user: {},
     clientUser: {},
+    clients: [],
     staff: {},
     staffs: [],
     usersPagination: {
@@ -48,6 +49,7 @@ const blankState = {
     designation_category: state => state.designation_category,
     company_category: state => state.company_category,
     client: state => state.client,
+    clients: state => state.clients,
     users: state => state.users,
     staffs: state => state.staffs,
     user: state => {
@@ -69,8 +71,14 @@ const blankState = {
     setClientUser(state, payload) {
       state.clientUser = payload.clientUser;
     },
+    setClients(state, payload) {
+      state.clients = payload.clients;
+    },
     setStaff(state, payload) {
       state.staff = payload.staff;
+    },
+    setStaffs(state, payload) {
+      state.staffs = payload.staffs;
     },
     setUsers(state, payload) {
       state.users = payload.users;
@@ -146,6 +154,28 @@ const blankState = {
       try {
         await this.$axios.get(endpoint).then(res => {
           commit("setStaff", {staff: res.data})
+        });
+      } catch (err) {
+        throw err;
+      }
+    },
+    async fetchStaffCodes({commit, dispatch}, payload) {
+      this.loading = true;
+      let endpoint = `/api/auth/staff-code/`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          commit("setStaffs", {staffs: res.data.results})
+        });
+      } catch (err) {
+        throw err;
+      }
+    },
+    async fetchClientCodes({commit, dispatch}, payload) {
+      this.loading = true;
+      let endpoint = `/api/auth/client-code/`;
+      try {
+        await this.$axios.get(endpoint).then(res => {
+          commit("setClients", {clients: res.data.results})
         });
       } catch (err) {
         throw err;
