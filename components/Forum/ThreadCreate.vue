@@ -34,7 +34,7 @@
                 <div class="col-md-6">
                   <base-input label="Staff carbon copy">
                     <el-select
-                      v-model="optionStaffs"
+                      v-model="staff_carbon_copy"
                       multiple
                       filterable
                       placeholder="Search here"
@@ -52,7 +52,7 @@
                 <div class="col-md-6" v-if="$auth.user.designation_category == 'staff'">
                   <base-input label="Client carbon copy">
                     <el-select
-                      v-model="optionClients"
+                      v-model="client_carbon_copy"
                       multiple
                       filterable
                       placeholder="Search here"
