@@ -7,7 +7,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    mode: 'universal',
+    mode: 'spa',
     title: 'Psalms Global',
     meta: [
       { charset: 'utf-8' },
