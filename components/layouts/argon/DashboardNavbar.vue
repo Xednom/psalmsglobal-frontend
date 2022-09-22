@@ -66,7 +66,7 @@
           </div>
           <nuxt-link to="/pages/user" class="dropdown-item">
             <i class="ni ni-single-02"></i>
-            <span>My profile</span>
+            <span>My profile {{ $auth.user}}</span>
           </nuxt-link>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item" native-type="submit" @click="logout">

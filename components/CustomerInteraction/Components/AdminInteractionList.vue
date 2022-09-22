@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header bg-transparent border-0">
-        <h3 class="mb-0">Customer Interaction list</h3>
+        <h3 class="mb-0">{{ interactionName }} Customer Interaction list</h3>
       </div>
       <b-container fluid>
         <!-- User Interface controls -->
@@ -27,7 +27,11 @@
             </b-form-group>
           </b-col>
 
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category == 'staff'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="this.$auth.user.designation_category == 'staff'"
+          >
             <b-form-group
               label="Select Account type"
               label-for="initial-sort-select"
@@ -69,7 +73,14 @@
             </b-form-group>
           </b-col>
 
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'prepaid'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="
+              this.$auth.user.designation_category != 'staff' &&
+                this.$auth.user.account_type == 'prepaid'
+            "
+          >
             <b-form-group
               label="Filter"
               label-for="filter-input"
@@ -95,7 +106,14 @@
               </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'postpaid'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="
+              this.$auth.user.designation_category != 'staff' &&
+                this.$auth.user.account_type == 'postpaid'
+            "
+          >
             <b-form-group
               label="Filter"
               label-for="filter-input"
@@ -121,7 +139,7 @@
               </b-input-group>
             </b-form-group>
           </b-col>
-           <b-col lg="6" class="my-1" v-if="this.$auth.user.is_superuser">
+          <b-col lg="6" class="my-1" v-if="this.$auth.user.is_superuser">
             <b-form-group
               label="Filter"
               label-for="filter-input"
@@ -154,14 +172,12 @@
           :items="interactions"
           :fields="fields"
           :per-page="perPage"
-          :filter="filter"
           :busy="isBusy"
           :filter-included-fields="filterOn"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           :sort-direction="sortDirection"
           @filtered="onFiltered"
-          no-local-sorting
           stacked="md"
           show-empty
           small
@@ -294,7 +310,7 @@ import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
 import JobOrderComment from "@/components/CustomerInteraction/InteractionCommentSection";
 
 export default {
-  name: "interaction_list",
+  name: "AdminInteractionList",
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
@@ -305,13 +321,25 @@ export default {
     JobOrderList,
     JobOrderComment
   },
+  props: {
+    prepaid: { type: Boolean, default: false },
+    postPaid: { type: Boolean, default: false }
+  },
   computed: {
     ...mapGetters({
       // interactions: "postPaidCustomerInteraction/interactions",
       pagination: "postPaidCustomerInteraction/interactionsPagination",
       user: "user/user",
       client: "user/clientUser"
-    })
+    }),
+    interactionName() {
+      const vm = this;
+      if (vm.postPaid) {
+        return "Postpaid";
+      } else if (vm.prepaid) {
+        return "Prepaid";
+      }
+    }
   },
   data() {
     return {
@@ -366,9 +394,15 @@ export default {
   watch: {
     currentPage: {
       handler: function(value) {
-        this.fetchClientPostpaidInteractions().catch(error => {
-          console.error(error)
-        })
+        if (this.postPaid) {
+          this.fetchClientPostpaidInteractions().catch(error => {
+            console.error(error);
+          });
+        } else if (this.prepaid) {
+          this.fetchClientPrepaidInteractions().catch(error => {
+            console.error(error);
+          });
+        }
       }
     }
   },
@@ -376,6 +410,7 @@ export default {
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.fetchSearchPostpaidInteractionsAdmin();
+      console.warn(filteredItems);
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
@@ -486,57 +521,14 @@ export default {
           throw e;
         });
     },
-    async fetchClientPostpaidInteractions() {
+    async fetchClientPrepaidInteractions() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?page=${this.currentPage}`;
+      let endpoint = `/api/v1/prepaid/customer-interaction/?page=${this.currentPage}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
           this.interactions = res.data.results;
           this.totalRows = res.data.count;
-          console.warn(res)
-          console.warn(res.data.count)
-          this.isBusy = false;
-          this.interactions.forEach(item => {
-            if (
-              item.interested_to_sell == "yes" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "success",
-                interested_to_buy: "info"
-              };
-            } else if (
-              item.interested_to_buy == "yes" &&
-              item.interested_to_sell == "no"
-            ) {
-              item._cellVariants = {
-                interested_to_buy: "success",
-                interested_to_sell: "danger"
-              };
-            } else if (
-              item.interested_to_sell == "no" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "danger",
-                interested_to_buy: "info"
-              };
-            }
-          });
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    async fetchClientPrepaidInteractions() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/customer-interaction/?limit=10000`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.interactions = res.data.results;
-          this.totalRows = this.interactions.length;
           this.isBusy = false;
           this.interactions.forEach(item => {
             if (
@@ -605,10 +597,10 @@ export default {
         this.fetchPostpaidInteractions();
       } else {
         if (this.$auth.user.account_type == "Prepaid") {
-        this.fetchPrepaidInteractions();
-      } else if (this.$auth.user.account_type == "Postpaid") {
-        this.fetchPostpaidInteractions();
-      }
+          this.fetchPrepaidInteractions();
+        } else if (this.$auth.user.account_type == "Postpaid") {
+          this.fetchPostpaidInteractions();
+        }
       }
     },
     adminInteractions() {
@@ -634,18 +626,12 @@ export default {
     }
   },
   mounted() {
-    if (
-      this.$auth.user.designation_category == "new_client" ||
-      this.$auth.user.designation_category == "current_client" ||
-      this.$auth.user.designation_category == "affiliate_partner"
-    ) {
-      if (this.$auth.user.account_type == "postpaid") {
+    if (this.$auth.user.is_superuser) {
+      if (this.postPaidInteractions) {
         this.fetchClientPostpaidInteractions();
-      } else if (this.$auth.user.account_type == "prepaid") {
+      } else if (this.prepaid) {
         this.fetchClientPrepaidInteractions();
       }
-    } else if (this.$auth.user.is_superuser) {
-      this.fetchClientPostpaidInteractions();
     }
   }
 };
