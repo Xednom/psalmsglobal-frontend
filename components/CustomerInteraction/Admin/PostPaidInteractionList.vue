@@ -1,5 +1,13 @@
 <template>
-  <div><admin-interaction-list post-paid></admin-interaction-list></div>
+  <div>
+    <b-alert show variant="danger" v-if="!$auth.user.is_superuser"
+      >You're not allowed to access this page.</b-alert
+    >
+    <admin-interaction-list
+      post-paid
+      v-if="$auth.user.is_superuser"
+    ></admin-interaction-list>
+  </div>
 </template>
 
 <script>
