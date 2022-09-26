@@ -14,7 +14,18 @@
               <base-button @click="modals.classic = true" type="primary"
                 >Comments</base-button
               >
-              <nuxt-link to="/customer-interaction/">
+              <nuxt-link
+                v-if="$auth.user.is_superuser"
+                to="/admin-interaction/"
+              >
+                <base-button type="danger"
+                  >Back to Interaction list</base-button
+                ></nuxt-link
+              >
+              <nuxt-link
+                v-if="!$auth.user.is_superuser"
+                to="/customer-interaction/"
+              >
                 <base-button type="danger"
                   >Back to Interaction list</base-button
                 ></nuxt-link
@@ -71,7 +82,7 @@
                             "
                             placeholder="Search a Company"
                             @input="getCompany"
-                            disabled
+                            :disabled="!$auth.user.is_superuser"
                           />
                         </div>
                       </div>
@@ -88,7 +99,7 @@
                             v-model="interaction.apn"
                             name="APN"
                             rules="required"
-                            disabled
+                            :disabled="!$auth.user.is_superuser"
                           >
                           </base-input>
                         </div>
@@ -100,7 +111,7 @@
                             v-model="interaction.reference_number"
                             name="Reference number"
                             rules="required"
-                            disabled
+                            :disabled="!$auth.user.is_superuser"
                           >
                           </base-input>
                         </div>
@@ -115,7 +126,7 @@
                               filterable
                               placeholder="Choose"
                               @change="fetchCounties"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             >
                               <el-option
                                 v-for="option in states"
@@ -137,7 +148,7 @@
                               v-model="interaction.county"
                               filterable
                               placeholder="Choose"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             >
                               <el-option
                                 v-for="option in counties"
@@ -156,7 +167,7 @@
                               id="address"
                               rows="3"
                               v-model="interaction.address"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             ></textarea>
                           </base-input>
                         </div>
@@ -173,7 +184,7 @@
                             v-model="interaction.caller_full_name"
                             name="Caller full name"
                             rules="required"
-                            disabled
+                            :disabled="!$auth.user.is_superuser"
                           >
                           </base-input>
                         </div>
@@ -184,7 +195,7 @@
                             v-model="interaction.caller_phone"
                             name="Caller phone"
                             rules="required"
-                            disabled
+                            :disabled="!$auth.user.is_superuser"
                           >
                           </base-input>
                         </div>
@@ -196,7 +207,7 @@
                             name="Email"
                             v-model="interaction.email"
                             :rules="{ required: true, email: true }"
-                            disabled
+                            :disabled="!$auth.user.is_superuser"
                           >
                           </base-input>
                         </div>
@@ -212,7 +223,7 @@
                               v-model="interaction.crm"
                               filterable
                               placeholder="Choose"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             >
                               <el-option
                                 v-for="option in crmOptions"
@@ -230,7 +241,7 @@
                               v-model="interaction.leads_transferred_crm"
                               filterable
                               placeholder="Choose"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             >
                               <el-option
                                 v-for="option in leadsCrmOptions"
@@ -255,7 +266,7 @@
                               filterable
                               placeholder="Choose"
                               rules="required"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             >
                               <el-option
                                 v-for="option in generalCalls"
@@ -280,7 +291,7 @@
                               filterable
                               placeholder="Choose"
                               rules="required"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             >
                               <el-option
                                 v-for="option in interestedToBuys"
@@ -299,7 +310,7 @@
                               filterable
                               placeholder="Choose"
                               rules="required"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             >
                               <el-option
                                 v-for="option in interestedToSells"
@@ -322,27 +333,25 @@
                               id="notes"
                               rows="3"
                               v-model="interaction.reason_of_the_call"
-                              disabled
+                              :disabled="!$auth.user.is_superuser"
                             ></textarea>
                           </base-input>
                         </div>
                       </div>
                     </div>
-                    <!-- <base-button
-                    type="primary"
-                    native-type="submit"
-                    loading
-                    v-if="saving"
-                    >Submit</base-button
-                  >
-                  <base-button
-                    type="primary"
-                    native-type="submit"
-                    v-else-if="
-                      !saving && $auth.user.designation_category == 'staff'
-                    "
-                    >Submit</base-button
-                  > -->
+                    <base-button
+                      type="primary"
+                      native-type="submit"
+                      loading
+                      v-if="saving"
+                      >Submit...</base-button
+                    >
+                    <base-button
+                      type="primary"
+                      native-type="submit"
+                      v-else-if="!saving && $auth.user.is_superuser"
+                      >Submit</base-button
+                    >
                   </form>
                 </validation-observer>
               </b-tab>
@@ -733,7 +742,7 @@ export default {
           .customer_interaction_post_paid_forms
       };
 
-      if (this.$auth.user.designation_category == "staff") {
+      if (this.$auth.user.is_superuser) {
         try {
           this.saving = true;
           await this.updateInteraction(interactionPayload)
