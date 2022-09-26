@@ -27,7 +27,11 @@
             </b-form-group>
           </b-col>
 
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category == 'staff'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="this.$auth.user.designation_category == 'staff'"
+          >
             <b-form-group
               label="Select Account type"
               label-for="initial-sort-select"
@@ -69,7 +73,14 @@
             </b-form-group>
           </b-col>
 
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'prepaid'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="
+              this.$auth.user.designation_category != 'staff' &&
+                this.$auth.user.account_type == 'prepaid'
+            "
+          >
             <b-form-group
               label="Filter"
               label-for="filter-input"
@@ -95,9 +106,16 @@
               </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'postpaid'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="
+              this.$auth.user.designation_category != 'staff' &&
+                this.$auth.user.account_type == 'postpaid'
+            "
+          >
             <b-form-group
-              label="Filter"
+              label="z"
               label-for="filter-input"
               label-cols-sm="3"
               label-align-sm="right"
@@ -109,32 +127,6 @@
                   id="filter-input"
                   v-model="filter"
                   @keyup.enter="fetchPostpaidInteractions"
-                  type="search"
-                  placeholder="Type to Search"
-                ></b-form-input>
-
-                <b-input-group-append>
-                  <b-button :disabled="!filter" @click="filter = ''"
-                    >Clear</b-button
-                  >
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-group>
-          </b-col>
-           <b-col lg="6" class="my-1" v-if="this.$auth.user.is_superuser">
-            <b-form-group
-              label="Filter"
-              label-for="filter-input"
-              label-cols-sm="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-input-group size="sm">
-                <b-form-input
-                  id="filter-input"
-                  v-model="filter"
-                  @keyup.enter="fetchSearchPostpaidInteractionsAdmin"
                   type="search"
                   placeholder="Type to Search"
                 ></b-form-input>
@@ -160,8 +152,6 @@
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           :sort-direction="sortDirection"
-          @filtered="onFiltered"
-          no-local-sorting
           stacked="md"
           show-empty
           small
@@ -363,51 +353,19 @@ export default {
       ]
     };
   },
-  watch: {
-    currentPage: {
-      handler: function(value) {
-        this.fetchClientPostpaidInteractions().catch(error => {
-          console.error(error)
-        })
-      }
-    }
-  },
   methods: {
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
-      this.fetchSearchPostpaidInteractionsAdmin();
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
     async fetchPostpaidInteractions() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?limit=${this.perPage}&offset=${this.perPage}search=${this.filter}`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.postPaidInteractions = res.data.results;
-          if (this.postPaidInteractions.length == "1") {
-            this.postPaidInteractions.forEach(item => {
-              this.interactions = res.data.results;
-              this.accountType = "Postpaid";
-            });
-          }
-          if (this.accountType == "Postpaid") {
-            this.interactions = res.data.results;
-          }
-          this.isBusy = false;
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    async fetchSearchPostpaidInteractionsAdmin() {
-      this.isBusy = true;
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
       return await this.$axios
         .get(endpoint)
         .then(res => {
-          this.interactions = res.data.results;
+          this.postPaidInteractions = res.data.results;
           if (this.postPaidInteractions.length == "1") {
             this.postPaidInteractions.forEach(item => {
               this.interactions = res.data.results;
@@ -453,49 +411,6 @@ export default {
         .then(res => {
           this.interactions = res.data.results;
           this.totalRows = res.data.count;
-          this.isBusy = false;
-          this.interactions.forEach(item => {
-            if (
-              item.interested_to_sell == "yes" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "success",
-                interested_to_buy: "info"
-              };
-            } else if (
-              item.interested_to_buy == "yes" &&
-              item.interested_to_sell == "no"
-            ) {
-              item._cellVariants = {
-                interested_to_buy: "success",
-                interested_to_sell: "danger"
-              };
-            } else if (
-              item.interested_to_sell == "no" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "danger",
-                interested_to_buy: "info"
-              };
-            }
-          });
-        })
-        .catch(e => {
-          throw e;
-        });
-    },
-    async fetchClientPostpaidInteractions() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?page=${this.currentPage}`;
-      return await this.$axios
-        .get(endpoint)
-        .then(res => {
-          this.interactions = res.data.results;
-          this.totalRows = res.data.count;
-          console.warn(res)
-          console.warn(res.data.count)
           this.isBusy = false;
           this.interactions.forEach(item => {
             if (
@@ -605,15 +520,10 @@ export default {
         this.fetchPostpaidInteractions();
       } else {
         if (this.$auth.user.account_type == "Prepaid") {
-        this.fetchPrepaidInteractions();
-      } else if (this.$auth.user.account_type == "Postpaid") {
-        this.fetchPostpaidInteractions();
-      }
-      }
-    },
-    adminInteractions() {
-      if (this.auth.user.is_superuser) {
-        this.fetchPostpaidInteractions();
+          this.fetchPrepaidInteractions();
+        } else if (this.$auth.user.account_type == "Postpaid") {
+          this.fetchPostpaidInteractions();
+        }
       }
     },
     errorMessage(variant = null, error) {
@@ -644,8 +554,6 @@ export default {
       } else if (this.$auth.user.account_type == "prepaid") {
         this.fetchClientPrepaidInteractions();
       }
-    } else if (this.$auth.user.is_superuser) {
-      this.fetchClientPostpaidInteractions();
     }
   }
 };
