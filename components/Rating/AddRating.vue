@@ -2,7 +2,11 @@
   <div class="container">
     <div
       class="col-xl-12 col-md-12 col-sm-12"
-      v-if="rate == 0 && $auth.user.designation_category != 'staff'"
+      v-if="
+        rate == 0 &&
+          $auth.user.designation_category != 'staff' &&
+          !$auth.user.is_superuser
+      "
     >
       <div slot="header" class="row align-items-center">
         <div class="col-8">
@@ -46,7 +50,10 @@
     </div>
     <div
       class="col-xl-12 col-md-12 col-sm-12"
-      v-if="rate == 0 && $auth.user.designation_category == 'staff'"
+      v-if="
+        (rate == 0 && $auth.user.designation_category == 'staff') ||
+          $auth.user.is_superuser
+      "
     >
       <div slot="header" class="row align-items-center">
         <div class="col-md-12 col-lg-12">
