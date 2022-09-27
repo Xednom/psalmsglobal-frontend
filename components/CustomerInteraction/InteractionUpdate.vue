@@ -82,7 +82,7 @@
                             "
                             placeholder="Search a Company"
                             @input="getCompany"
-                            :disabled="!$auth.user.is_superuser"
+                            disabled
                           />
                         </div>
                       </div>
