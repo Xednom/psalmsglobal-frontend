@@ -52,7 +52,7 @@
       class="col-xl-12 col-md-12 col-sm-12"
       v-if="
         (rate == 0 && $auth.user.designation_category == 'staff') ||
-          $auth.user.is_superuser
+          (rate == 0 && $auth.user.is_superuser)
       "
     >
       <div slot="header" class="row align-items-center">
@@ -68,7 +68,7 @@
       >
         <div class="col-sm-12 col-md-12 col-lg-12">
           <label for="rating-md-no-border" class="mt-3"
-            >You rated this interaction with:</label
+            >{{ userRating }} rated this interaction with:</label
           >
           <b-form-rating
             id="rating-md-no-border"
@@ -96,8 +96,9 @@
             for="rating-md-no-border"
             class="mt-3"
             v-if="$auth.user.designation_category != 'staff'"
-            >You rated this interaction with:</label
-          >
+            >{{ userRating }} rated this interaction with:
+          </label>
+
           <label
             for="rating-md-no-border"
             class="mt-3"
@@ -143,7 +144,20 @@ export default {
       categories: "resolution/resolutionCategory",
       user: "user/user",
       client: "user/company"
-    })
+    }),
+    userRating() {
+      if (
+        this.$auth.user.designation_category == "staff" ||
+        this.$auth.user.is_superuser
+      ) {
+        return "The Client";
+      } else if (
+        !this.$auth.user.designation_category == "staff" ||
+        !this.$auth.user.is_superuser
+      ) {
+        return "You";
+      }
+    }
   },
   props: {
     interaction: {
