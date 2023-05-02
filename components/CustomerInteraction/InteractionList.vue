@@ -27,7 +27,11 @@
             </b-form-group>
           </b-col>
 
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category == 'staff'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="this.$auth.user.designation_category == 'staff'"
+          >
             <b-form-group
               label="Select Account type"
               label-for="initial-sort-select"
@@ -69,7 +73,14 @@
             </b-form-group>
           </b-col>
 
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'prepaid'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="
+              this.$auth.user.designation_category != 'staff' &&
+              this.$auth.user.account_type == 'prepaid'
+            "
+          >
             <b-form-group
               label="Filter"
               label-for="filter-input"
@@ -95,7 +106,14 @@
               </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col lg="6" class="my-1" v-if="this.$auth.user.designation_category != 'staff' && this.$auth.user.account_type == 'postpaid'">
+          <b-col
+            lg="6"
+            class="my-1"
+            v-if="
+              this.$auth.user.designation_category != 'staff' &&
+              this.$auth.user.account_type == 'postpaid'
+            "
+          >
             <b-form-group
               label="Filter"
               label-for="filter-input"
@@ -237,7 +255,7 @@
           {{ interaction.ticket_number }}
         </template>
         <b-overlay :show="show" rounded="sm">
-          <job-order-comment :interaction="interaction"></job-order-comment>
+          <interaction-comment :interaction="interaction"></interaction-comment>
         </b-overlay>
       </b-modal>
 
@@ -257,13 +275,13 @@ import {
   TableColumn,
   DropdownMenu,
   DropdownItem,
-  Dropdown
+  Dropdown,
 } from "element-ui";
 import { mapGetters } from "vuex";
 
 import FormView from "@/components/Form/FormView";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
-import JobOrderComment from "@/components/CustomerInteraction/InteractionCommentSection";
+import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection";
 
 export default {
   name: "interaction_list",
@@ -275,15 +293,15 @@ export default {
     [DropdownMenu.name]: DropdownMenu,
     FormView,
     JobOrderList,
-    JobOrderComment
+    InteractionComment,
   },
   computed: {
     ...mapGetters({
       // interactions: "postPaidCustomerInteraction/interactions",
       pagination: "postPaidCustomerInteraction/interactionsPagination",
       user: "user/user",
-      client: "user/clientUser"
-    })
+      client: "user/clientUser",
+    }),
   },
   data() {
     return {
@@ -300,7 +318,7 @@ export default {
       showJobOrder: false,
       modals: {
         update: false,
-        jobOrder: false
+        jobOrder: false,
       },
       totalRows: 1,
       currentPage: 1,
@@ -314,7 +332,7 @@ export default {
       infoModal: {
         id: "info-modal",
         title: "",
-        content: ""
+        content: "",
       },
       fields: [
         { key: "ticket_number", sortable: true },
@@ -331,8 +349,8 @@ export default {
         { key: "reason_of_the_call", sortable: true },
         { key: "interested_to_sell", sortable: true },
         { key: "interested_to_buy", sortable: true },
-        { key: "general_call", sortable: true }
-      ]
+        { key: "general_call", sortable: true },
+      ],
     };
   },
   methods: {
@@ -346,10 +364,10 @@ export default {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.postPaidInteractions = res.data.results;
           if (this.postPaidInteractions.length == "1") {
-            this.postPaidInteractions.forEach(item => {
+            this.postPaidInteractions.forEach((item) => {
               this.interactions = res.data.results;
               this.accountType = "Postpaid";
             });
@@ -359,7 +377,7 @@ export default {
           }
           this.isBusy = false;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -368,10 +386,10 @@ export default {
       let endpoint = `/api/v1/prepaid/customer-interaction/?search=${this.filter}`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.interactions = res.data.results;
           if (this.prepaidInteractions.length == "1") {
-            this.prepaidInteractions.forEach(item => {
+            this.prepaidInteractions.forEach((item) => {
               this.interactions = res.data.results;
               this.accountType = "Postpaid";
             });
@@ -381,7 +399,7 @@ export default {
           }
           this.isBusy = false;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -390,18 +408,18 @@ export default {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?limit=10000`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.interactions = res.data.results;
           this.totalRows = this.interactions.length;
           this.isBusy = false;
-          this.interactions.forEach(item => {
+          this.interactions.forEach((item) => {
             if (
               item.interested_to_sell == "yes" &&
               item.interested_to_buy == "yes"
             ) {
               item._cellVariants = {
                 interested_to_sell: "success",
-                interested_to_buy: "info"
+                interested_to_buy: "info",
               };
             } else if (
               item.interested_to_buy == "yes" &&
@@ -409,7 +427,7 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_buy: "success",
-                interested_to_sell: "danger"
+                interested_to_sell: "danger",
               };
             } else if (
               item.interested_to_sell == "no" &&
@@ -417,12 +435,12 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_sell: "danger",
-                interested_to_buy: "info"
+                interested_to_buy: "info",
               };
             }
           });
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -431,18 +449,18 @@ export default {
       let endpoint = `/api/v1/prepaid/customer-interaction/?limit=10000`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.interactions = res.data.results;
           this.totalRows = this.interactions.length;
           this.isBusy = false;
-          this.interactions.forEach(item => {
+          this.interactions.forEach((item) => {
             if (
               item.interested_to_sell == "yes" &&
               item.interested_to_buy == "yes"
             ) {
               item._cellVariants = {
                 interested_to_sell: "success",
-                interested_to_buy: "info"
+                interested_to_buy: "info",
               };
             } else if (
               item.interested_to_buy == "yes" &&
@@ -450,7 +468,7 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_buy: "success",
-                interested_to_sell: "danger"
+                interested_to_sell: "danger",
               };
             } else if (
               item.interested_to_sell == "no" &&
@@ -458,12 +476,12 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_sell: "danger",
-                interested_to_buy: "info"
+                interested_to_buy: "info",
               };
             }
           });
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -472,11 +490,11 @@ export default {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${id}`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.show = false;
           this.interaction = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           this.show = false;
           throw e;
         });
@@ -486,11 +504,11 @@ export default {
       let endpoint = `/api/v1/interaction-form/${id}/`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.show = false;
           this.form = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           this.show = false;
           throw e;
         });
@@ -502,10 +520,10 @@ export default {
         this.fetchPostpaidInteractions();
       } else {
         if (this.$auth.user.account_type == "Prepaid") {
-        this.fetchPrepaidInteractions();
-      } else if (this.$auth.user.account_type == "Postpaid") {
-        this.fetchPostpaidInteractions();
-      }
+          this.fetchPrepaidInteractions();
+        } else if (this.$auth.user.account_type == "Postpaid") {
+          this.fetchPostpaidInteractions();
+        }
       }
     },
     errorMessage(variant = null, error) {
@@ -520,10 +538,10 @@ export default {
         {
           title: `Error`,
           variant: variant,
-          solid: true
+          solid: true,
         }
       );
-    }
+    },
   },
   mounted() {
     if (
@@ -537,7 +555,7 @@ export default {
         this.fetchClientPrepaidInteractions();
       }
     }
-  }
+  },
 };
 </script>
 
