@@ -255,7 +255,10 @@
           {{ interaction.ticket_number }}
         </template>
         <b-overlay :show="show" rounded="sm">
-          <interaction-comment :interaction="interaction"></interaction-comment>
+          <interaction-comment
+            :interaction="interaction"
+            :account-type="$auth.user.account_type"
+          ></interaction-comment>
         </b-overlay>
       </b-modal>
 
