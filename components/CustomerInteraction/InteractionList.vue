@@ -257,7 +257,8 @@
         <b-overlay :show="show" rounded="sm">
           <interaction-comment
             :interaction="interaction"
-            :account-type="$auth.user.account_type"
+            :user="$auth.user"
+            :account-type="interaction.client_account_type"
           ></interaction-comment>
         </b-overlay>
       </b-modal>
@@ -305,6 +306,14 @@ export default {
       user: "user/user",
       client: "user/clientUser",
     }),
+    // userDesignationAndAccountType() {
+    //   const vm = this;
+    //   if (vm.$auth.user.designation_category == 'staff') {
+    //     return vm.$auth.user.designation_category;
+    //   } else if (vm.$auth.user.designation_category == 'new_client' || vm.$auth.user.designation_category == 'current_client' || vm.$auth.user.designation_category == 'affiliate_partner') {
+    //     return vm.$auth.
+    //   }
+    // }
   },
   data() {
     return {

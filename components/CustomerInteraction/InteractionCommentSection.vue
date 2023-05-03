@@ -89,24 +89,28 @@ import CreateCustomerInteractionMixin from "@/mixins/CreatePostPaidInteractionMi
 
 export default {
   components: {
-    BaseTable
+    BaseTable,
   },
   mixins: [CreateCustomerInteractionMixin],
   props: {
     interaction: {
       type: Object,
-      description: "The interaction object"
+      description: "The interaction object",
+    },
+    user: {
+      type: String,
+      description: "User info",
     },
     accountType: {
       type: String,
-      description: "Account type of the User"
-    }
+      description: "Company's user account type",
+    },
   },
   data() {
     return {
       loading: false,
       saving: false,
-      error: ""
+      error: "",
     };
   },
   computed: {
@@ -116,18 +120,18 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("comment", value);
-      }
-    }
+      },
+    },
   },
   methods: {
     async refreshPostpaid(payload) {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${payload}/`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.interaction = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
           throw e;
         });
@@ -136,10 +140,10 @@ export default {
       let endpoint = `/api/v1/prepaid/customer-interaction/${payload}/`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.interaction = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
           throw e;
         });
@@ -147,18 +151,18 @@ export default {
     async save() {
       this.loading = true;
       try {
-        if (this.accountType == "postpaid") {
+        if (this.user.account_type == "postpaid") {
           await this.$axios.post(
             `/api/v1/customer-interaction-post-paid/${this.interaction.id}/comment/`,
             {
-              comment: this.comment
+              comment: this.comment,
             }
           );
           this.loading = false;
           this.success = true;
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
-        } else if (this.accountType == "prepaid") {
+        } else if (this.user.account_type == "prepaid") {
           await this.$axios.post(
             `/api/v1/customer-interaction-prepaid/${this.interaction.id}/comment/`,
             { comment: this.comment }
@@ -166,6 +170,34 @@ export default {
           this.loading = false;
           this.success = true;
           this.refreshPrepaid(this.interaction.ticket_number);
+        } else if (
+          this.user.account_type == "staff" ||
+          this.accountType == "postpaid"
+        ) {
+          await this.$axios.post(
+            `/api/v1/customer-interaction-post-paid/${this.interaction.id}/comment/`,
+            {
+              comment: this.comment,
+            }
+          );
+          this.loading = false;
+          this.success = true;
+          this.comment = "";
+          this.refreshPostpaid(this.interaction.ticket_number);
+        } else if (
+          this.user.account_type == "staff" ||
+          this.accountType == "prepaid"
+        ) {
+          await this.$axios.post(
+            `/api/v1/customer-interaction-prepaid/${this.interaction.id}/comment/`,
+            {
+              comment: this.comment,
+            }
+          );
+          this.loading = false;
+          this.success = true;
+          this.comment = "";
+          this.refreshPostpaid(this.interaction.ticket_number);
         }
       } catch (err) {
         console.log(err);
@@ -191,11 +223,11 @@ export default {
         {
           title: `Error`,
           variant: variant,
-          solid: true
+          solid: true,
         }
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
