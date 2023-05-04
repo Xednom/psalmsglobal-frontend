@@ -474,6 +474,7 @@
       </h6>
       <interaction-comment
         :interaction="interaction"
+        :user="$auth.user"
         :accountType="interaction.client_account_type"
       ></interaction-comment>
     </modal>
