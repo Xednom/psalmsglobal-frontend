@@ -371,9 +371,12 @@
                       index) in interaction.customer_interaction_post_paid_forms"
                       :key="index"
                     >
-                      <h6 class="heading-small text-muted">
+                      <h6 class="heading-small text-muted" v-if="interaction_forms.form_title != ''">
                         {{ interaction_forms.form_title }} of
                         {{ interaction_forms.company }}
+                      </h6>
+                      <h6 class="heading-small text-muted" v-else>
+                        No script
                       </h6>
                       <div
                         v-for="(form,
@@ -474,6 +477,7 @@
       </h6>
       <interaction-comment
         :interaction="interaction"
+        :user="$auth.user"
         :accountType="interaction.client_account_type"
       ></interaction-comment>
     </modal>
