@@ -192,7 +192,7 @@
                         v-model="job.caller_interaction_record"
                         :ieCloseFix="false"
                         :data="callerInteractions"
-                        :serializer="item => item.ticket_number"
+                        :serializer="(item) => item.ticket_number"
                         :value="ticketKeyword"
                         @hit="getCallerInteraction"
                         @input="onSearchInputTicket"
@@ -215,7 +215,7 @@
                         v-model="job.client"
                         :ieCloseFix="false"
                         :data="clientCodes"
-                        :serializer="item => item.client_code"
+                        :serializer="(item) => item.client_code"
                         :value="clientKeyword"
                         @hit="getClient"
                         @input="onSearchInputClient"
@@ -310,7 +310,7 @@ import {
   DropdownItem,
   Dropdown,
   Select,
-  Option
+  Option,
 } from "element-ui";
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
@@ -333,21 +333,25 @@ export default {
     flatPicker,
     JobOrderView,
     JobOrderUpdate,
-    VueTypeaheadBootstrap
+    VueTypeaheadBootstrap,
   },
   props: {
     interaction: {
       Type: Object,
-      description: "Interaction data ticket use to create job order"
-    }
+      description: "Interaction data ticket use to create job order",
+    },
+    summary: {
+      Type: Object,
+      description: "Summary data ticket use to create job order",
+    },
   },
   computed: {
     ...mapGetters({
       pagination: "jobOrder/jobOrdersPagination",
       staff: "user/staff",
       user: "user/user",
-      client: "user/clientUser"
-    })
+      client: "user/clientUser",
+    }),
   },
   data() {
     return {
@@ -360,7 +364,7 @@ export default {
         due_date: "",
         request_date: "",
         job_title: "",
-        job_description: ""
+        job_description: "",
       },
       clientUser: {},
       isBusy: false,
@@ -368,7 +372,7 @@ export default {
       modals: {
         form: false,
         info: false,
-        update: false
+        update: false,
       },
       totalRows: 1,
       currentPage: 1,
@@ -382,22 +386,22 @@ export default {
       infoModal: {
         id: "info-modal",
         title: "",
-        content: ""
+        content: "",
       },
       fields: [
         {
           key: "caller_interaction_record",
           label: " Caller interaction ticket ",
-          sortable: true
+          sortable: true,
         },
         {
           key: "ticket_number",
           label: "Job order ticket number",
-          sortable: true
+          sortable: true,
         },
         { key: "job_title", sortable: true },
-        { key: "actions" }
-      ]
+        { key: "actions" },
+      ],
     };
   },
   methods: {
@@ -418,15 +422,15 @@ export default {
     onSearchInput(text) {
       this.keyword = text;
     },
-    getCallerInteraction: debounce(function() {
+    getCallerInteraction: debounce(function () {
       this.$axios
         .get(
           `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.job.caller_interaction_record}`
         )
-        .then(res => {
+        .then((res) => {
           this.callerInteractions = res.data.results;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }, 700),
@@ -442,11 +446,11 @@ export default {
       let endpoint = `/api/v1/post-paid/job-order-general/?search=${this.interaction.ticket_number}`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.jobOrders = res.data.results;
           this.isBusy = false;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -455,11 +459,11 @@ export default {
       let endpoint = `/api/v1/prepaid/job-order-general/?search=${this.interaction.ticket_number}`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.jobOrders = res.data.results;
           this.isBusy = false;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -477,10 +481,10 @@ export default {
       let endpoint = `/api/v1/post-paid/job-order/${id}`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.jobOrder = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -488,10 +492,10 @@ export default {
       let endpoint = `/api/v1/prepaid/job-order/${id}`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.jobOrder = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -538,7 +542,7 @@ export default {
           request_date: this.job.request_date,
           due_date: this.job.due_date,
           job_title: this.job.job_title,
-          job_description: this.job.job_description
+          job_description: this.job.job_description,
         };
         try {
           if (this.interaction.client_account_type == "postpaid") {
@@ -566,7 +570,7 @@ export default {
           request_date: this.job.request_date,
           due_date: this.job.due_date,
           job_title: this.job.job_title,
-          job_description: this.job.job_description
+          job_description: this.job.job_description,
         };
         try {
           if (this.interaction.client_account_type == "postpaid") {
@@ -589,13 +593,34 @@ export default {
         } catch (e) {
           throw e;
         }
+        try {
+          if (this.summary.client_sub_category == "ftm") {
+            const jobOrderTicketSummaryPayload = {
+              client: this.clientUser.client_code,
+              ticket_summary_job_order: this.summary.ticket_number,
+              request_date: this.job.request_date,
+              due_date: this.job.due_date,
+              job_title: this.job.job_title,
+              job_description: this.job.job_description,
+            };
+            this.saving = true;
+            await this.saveJobOrder(jobOrderTicketSummaryPayload).then(() => {
+              this.saving = false;
+              this.reset();
+              this.successMessage("success");
+              this.fetchJobOrders();
+            });
+          }
+        } catch (e) {
+          throw e;
+        }
       }
     },
     successMessage(variant = null) {
       this.$bvToast.toast("Successfully added a new Job Order!", {
         title: `Successful`,
         variant: variant,
-        solid: true
+        solid: true,
       });
     },
     errorMessage(variant = null, error) {
@@ -610,10 +635,10 @@ export default {
         {
           title: `Error`,
           variant: variant,
-          solid: true
+          solid: true,
         }
       );
-    }
+    },
   },
   mounted() {
     console.log(this.interaction.client_account_type);
@@ -622,14 +647,14 @@ export default {
     this.totalRows = this.jobOrders.length;
   },
   watch: {
-    keyword: debounce(function(oldKeyword, newKeyword) {
+    keyword: debounce(function (oldKeyword, newKeyword) {
       if (newKeyword !== "" && newKeyword !== oldKeyword) {
         this.getCallerInteraction();
       } else if (!newKeyword) {
         this.jobOrders = [];
       }
-    }, 500)
-  }
+    }, 500),
+  },
 };
 </script>
 
