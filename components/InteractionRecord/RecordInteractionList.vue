@@ -4,7 +4,10 @@
       <div class="col-12">
         <card card-body-classes="table-full-width">
           <div>
-            <b-button variant="success" @click="modals.create = true" v-if="$auth.user.designation_category == 'staff'"
+            <b-button
+              variant="success"
+              @click="modals.create = true"
+              v-if="$auth.user.designation_category == 'staff'"
               >Add interaction record</b-button
             >
             <b-container fluid>
@@ -126,7 +129,7 @@
       headerClasses="justify-content-center"
       class="white-content"
     >
-    <record-view :interaction="record"></record-view>
+      <record-view :interaction="record"></record-view>
     </modal>
 
     <modal
@@ -148,6 +151,8 @@ import swal from "sweetalert2";
 import RecordCreate from "@/components/InteractionRecord/RecordInteractionCreate";
 import RecordView from "@/components/InteractionRecord/RecordInfo";
 
+import { mapGetters } from "vuex";
+
 export default {
   name: "interaction_record_list",
   components: {
@@ -156,14 +161,24 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     RecordCreate,
-    RecordView
+    RecordView,
   },
   props: {
     interactionRecord: {
-      Type: Object
-    }
+      Type: Object,
+      default: {}
+    },
+    ticketSummary: {
+      Type: Object,
+    },
+    userSubcategory: {
+      Type: Object,
+    },
   },
   computed: {
+    ...mapGetters({
+      summaryRecords: "interactionRecord/ticket_summaries",
+    }),
     /***
      * Returns a page from the searched data or the whole data. Search is performed in the watch section below
      */
@@ -177,8 +192,8 @@ export default {
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
+        .filter((f) => f.sortable)
+        .map((f) => {
           return { text: f.label, value: f.key };
         });
     },
@@ -188,16 +203,16 @@ export default {
         this.$auth.user.designation_category == "current_client" ||
         this.$auth.user.designation_category == "affiliate_partner"
       ) {
-        return this.fields.filter(field => !field.requiresStaff);
+        return this.fields.filter((field) => !field.requiresStaff);
       } else {
-        return this.fields.filter(field => !field.requiresClient);
+        return this.fields.filter((field) => !field.requiresClient);
       }
     },
     interactionRecordCount() {
       if (this.records) {
         return this.records.length;
       }
-    }
+    },
   },
   data() {
     return {
@@ -213,7 +228,7 @@ export default {
         { key: "ticket_number", sortable: true },
         { key: "date_called", sortable: true },
         { key: "total_minutes", sortable: true },
-        { key: "actions", label: "Actions" }
+        { key: "actions", label: "Actions" },
       ],
       totalRows: 1,
       currentPage: 1,
@@ -226,14 +241,14 @@ export default {
       infoModal: {
         id: "info-modal",
         title: "",
-        content: ""
+        content: "",
       },
       modals: {
         classic: false,
         create: false,
         comments: false,
-        info: false
-      }
+        info: false,
+      },
     };
   },
   methods: {
@@ -242,14 +257,14 @@ export default {
         title: `You liked ${row.name}`,
         buttonsStyling: false,
         type: "success",
-        confirmButtonClass: "btn btn-success btn-fill"
+        confirmButtonClass: "btn btn-success btn-fill",
       });
     },
     handleEdit(index, row) {
       swal({
         title: `You want to edit ${row.name}`,
         buttonsStyling: false,
-        confirmButtonClass: "btn btn-info btn-fill"
+        confirmButtonClass: "btn btn-info btn-fill",
       });
     },
 
@@ -269,7 +284,7 @@ export default {
     },
     async fetchInteractionRecord(id) {
       if (this.interactionRecord.client_account_type == "postpaid") {
-        this.fetchPostpaidInteractionRecord(id)
+        this.fetchPostpaidInteractionRecord(id);
       } else if (this.interactionRecord.client_account_type == "prepaid") {
         this.fetchPrepaidInteractionRecord(id);
       }
@@ -278,10 +293,10 @@ export default {
       let endpoint = `/api/v1/post-paid/interaction-record/${id}/`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.record = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -289,10 +304,10 @@ export default {
       let endpoint = `/api/v1/prepaid/interaction-record/${id}/`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.record = res.data;
         })
-        .catch(e => {
+        .catch((e) => {
           throw e;
         });
     },
@@ -301,11 +316,11 @@ export default {
       let endpoint = `/api/v1/post-paid/interaction-record/?search=${this.interactionRecord.id}`;
       return this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.isBusy = false;
           this.records = res.data.results;
         })
-        .catch(e => {
+        .catch((e) => {
           this.isBusy = false;
           console.error(e);
         });
@@ -315,14 +330,24 @@ export default {
       let endpoint = `/api/v1/prepaid/interaction-record/?search=${this.interactionRecord.id}`;
       return this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.isBusy = false;
           this.records = res.data.results;
           console.log(this.records);
         })
-        .catch(e => {
+        .catch((e) => {
           this.isBusy = false;
           console.error(e);
+        });
+    },
+    fetchTicketSummaries() {
+      const vm = this;
+      vm.isBusy = true;
+      vm.$store
+        .dispatch("interactionRecord/fetchSummaryRecords")
+        .then(() => {
+          vm.isBusy = false;
+          console.warn("FTM records: ", vm.summaryRecords)
         });
     },
     fetchInteractionRecords() {
@@ -330,6 +355,8 @@ export default {
         this.fetchPostpaidInteractionRecords();
       } else if (this.interactionRecord.client_account_type == "prepaid") {
         this.fetchPrepaidInteractionRecords();
+      } else if (this.userSubcategory == "ftm") {
+        this.fetchTicketSummaries();
       }
     },
     refresh() {
@@ -363,14 +390,14 @@ export default {
         {
           title: `Something went wrong`,
           variant: variant,
-          solid: true
+          solid: true,
         }
       );
-    }
+    },
   },
   mounted() {
     this.fetchInteractionRecords();
-  }
+  },
 };
 </script>
 <style scoped>

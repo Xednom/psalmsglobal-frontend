@@ -13,11 +13,35 @@ const blankState = {
   summary: ""
 };
 
+const ticketSummaryBlankState = {
+  date_called: "",
+  ticket_number: "",
+  ticket_summary: null,
+  client: null,
+  agent: null,
+  total_minutes: 0,
+  client_feedback_status: "",
+  other_feedback: "",
+  client_notes: "",
+  internal_management_ticket_status: "",
+  other_ticket_status: "",
+  summary: ""
+};
+
 export const state = () => ({
   ...blankState,
+  ...ticketSummaryBlankState,
   interactions: [],
   interaction: {},
   interactionsPagination: {
+    offset: 0,
+    count: 0,
+    showing: 0,
+    currentPage: 1
+  },
+  ticketSummaries: [],
+  ticketSummary: {},
+  summariesPagination: {
     offset: 0,
     count: 0,
     showing: 0,
@@ -39,6 +63,11 @@ export const getters = {
     state.internal_management_ticket_status,
   other_ticket_status: state => state.other_ticket_status,
   summary: state => state.summary,
+  ticket_summaries: state => state.ticket_summaries,
+  ticet_summary: state => {
+    state.ticket_summary;
+  },
+  ticketSummariesPagination: state => state.ticketSummariesPagination,
   recordsPagination: state => state.recordsPagination,
   records: state => state.records,
   record: state => {
@@ -50,17 +79,26 @@ export const mutations = {
   setRecord(state, payload) {
     state.record = payload.record;
   },
-  setRecords(state, payload) {
-    state.records = payload.records;
+  setSummaryRecord(state, payload) {
+    state.ticket_summary = payload.ticket_summary;
+  },
+  setSummaryRecords(state, payload) {
+    state.ticket_summaries = payload.ticket_summaries;
   },
   setRecordsPagination(state, payload) {
     state.recordsPagination = payload;
+  },
+  setTicketSummariesPagination(state, payload) {
+    state.ticketSummariesPagination = payload;
   },
   setBasicField(state, { field, value }) {
     state[field] = value;
   },
   reset(state) {
     Object.assign(state, blankState);
+  },
+  resetTicket(state) {
+    Object.assign(state, ticketSummaryBlankState);
   }
 };
 
@@ -80,6 +118,24 @@ export const actions = {
         commit("setRecords", { records: res.data.results });
         const offset = getOffset(res.data.previous);
         commit("setRecordsPagination", {
+          offset: offset,
+          count: res.data.count,
+          showing: res.data.results.length,
+          currentPage: offset / 12 + 1
+        });
+        return res;
+      })
+      .catch(e => {
+        throw e;
+      });
+  },
+  async fetchSummaryRecords({ commit, dispatch }, params) {
+    return await this.$axios
+      .get("/api/v1/post-paid/ticket-summary-interaction/", { params: params })
+      .then(res => {
+        commit("setSummaryRecords", { ticket_summaries: res.data.results });
+        const offset = getOffset(res.data.previous);
+        commit("setTicketSummariesPagination", {
           offset: offset,
           count: res.data.count,
           showing: res.data.results.length,
@@ -131,6 +187,17 @@ export const actions = {
       commit("setBasicField", payload);
     });
   },
+  async saveTicketRecord({ commit }, payload) {
+    let url = `/api/v1/post-paid/ticket-summary-interaction/`;
+    let method = "post";
+    if (payload.id) {
+      method = "put";
+      url = `/api/v1/post-paid/ticket-summary-interaction/${payload.id}`;
+    }
+    return await this.$axios[method](url, payload).then(() => {
+      commit("setBasicField", payload);
+    });
+  },
   async updateRecord({ commit }, payload) {
     let url = `/api/v1/post-paid/interaction-record/${payload.id}/`;
     let method = "put";
@@ -140,5 +207,8 @@ export const actions = {
   },
   reset({ commit }) {
     commit("reset");
+  },
+  resetTicket({ commit }) {
+    commit("resetTicket");
   }
 };
