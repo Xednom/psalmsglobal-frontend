@@ -344,7 +344,8 @@
               </b-tab>
               <b-tab lazy title="Ticket Summary Overview" :disabled="loading">
                 <interaction-record-list
-                  :interactionRecord="interaction"
+                  :ticket-summary="summary"
+                  :user-subcategory="$auth.user.sub_category"
                 ></interaction-record-list>
               </b-tab>
               <b-tab title="Script answer" :disabled="loading">
@@ -450,7 +451,7 @@
                 </div>
               </b-tab>
               <b-tab lazy title="Job Order" :disabled="loading">
-                <job-order-list :interaction="interaction"></job-order-list>
+                <job-order-list :summary="summary"></job-order-list>
               </b-tab>
               <b-tab lazy title="Rating" :disabled="loading">
                 <interaction-rate
@@ -491,7 +492,7 @@ import { Select, Option } from "element-ui";
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection";
 import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList";
-import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
+import JobOrderList from "@/components/JobOrder/FTM/JobOrderTicketSummaryList";
 import InteractionRate from "@/components/Rating/AddRating.vue";
 
 import { mapGetters, mapActions } from "vuex";
