@@ -478,9 +478,9 @@
         Comment Section for ticket {{ summary.ticket_number }}
       </h6>
       <interaction-comment
-        :interaction="interaction"
+        :interaction="summary"
         :user="$auth.user"
-        :accountType="summary.client_account_type"
+        :accountType="summary.client_sub_category"
       ></interaction-comment>
     </modal>
   </div>
@@ -490,9 +490,9 @@
 import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
-import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection";
-import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList";
-import JobOrderList from "@/components/JobOrder/FTM/JobOrderTicketSummaryList";
+import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection.vue";
+import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList.vue";
+import JobOrderList from "@/components/JobOrder/FTM/JobOrderTicketSummaryList.vue";
 import InteractionRate from "@/components/Rating/AddRating.vue";
 
 import { mapGetters, mapActions } from "vuex";

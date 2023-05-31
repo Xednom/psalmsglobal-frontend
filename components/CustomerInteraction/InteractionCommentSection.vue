@@ -78,6 +78,26 @@
           </template>
         </base-table>
       </div>
+      <div class="form-row">
+        <base-table
+          :data="interaction.ticket_summary_comments"
+          thead-classes="text-primary"
+        >
+          <template slot-scope="{ row }">
+            <td>
+              <blockquote class="blockquote">
+                <p class="mb-0 comment-section">
+                  {{ row.comment }}
+                </p>
+                <footer class="blockquote-footer">
+                  {{ row.commenter }}
+                  commented at <strong>{{ row.created_at }}</strong>
+                </footer>
+              </blockquote>
+            </td>
+          </template>
+        </base-table>
+      </div>
     </div>
   </div>
 </template>
@@ -148,10 +168,34 @@ export default {
           throw e;
         });
     },
+    async refreshTicketSummary(payload) {
+      let endpoint = `/api/v1/post-paid/ticket-summary/${payload}/`;
+      return await this.$axios
+        .get(endpoint)
+        .then((res) => {
+          this.interaction = res.data;
+        })
+        .catch((e) => {
+          console.log(e);
+          throw e;
+        });
+    },
     async save() {
       this.loading = true;
       try {
-        if (this.user.account_type == "postpaid") {
+        if (
+          this.interaction.client_sub_category == "ftm" &&
+          this.user.account_type == "postpaid"
+        ) {
+          await this.$axios.post(
+            `/api/v1/ticket-summary/${this.interaction.id}/comment/`,
+            { comment: this.comment }
+          );
+          this.loading = false;
+          this.success = true;
+          this.comment = "";
+          this.refreshTicketSummary(this.interaction.ticket_number);
+        } else if (this.user.account_type == "postpaid") {
           await this.$axios.post(
             `/api/v1/customer-interaction-post-paid/${this.interaction.id}/comment/`,
             {
