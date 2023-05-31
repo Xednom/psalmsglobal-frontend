@@ -505,7 +505,7 @@ export default {
     },
     async fetchInteraction(id) {
       this.show = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${id}`;
+      let endpoint = `/api/v1/post-paid/ticket-summary/${id}`;
       return await this.$axios
         .get(endpoint)
         .then((res) => {
