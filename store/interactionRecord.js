@@ -192,7 +192,7 @@ export const actions = {
     let method = "post";
     if (payload.id) {
       method = "put";
-      url = `/api/v1/post-paid/ticket-summary-interaction/${payload.id}`;
+      url += `${payload.id}/`;
     }
     return await this.$axios[method](url, payload).then(() => {
       commit("setBasicField", payload);
