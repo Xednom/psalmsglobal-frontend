@@ -491,7 +491,7 @@ import { Select, Option } from "element-ui";
 
 import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection.vue";
-import InteractionRecordList from "@/components/InteractionRecord/RecordInteractionList.vue";
+import InteractionRecordList from "@/components/InteractionRecord/Ftm/RecordInteractionList.vue";
 import JobOrderList from "@/components/JobOrder/FTM/JobOrderTicketSummaryList.vue";
 import InteractionRate from "@/components/Rating/AddRating.vue";
 
