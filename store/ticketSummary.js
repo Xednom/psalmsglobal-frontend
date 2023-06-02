@@ -201,13 +201,17 @@ export const actions = {
     if (payload.id) {
       method = "put";
       return await this.$axios[method](url, payload).then((res) => {
-        this.$router.push({
-          name: "customer-interaction-id",
-          params: { id: res.data.ticket_number },
-        });
         commit("setBasicField", payload);
       });
     }
+    return await this.$axios[method](url, payload).then((res) => {
+      console.warn("REs ticket summary: ", res)
+      this.$router.push({
+        name: "ticket-summary-id",
+        params: { id: res.data.ticket_number },
+      });
+      commit("setBasicField", payload);
+    });
   },
   async updateTicketSummary({ commit }, payload) {
     let url = `/api/v1/post-paid/ticket-summary/${payload.ticket_number}/`;

@@ -358,15 +358,15 @@
                 <div v-else-if="!loading" class="row">
                   <div
                     v-if="
-                      summary.customer_interaction_post_paid_forms &&
-                      summary.customer_interaction_post_paid_forms.length
+                      summary.ticket_summary_forms &&
+                      summary.ticket_summary_forms.length
                     "
                   >
                     <div
                       class="col-lg-12 mb-3"
                       v-for="(
                         interaction_forms, index
-                      ) in summary.customer_interaction_post_paid_forms"
+                      ) in summary.ticket_summary_forms"
                       :key="index"
                     >
                       <h6

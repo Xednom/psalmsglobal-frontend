@@ -17,9 +17,9 @@
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
           <b-tabs content-class="mt-3">
             <form @submit.prevent="handleSubmit(save)">
-              <b-tab title="Cust. Interaction" active>
+              <b-tab title="Ticket Summary" active>
                 <h6 class="heading-small text-muted mb-4">
-                  Caller Interaction
+                  Ticket Summary
                 </h6>
                 <hr class="my-4" />
                 <div class="pl-lg-4">
@@ -344,12 +344,12 @@ import StatsCard from "@/components/argon-core/Cards/StatsCard";
 import FormViewList from "@/components/Form/FormViewList";
 import CallmeInfo from "@/components/CallMeInfo/CallMeInfoList";
 
-import CreateCustomerInteractionMixin from "@/mixins/CreatePostPaidInteractionMixin.js";
+import CreateTicketSummaryMixin from "@/mixins/CreateTicketSummaryMixin.js";
 import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 
 export default {
   name: "customer_interaction_create",
-  mixins: [CreateCustomerInteractionMixin],
+  mixins: [CreateTicketSummaryMixin],
   components: {
     StatsCard,
     [Select.name]: Select,
@@ -360,9 +360,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      interestedToBuys: "postPaidCustomerInteraction/interestedToBuys",
-      interestedToSells: "postPaidCustomerInteraction/interestedToSells",
-      generalCalls: "postPaidCustomerInteraction/generalCalls",
+      interestedToBuys: "ticketSummary/interestedToBuys",
+      interestedToSells: "ticketSummary/interestedToSells",
+      generalCalls: "ticketSummary/generalCalls",
       client: "user/company"
     }),
     async getCallMeInfo() {
@@ -394,7 +394,7 @@ export default {
     },
     ticket_number: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/ticket_number"];
+        return this.$store.getters["ticketSummary/ticket_number"];
       },
       set(value) {
         this.setBasicStoreValue("ticket_number", value);
@@ -402,7 +402,7 @@ export default {
     },
     company: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/company"];
+        return this.$store.getters["ticketSummary/company"];
       },
       set(value) {
         this.setBasicStoreValue("company", value);
@@ -410,7 +410,7 @@ export default {
     },
     apn: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/apn"];
+        return this.$store.getters["ticketSummary/apn"];
       },
       set(value) {
         this.setBasicStoreValue("apn", value);
@@ -421,7 +421,7 @@ export default {
         if (this.callMeInfo.length === 0) {
           this.callMeInfo.reference = "";
           return this.$store.getters[
-            "postPaidCustomerInteraction/reference_number"
+            "ticketSummary/reference_number"
           ];
         } else if (this.callMeInfo.length >= 1) {
           return this.callMe.reference;
@@ -434,7 +434,7 @@ export default {
     county: {
       get() {
         if (this.callMeInfo.length === 0) {
-          return this.$store.getters["postPaidCustomerInteraction/county"];
+          return this.$store.getters["ticketSummary/county"];
         } else if (this.callMeInfo.length >= 1) {
           return this.callMe.property_county;
         }
@@ -446,7 +446,7 @@ export default {
     state: {
       get() {
         if (this.callMeInfo.length === 0) {
-          return this.$store.getters["postPaidCustomerInteraction/state"];
+          return this.$store.getters["ticketSummary/state"];
         } else if (this.callMeInfo.length >= 1) {
           this.state = "";
           return this.callMe.property_state;
@@ -459,7 +459,7 @@ export default {
     address: {
       get() {
         if (this.callMeInfo.length === 0) {
-          return this.$store.getters["postPaidCustomerInteraction/address"];
+          return this.$store.getters["ticketSummary/address"];
         } else if (this.callMeInfo.length >= 1) {
           this.address = "";
           return this.callMe.property_address;
@@ -473,7 +473,7 @@ export default {
       get() {
         if (this.callMeInfo.length === 0) {
           return this.$store.getters[
-            "postPaidCustomerInteraction/caller_full_name"
+            "ticketSummary/caller_full_name"
           ];
         } else if (this.callMeInfo.length >= 1) {
           this.caller_full_name = "";
@@ -486,7 +486,7 @@ export default {
     },
     caller_phone: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/caller_phone"];
+        return this.$store.getters["ticketSummary/caller_phone"];
       },
       set(value) {
         this.setBasicStoreValue("caller_phone", value);
@@ -494,7 +494,7 @@ export default {
     },
     email: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/email"];
+        return this.$store.getters["ticketSummary/email"];
       },
       set(value) {
         this.setBasicStoreValue("email", value);
@@ -503,7 +503,7 @@ export default {
     reason_of_the_call: {
       get() {
         return this.$store.getters[
-          "postPaidCustomerInteraction/reason_of_the_call"
+          "ticketSummary/reason_of_the_call"
         ];
       },
       set(value) {
@@ -513,7 +513,7 @@ export default {
     interested_to_sell: {
       get() {
         return this.$store.getters[
-          "postPaidCustomerInteraction/interested_to_sell"
+          "ticketSummary/interested_to_sell"
         ];
       },
       set(value) {
@@ -523,7 +523,7 @@ export default {
     interested_to_buy: {
       get() {
         return this.$store.getters[
-          "postPaidCustomerInteraction/interested_to_buy"
+          "ticketSummary/interested_to_buy"
         ];
       },
       set(value) {
@@ -532,7 +532,7 @@ export default {
     },
     general_call: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/general_call"];
+        return this.$store.getters["ticketSummary/general_call"];
       },
       set(value) {
         this.setBasicStoreValue("general_call", value);
@@ -540,7 +540,7 @@ export default {
     },
     total_minutes: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/total_minutes"];
+        return this.$store.getters["ticketSummary/total_minutes"];
       },
       set(value) {
         this.setBasicStoreValue("total_minutes", value);
@@ -548,7 +548,7 @@ export default {
     },
     crm: {
       get() {
-        return this.$store.getters["postPaidCustomerInteraction/crm"];
+        return this.$store.getters["ticketSummary/crm"];
       },
       set(value) {
         this.setBasicStoreValue("crm", value);
@@ -557,7 +557,7 @@ export default {
     leads_transferred_crm: {
       get() {
         return this.$store.getters[
-          "postPaidCustomerInteraction/leads_transferred_crm"
+          "ticketSummary/leads_transferred_crm"
         ];
       },
       set(value) {
@@ -583,7 +583,7 @@ export default {
       clientUser: {},
       staffUser: {},
       user: {},
-      clientAccountType: {},
+      clientSubCategory: {},
       isBusy: false,
       saving: false,
       loadingCounties: false,
@@ -607,11 +607,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
-    ...mapActions("prepaid/prepaidCustomerInteraction", [
-      "reset",
-      "savePrepaidInteraction"
-    ]),
+    ...mapActions("ticketSummary", ["reset", "saveTicketSummary"]),
     eventChild(form) {
       console.log("Event from child component emitted", (this.form = form));
     },
@@ -619,14 +615,15 @@ export default {
       this.keyword = text;
     },
     getCompany: debounce(function() {
+      console.warn("COmpany: ", this.company)
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
         .then(res => {
           this.companies = res.data.results;
           this.$refs.formViewList.clearForm();
           this.companies.forEach(item => {
-            this.clientAccountType = item.company_client_account_type;
-            console.log(this.clientAccountType);
+            this.clientSubCategory = item.company_client_sub_category;
+            console.warn("Sub category", this.clientSubCategory);
           });
           this.getCompanyCrm();
         })
@@ -660,7 +657,7 @@ export default {
     async fetchInterestedToSell() {
       this.isBusy = true;
       await this.$store
-        .dispatch("postPaidCustomerInteraction/fetchInterestedToSell")
+        .dispatch("ticketSummary/fetchInterestedToSell")
         .then(() => {
           this.isBusy = false;
         });
@@ -668,7 +665,7 @@ export default {
     async fetchInterestedToBuy() {
       this.isBusy = true;
       await this.$store
-        .dispatch("postPaidCustomerInteraction/fetchInterestedToBuy")
+        .dispatch("ticketSummary/fetchInterestedToBuy")
         .then(() => {
           this.isBusy = false;
         });
@@ -676,7 +673,7 @@ export default {
     async fetchGeneralCalls() {
       this.isBusy = true;
       await this.$store
-        .dispatch("postPaidCustomerInteraction/fetchGeneralCalls")
+        .dispatch("ticketSummary/fetchGeneralCalls")
         .then(() => {
           this.isBusy = false;
         });
@@ -715,7 +712,10 @@ export default {
           status: true
         }
       ];
-      const interactionPostpaidPayload = {
+
+      console.warn("Client sub category: ", this.clientSubCategory)
+      console.warn("Designation category: ", this.$auth.user.designation_category)
+      const ticketSummaryPayload = {
         company: this.company,
         agent: this.staffUser.id,
         apn: this.apn,
@@ -732,34 +732,15 @@ export default {
         general_call: this.general_call,
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm,
-        customer_interaction_post_paid_forms: formArray
-      };
-      const interactionPrepaidPayload = {
-        company: this.company,
-        agent: this.staffUser.id,
-        apn: this.apn,
-        state: this.callMe.property_state,
-        county: this.callMe.property_county,
-        address: this.callMe.property_address,
-        reference_number: this.callMe.reference,
-        caller_full_name: this.callMe.full_name,
-        caller_phone: this.caller_phone,
-        email: this.email,
-        reason_of_the_call: this.reason_of_the_call,
-        interested_to_sell: this.interested_to_sell,
-        interested_to_buy: this.interested_to_buy,
-        general_call: this.general_call,
-        crm: this.crm,
-        leads_transferred_crm: this.leads_transferred_crm,
-        customer_interaction_prepaid_forms: formArray
+        ticket_summary_forms: formArray
       };
       if (
         this.$auth.user.designation_category == "staff" &&
-        this.clientAccountType == "postpaid"
+        this.clientSubCategory == "ftm"
       ) {
         try {
           this.saving = true;
-          await this.saveInteraction(interactionPostpaidPayload)
+          await this.saveTicketSummary(ticketSummaryPayload)
             .then(() => {
               this.saving = false;
               this.reset();
@@ -775,32 +756,16 @@ export default {
           throw e;
         }
         this.saving = false;
-      } else if (
-        this.$auth.user.designation_category == "staff" &&
-        this.clientAccountType == "prepaid"
-      ) {
-        try {
-          this.saving = true;
-          await this.savePrepaidInteraction(interactionPrepaidPayload)
-            .then(() => {
-              this.saving = false;
-              this.reset();
-              this.$refs.formValidator.reset();
-              this.successMessage("success");
-            })
-            .catch(err => {
-              this.saving = false;
-              console.log(err);
-              this.errorMessage("danger", err.response.data);
-            });
-        } catch (e) {
-          throw e;
-        }
-        this.saving = false;
+      } else {
+        this.$bvToast.toast("Company client does not have FTM sub category.", {
+        title: `FTM Notice`,
+        variant: "danger",
+        solid: true
+      });
       }
     },
     successMessage(variant = null) {
-      this.$bvToast.toast("Successfully added a new interaction information!", {
+      this.$bvToast.toast("Successfully added a new ticket summary information!", {
         title: `Successful`,
         variant: variant,
         solid: true
@@ -828,8 +793,8 @@ export default {
           ? "Interested to Buy: " + error.interested_to_buy
           : error.general_call
           ? "General call: " + error.general_call
-          : error.customer_interaction_post_paid_forms
-          ? "Script: Please select a Script for this Interaction."
+          : error.ticket_summary_forms
+          ? "Script: Please select a Script for this Ticket Summary."
           : error.non_field_errors
           ? error.non_field_errors
           : error,

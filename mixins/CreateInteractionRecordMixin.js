@@ -14,12 +14,6 @@ export default {
         value: value,
       });
     },
-    setFtmBasicStoreValue(fieldName, value) {
-      this.$store.commit("ticketSummary/setBasicField", {
-        field: fieldName,
-        value: value,
-      });
-    },
   },
   computed: {
     setItem() {
