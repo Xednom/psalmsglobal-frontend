@@ -4,8 +4,8 @@
       <b-overlay :show="show" rounded="sm">
         <card>
           <div slot="header" class="row align-items-center">
-            <div class="col-7">
-              <h3 class="mb-0">
+            <div class="col-6">
+              <h3 class="mb-6">
                 Update Ticket Summaries #ticket number:
                 <strong>{{ summary.ticket_number }}</strong>
               </h3>
