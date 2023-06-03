@@ -242,6 +242,20 @@ export default {
           this.success = true;
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
+        } if (
+          this.user.account_type == "staff" ||
+          this.accountType == "ftm"
+        ) {
+          await this.$axios.post(
+            `/api/v1/ticket-summary/${this.interaction.id}/comment/`,
+            {
+              comment: this.comment,
+            }
+          );
+          this.loading = false;
+          this.success = true;
+          this.comment = "";
+          this.refreshTicketSummary(this.interaction.ticket_number);
         }
       } catch (err) {
         console.log(err);
