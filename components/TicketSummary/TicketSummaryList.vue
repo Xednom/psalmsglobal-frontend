@@ -528,8 +528,7 @@ export default {
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||
-      (this.$auth.user.designation_category == "affiliate_partner" &&
-        this.$auth.user.sub_category == "ftm")
+      this.$auth.user.designation_category == "affiliate_partner"
     ) {
       this.fetchClientTicketSummary();
     }
