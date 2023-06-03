@@ -158,7 +158,7 @@
             {{ row.item.company }}
           </template>
 
-          <template #cell(customer_interaction_post_paid_comments)="row">
+          <template #cell(ticket_summary_comments)="row">
             <b-button
               size="sm"
               v-b-modal.comment-section
@@ -313,16 +313,32 @@ export default {
         content: "",
       },
       fields: [
-        { key: "ticket_number", sortable: true, requiresStaff: true },
+        {
+          key: "ticket_number",
+          sortable: true,
+          requiresStaff: true,
+          requiresClient: true,
+        },
         {
           key: "created_at",
           label: "Date call received",
           sortable: true,
           requiresStaff: true,
+          requiresClient: true,
         },
-        { key: "customer_interaction_post_paid_comments", label: "comments" },
+        {
+          key: "ticket_summary_comments",
+          label: "comments",
+          requiresStaff: true,
+          requiresClient: true,
+        },
         { key: "company", sortable: true, requiresStaff: true },
-        { key: "apn", sortable: true, requiresStaff: true },
+        {
+          key: "apn",
+          sortable: true,
+          requiresStaff: true,
+          requiresClient: true,
+        },
         { key: "reference_number", sortable: true },
         { key: "crm", sortable: true },
         { key: "leads_transferred_crm", sortable: true },
@@ -332,30 +348,39 @@ export default {
         { key: "reason_of_the_call", sortable: true },
         { key: "interested_to_sell", sortable: true, requiresStaff: true },
         { key: "interested_to_buy", sortable: true, requiresStaff: true },
-        { key: "general_call", sortable: true, requiresStaff: true },
+        {
+          key: "general_call",
+          sortable: true,
+          requiresStaff: true,
+          requiresClient: true,
+        },
         {
           key: "acquisition__description",
           label: "Acquisition tagging",
           sortable: true,
           requiresStaff: true,
+          requiresClient: true,
         },
         {
           key: "prep_for_marketing__description",
           label: "Prep for Marketing",
           sortable: true,
           requiresStaff: true,
+          requiresClient: true,
         },
         {
           key: "disposition_tagging__description",
           label: "Disposition tagging",
           sortable: true,
           requiresStaff: true,
+          requiresClient: true,
         },
         {
           key: "overall_tagging__description",
           label: "Overall tagging",
           sortable: true,
           requiresStaff: true,
+          requiresClient: true,
         },
       ],
     };
@@ -374,7 +399,7 @@ export default {
         sort: "",
         limit: 10000,
         order: "asc",
-        search: this.filter
+        search: this.filter,
       };
 
       // options.query = {
@@ -385,50 +410,69 @@ export default {
         .dispatch("ticketSummary/fetchTicketSummaries", options)
         .then(() => {
           vm.isBusy = false;
-          console.warn("Ticket Summary: ", vm.summaries);
         });
     },
     async fetchClientTicketSummary() {
       this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/customer-interaction/?limit=10000`;
-      return await this.$axios
-        .get(endpoint)
-        .then((res) => {
-          this.interactions = res.data.results;
-          this.totalRows = this.interactions.length;
-          this.isBusy = false;
-          this.interactions.forEach((item) => {
-            if (
-              item.interested_to_sell == "yes" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "success",
-                interested_to_buy: "info",
-              };
-            } else if (
-              item.interested_to_buy == "yes" &&
-              item.interested_to_sell == "no"
-            ) {
-              item._cellVariants = {
-                interested_to_buy: "success",
-                interested_to_sell: "danger",
-              };
-            } else if (
-              item.interested_to_sell == "no" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "danger",
-                interested_to_buy: "info",
-              };
-            }
-          });
-        })
-        .catch((e) => {
-          throw e;
+      const vm = this;
+
+      var options = {
+        sort: "",
+        limit: 10000,
+        order: "asc",
+      };
+
+      // options.query = {
+      //   and: [["ticket_number", "eq", this.filter]],
+      // };
+
+      vm.$store
+        .dispatch("ticketSummary/fetchTicketSummaries", options)
+        .then(() => {
+          vm.isBusy = false;
         });
     },
+    // async fetchClientTicketSummary() {
+    //   this.isBusy = true;
+    //   let endpoint = `/api/v1/post-paid/ticket-summary/?limit=10000`;
+    //   return await this.$axios
+    //     .get(endpoint)
+    //     .then((res) => {
+    //       this.summaries = res.data.results;
+    //       this.totalRows = this.summaries.length;
+    //       this.isBusy = false;
+    //       this.summaries.forEach((item) => {
+    //         if (
+    //           item.interested_to_sell == "yes" &&
+    //           item.interested_to_buy == "yes"
+    //         ) {
+    //           item._cellVariants = {
+    //             interested_to_sell: "success",
+    //             interested_to_buy: "info",
+    //           };
+    //         } else if (
+    //           item.interested_to_buy == "yes" &&
+    //           item.interested_to_sell == "no"
+    //         ) {
+    //           item._cellVariants = {
+    //             interested_to_buy: "success",
+    //             interested_to_sell: "danger",
+    //           };
+    //         } else if (
+    //           item.interested_to_sell == "no" &&
+    //           item.interested_to_buy == "yes"
+    //         ) {
+    //           item._cellVariants = {
+    //             interested_to_sell: "danger",
+    //             interested_to_buy: "info",
+    //           };
+    //         }
+    //       });
+    //     })
+    //     .catch((e) => {
+    //       throw e;
+    //     });
+    // },
     async fetchInteraction(id) {
       this.show = true;
       let endpoint = `/api/v1/post-paid/ticket-summary/${id}`;
