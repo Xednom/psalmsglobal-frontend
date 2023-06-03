@@ -606,9 +606,7 @@ export default {
 
       vm.$store
         .dispatch("ticketSummary/fetchTicketSummary", payload)
-        .then(() => {
-          console.warn("Fetched ticket summary: ", vm.summary);
-        });
+        .then(() => {});
     },
     async refreshPostpaidInteraction(payload) {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${payload}/`;
