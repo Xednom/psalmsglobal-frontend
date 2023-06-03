@@ -186,24 +186,24 @@
                     >
                     </base-input>
                   </div>
-                  <div
+                  <!-- <div
                     class="col-md-6"
                     v-if="$auth.user.designation_category == 'staff'"
                   >
-                    <div class="col-lg-12" v-if="haveTicket">
-                      <label>Caller interaction ticket</label>
+                    <div class="col-lg-12">
+                      <label>Ticket Summary</label>
                       <vue-typeahead-bootstrap
-                        v-model="job.caller_interaction_record"
+                        v-model="job.ticket_summary"
                         :ieCloseFix="false"
-                        :data="callerInteractions"
+                        :data="ticketSummaries"
                         :serializer="(item) => item.ticket_number"
                         :value="ticketKeyword"
-                        @hit="getCallerInteraction"
+                        @hit="getTicketSummary"
                         @input="onSearchInputTicket"
                         placeholder="Search a Caller Interaction"
                       />
                       <div class="row">
-                        <div class="col-md-6 mt-2" v-if="haveTicket">
+                        <div class="col-md-6 mt-2">
                           <b-button
                             variant="primary"
                             size="sm"
@@ -237,7 +237,7 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="col-md-12">
                     <base-input label="Job description">
                       <textarea
@@ -358,9 +358,9 @@ export default {
       keyword: "",
       jobOrder: {},
       jobOrders: [],
-      callerInteractions: [],
+      ticketSummaries: [],
       job: {
-        caller_interaction_record: null,
+        ticket_summary_job_order: null,
         due_date: "",
         request_date: "",
         job_title: "",
@@ -412,7 +412,7 @@ export default {
       this.currentPage = 1;
     },
     reset() {
-      this.job.caller_interaction_record = null;
+      this.job.ticket_summary = null;
       this.job.due_date = "";
       this.job.request_date = "";
       this.job.job_title = "";
@@ -421,13 +421,13 @@ export default {
     onSearchInput(text) {
       this.keyword = text;
     },
-    getCallerInteraction: debounce(function () {
+    getTicketSummary: debounce(function () {
       this.$axios
         .get(
-          `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.job.caller_interaction_record}`
+          `/api/v1/post-paid/ticket-summary/?search=${this.job.ticket_summary}`
         )
         .then((res) => {
-          this.callerInteractions = res.data.results;
+          this.ticketSummaries = res.data.results;
         })
         .catch((err) => {
           console.log(err);
@@ -514,7 +514,8 @@ export default {
       if (
         this.$auth.user.designation_category == "new_client" ||
         this.$auth.user.designation_category == "current_client" ||
-        this.$auth.user.designation_category == "affiliate_partner"
+        (this.$auth.user.designation_category == "affiliate_partner" &&
+          this.$auth.user.sub_categroy == "ftm")
       ) {
         try {
           if (this.summary.client_sub_category == "ftm") {
@@ -539,6 +540,35 @@ export default {
         } catch (e) {
           throw e;
         }
+      } else if (this.$auth.user.designation_category == "staff") {
+        const jobOrderTicketSummaryPayload = {
+          ticket_summary_job_order: this.summary.ticket_number,
+          client: this.job.client,
+          client_email: this.clientEmail,
+          va_assigned: [this.staff.id],
+          request_date: this.job.request_date,
+          due_date: this.job.due_date,
+          total_time_consumed: this.job.total_time_consumed,
+          job_title: this.job.job_title,
+          job_description: this.job.job_description,
+        };
+        try {
+          this.saving = true;
+          await this.saveJobOrderTicketSummary(jobOrderTicketSummaryPayload)
+            .then(() => {
+              this.saving = false;
+              this.reset();
+              this.successMessage("success");
+              this.fetchJobOrdersTicketSummary();
+            })
+            .catch((e) => {
+              this.saving = false;
+              console.log(e.response.data);
+              this.errorMessage("danger", e.response.data);
+            });
+        } catch (e) {
+          this.saving = false;
+        }
       }
     },
     successMessage(variant = null) {
@@ -550,8 +580,8 @@ export default {
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
-        error.caller_interaction_record
-          ? "Caller interaction record: " + error.caller_interaction_record
+        error.ticket_summary
+          ? "Caller interaction record: " + error.ticket_summary
           : error.detail
           ? "Detail: " + error.detail
           : error.non_field_errors
@@ -567,12 +597,12 @@ export default {
   },
   mounted() {
     this.fetchMe();
-    setTimeout(() => this.fetchJobOrdersTicketSummary(), 1000);
+    setTimeout(() => this.fetchJobOrdersTicketSummary(), 100);
   },
   watch: {
     keyword: debounce(function (oldKeyword, newKeyword) {
       if (newKeyword !== "" && newKeyword !== oldKeyword) {
-        this.getCallerInteraction();
+        this.getTicketSummary();
       } else if (!newKeyword) {
         this.jobOrders = [];
       }
