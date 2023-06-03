@@ -129,10 +129,9 @@
         <!-- Main table element -->
         <b-table
           :items="summaries"
-          :fields="fields"
+          :fields="computedFields"
           :current-page="currentPage"
           :per-page="perPage"
-          :filter="filter"
           :busy="isBusy"
           :filter-included-fields="filterOn"
           :sort-by.sync="sortBy"
@@ -141,7 +140,6 @@
           stacked="md"
           show-empty
           small
-          @filtered="onFiltered"
           responsive
         >
           <template #table-busy>
@@ -242,7 +240,7 @@
           <interaction-comment
             :interaction="interaction"
             :user="$auth.user"
-            :account-type="interaction.client_account_type"
+            :account-type="interaction.client_sub_category"
           ></interaction-comment>
         </b-overlay>
       </b-modal>
@@ -283,22 +281,6 @@ export default {
     JobOrderList,
     InteractionComment,
   },
-  computed: {
-    ...mapGetters({
-      summaries: "ticketSummary/ticketSummaries",
-      pagination: "postPaidCustomerInteraction/interactionsPagination",
-      user: "user/user",
-      client: "user/clientUser",
-    }),
-    // userDesignationAndAccountType() {
-    //   const vm = this;
-    //   if (vm.$auth.user.designation_category == 'staff') {
-    //     return vm.$auth.user.designation_category;
-    //   } else if (vm.$auth.user.designation_category == 'new_client' || vm.$auth.user.designation_category == 'current_client' || vm.$auth.user.designation_category == 'affiliate_partner') {
-    //     return vm.$auth.
-    //   }
-    // }
-  },
   data() {
     return {
       interaction: {},
@@ -318,7 +300,7 @@ export default {
       },
       totalRows: 1,
       currentPage: 1,
-      perPage: 5,
+      perPage: 10,
       pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
       sortBy: "",
       sortDesc: false,
@@ -331,21 +313,50 @@ export default {
         content: "",
       },
       fields: [
-        { key: "ticket_number", sortable: true },
-        { key: "created_at", label: "Date call received", sortable: true },
+        { key: "ticket_number", sortable: true, requiresStaff: true },
+        {
+          key: "created_at",
+          label: "Date call received",
+          sortable: true,
+          requiresStaff: true,
+        },
         { key: "customer_interaction_post_paid_comments", label: "comments" },
-        { key: "company", sortable: true },
-        { key: "apn", sortable: true },
+        { key: "company", sortable: true, requiresStaff: true },
+        { key: "apn", sortable: true, requiresStaff: true },
         { key: "reference_number", sortable: true },
         { key: "crm", sortable: true },
         { key: "leads_transferred_crm", sortable: true },
-        { key: "caller_full_name", sortable: true },
+        { key: "caller_full_name", sortable: true, requiresStaff: true },
         { key: "caller_phone", sortable: true },
-        { key: "email", sortable: true },
+        { key: "email", sortable: true, requiresStaff: true },
         { key: "reason_of_the_call", sortable: true },
-        { key: "interested_to_sell", sortable: true },
-        { key: "interested_to_buy", sortable: true },
-        { key: "general_call", sortable: true },
+        { key: "interested_to_sell", sortable: true, requiresStaff: true },
+        { key: "interested_to_buy", sortable: true, requiresStaff: true },
+        { key: "general_call", sortable: true, requiresStaff: true },
+        {
+          key: "acquisition__description",
+          label: "Acquisition tagging",
+          sortable: true,
+          requiresStaff: true,
+        },
+        {
+          key: "prep_for_marketing__description",
+          label: "Prep for Marketing",
+          sortable: true,
+          requiresStaff: true,
+        },
+        {
+          key: "disposition_tagging__description",
+          label: "Disposition tagging",
+          sortable: true,
+          requiresStaff: true,
+        },
+        {
+          key: "overall_tagging__description",
+          label: "Overall tagging",
+          sortable: true,
+          requiresStaff: true,
+        },
       ],
     };
   },
@@ -361,81 +372,20 @@ export default {
 
       var options = {
         sort: "",
+        limit: 10000,
         order: "asc",
+        search: this.filter
       };
 
-      options.query = {
-        and: [["ticket_number", "eq", this.filter]],
-      };
+      // options.query = {
+      //   and: [["ticket_number", "eq", this.filter]],
+      // };
 
       vm.$store
         .dispatch("ticketSummary/fetchTicketSummaries", options)
         .then(() => {
           vm.isBusy = false;
           console.warn("Ticket Summary: ", vm.summaries);
-        });
-    },
-    async fetchPrepaidInteractions() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/customer-interaction/?search=${this.filter}`;
-      return await this.$axios
-        .get(endpoint)
-        .then((res) => {
-          this.interactions = res.data.results;
-          if (this.prepaidInteractions.length == "1") {
-            this.prepaidInteractions.forEach((item) => {
-              this.interactions = res.data.results;
-              this.accountType = "Postpaid";
-            });
-          }
-          if (this.accountType == "prepaid") {
-            this.interactions = res.data.results;
-          }
-          this.isBusy = false;
-        })
-        .catch((e) => {
-          throw e;
-        });
-    },
-    async fetchClientPostpaidInteractions() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?limit=10000`;
-      return await this.$axios
-        .get(endpoint)
-        .then((res) => {
-          this.interactions = res.data.results;
-          this.totalRows = this.interactions.length;
-          this.isBusy = false;
-          this.interactions.forEach((item) => {
-            if (
-              item.interested_to_sell == "yes" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "success",
-                interested_to_buy: "info",
-              };
-            } else if (
-              item.interested_to_buy == "yes" &&
-              item.interested_to_sell == "no"
-            ) {
-              item._cellVariants = {
-                interested_to_buy: "success",
-                interested_to_sell: "danger",
-              };
-            } else if (
-              item.interested_to_sell == "no" &&
-              item.interested_to_buy == "yes"
-            ) {
-              item._cellVariants = {
-                interested_to_sell: "danger",
-                interested_to_buy: "info",
-              };
-            }
-          });
-        })
-        .catch((e) => {
-          throw e;
         });
     },
     async fetchClientTicketSummary() {
@@ -524,11 +474,31 @@ export default {
       );
     },
   },
+  computed: {
+    ...mapGetters({
+      summaries: "ticketSummary/ticketSummaries",
+      pagination: "ticketSummary/ticketSummariesPagination",
+      user: "user/user",
+      client: "user/clientUser",
+    }),
+    computedFields() {
+      if (
+        this.$auth.user.designation_category == "new_client" ||
+        this.$auth.user.designation_category == "current_client" ||
+        this.$auth.user.designation_category == "affiliate_partner"
+      ) {
+        return this.fields.filter((field) => field.requiresClient);
+      } else {
+        return this.fields.filter((field) => field.requiresStaff);
+      }
+    },
+  },
   mounted() {
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||
-      this.$auth.user.designation_category == "affiliate_partner"
+      this.$auth.user.designation_category == "affiliate_partner" ||
+      this.$auth.user.sub_category == "ftm"
     ) {
       this.fetchClientTicketSummary();
     }
