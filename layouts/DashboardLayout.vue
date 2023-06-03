@@ -56,7 +56,21 @@
           }"
         />
         <sidebar-item
+          v-if="$auth.user.sub_category == 'ftm'"
+          :link="{
+            name: 'List of Ticket Summary',
+            path: '/ticket-summary'
+          }"
+        />
+        <sidebar-item
           v-if="$auth.user.designation_category == 'staff'"
+          :link="{
+            name: 'List of Ticket Summary',
+            path: '/ticket-summary'
+          }"
+        />
+        <sidebar-item
+          v-if="$auth.user.sub_category == 'staff'"
           :link="{
             name: 'List of Job Order',
             path: '/job-order'

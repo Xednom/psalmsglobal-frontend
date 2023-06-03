@@ -78,26 +78,6 @@
           </template>
         </base-table>
       </div>
-      <div class="form-row">
-        <base-table
-          :data="interaction.ticket_summary_comments"
-          thead-classes="text-primary"
-        >
-          <template slot-scope="{ row }">
-            <td>
-              <blockquote class="blockquote">
-                <p class="mb-0 comment-section">
-                  {{ row.comment }}
-                </p>
-                <footer class="blockquote-footer">
-                  {{ row.commenter }}
-                  commented at <strong>{{ row.created_at }}</strong>
-                </footer>
-              </blockquote>
-            </td>
-          </template>
-        </base-table>
-      </div>
     </div>
   </div>
 </template>
@@ -168,25 +148,10 @@ export default {
           throw e;
         });
     },
-    async refreshTicketSummary(payload) {
-      let endpoint = `/api/v1/post-paid/ticket-summary/${payload}/`;
-      return await this.$axios
-        .get(endpoint)
-        .then((res) => {
-          this.interaction = res.data;
-        })
-        .catch((e) => {
-          console.log(e);
-          throw e;
-        });
-    },
     async save() {
       this.loading = true;
       try {
-        if (
-          this.interaction.client_sub_category == "regular" &&
-          this.user.account_type == "postpaid"
-        ) {
+        if (this.user.account_type == "postpaid") {
           await this.$axios.post(
             `/api/v1/customer-interaction-post-paid/${this.interaction.id}/comment/`,
             {
@@ -197,23 +162,7 @@ export default {
           this.success = true;
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
-        }
-        
-        if (
-          this.interaction.client_sub_category == "ftm" &&
-          this.interaction.client_account_type == "postpaid"
-        ) {
-          await this.$axios.post(
-            `/api/v1/ticket-summary/${this.interaction.id}/comment/`,
-            { comment: this.comment }
-          );
-          this.loading = false;
-          this.success = true;
-          this.comment = "";
-          this.refreshTicketSummary(this.interaction.ticket_number);
-        }
-        
-        if (this.user.account_type == "prepaid") {
+        } else if (this.user.account_type == "prepaid") {
           await this.$axios.post(
             `/api/v1/customer-interaction-prepaid/${this.interaction.id}/comment/`,
             { comment: this.comment }
@@ -221,9 +170,7 @@ export default {
           this.loading = false;
           this.success = true;
           this.refreshPrepaid(this.interaction.ticket_number);
-        }
-        
-        if (
+        } else if (
           this.user.account_type == "staff" ||
           this.accountType == "postpaid"
         ) {
@@ -237,9 +184,7 @@ export default {
           this.success = true;
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
-        }
-        
-        if (
+        } else if (
           this.user.account_type == "staff" ||
           this.accountType == "prepaid"
         ) {
@@ -253,18 +198,6 @@ export default {
           this.success = true;
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
-        }
-        if (this.user.account_type == "staff" && this.accountType == "ftm") {
-          await this.$axios.post(
-            `/api/v1/ticket-summary/${this.interaction.id}/comment/`,
-            {
-              comment: this.comment,
-            }
-          );
-          this.loading = false;
-          this.success = true;
-          this.comment = "";
-          this.refreshTicketSummary(this.interaction.ticket_number);
         }
       } catch (err) {
         console.log(err);

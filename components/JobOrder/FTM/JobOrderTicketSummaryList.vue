@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header bg-transparent border-0">
-        <h3 class="mb-0">Job Order Request</h3>
+        <h3 class="mb-0">Job Order Ticket Summary Request</h3>
       </div>
       <b-container fluid>
         <!-- User Interface controls -->
@@ -97,7 +97,11 @@
               size="sm"
               @click="
                 {
-                  fetchJobOrder(row.item.id, row.index, $event.target),
+                  fetchJobOrderTicketSummary(
+                    row.item.ticket_number,
+                    row.index,
+                    $event.target
+                  ),
                     (modals.update = true);
                 }
               "
@@ -182,24 +186,24 @@
                     >
                     </base-input>
                   </div>
-                  <div
+                  <!-- <div
                     class="col-md-6"
                     v-if="$auth.user.designation_category == 'staff'"
                   >
-                    <div class="col-lg-12" v-if="haveTicket">
-                      <label>Caller interaction ticket</label>
+                    <div class="col-lg-12">
+                      <label>Ticket Summary</label>
                       <vue-typeahead-bootstrap
-                        v-model="job.caller_interaction_record"
+                        v-model="job.ticket_summary"
                         :ieCloseFix="false"
-                        :data="callerInteractions"
+                        :data="ticketSummaries"
                         :serializer="(item) => item.ticket_number"
                         :value="ticketKeyword"
-                        @hit="getCallerInteraction"
+                        @hit="getTicketSummary"
                         @input="onSearchInputTicket"
                         placeholder="Search a Caller Interaction"
                       />
                       <div class="row">
-                        <div class="col-md-6 mt-2" v-if="haveTicket">
+                        <div class="col-md-6 mt-2">
                           <b-button
                             variant="primary"
                             size="sm"
@@ -233,7 +237,7 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="col-md-12">
                     <base-input label="Job description">
                       <textarea
@@ -275,7 +279,7 @@
             <job-order-update
               :jobOrder="jobOrder"
               :refresh="refresh"
-              :accountType="interaction.client_account_type"
+              :accountType="summary.client_sub_category"
             ></job-order-update>
           </div>
         </modal>
@@ -300,8 +304,8 @@
     </div>
   </div>
 </template>
-
-<script>
+  
+  <script>
 import { debounce } from "lodash";
 import {
   Table,
@@ -317,8 +321,8 @@ import "flatpickr/dist/flatpickr.css";
 import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 import { mapGetters, mapActions } from "vuex";
 
-import JobOrderView from "@/components/JobOrder/JobOrderView";
-import JobOrderUpdate from "@/components/JobOrder/JobOrderUpdate";
+import JobOrderView from "@/components/JobOrder/JobOrderView.vue";
+import JobOrderUpdate from "@/components/JobOrder/FTM/JobOrderTicketSummaryUpdate.vue";
 
 export default {
   name: "job_order_list",
@@ -336,10 +340,6 @@ export default {
     VueTypeaheadBootstrap,
   },
   props: {
-    interaction: {
-      Type: Object,
-      description: "Interaction data ticket use to create job order",
-    },
     summary: {
       Type: Object,
       description: "Summary data ticket use to create job order",
@@ -358,9 +358,9 @@ export default {
       keyword: "",
       jobOrder: {},
       jobOrders: [],
-      callerInteractions: [],
+      ticketSummaries: [],
       job: {
-        caller_interaction_record: null,
+        ticket_summary_job_order: null,
         due_date: "",
         request_date: "",
         job_title: "",
@@ -390,8 +390,8 @@ export default {
       },
       fields: [
         {
-          key: "caller_interaction_record",
-          label: " Caller interaction ticket ",
+          key: "ticket_summary_job_order",
+          label: "Ticket Summary",
           sortable: true,
         },
         {
@@ -405,15 +405,14 @@ export default {
     };
   },
   methods: {
-    ...mapActions("jobOrder", ["reset", "saveJobOrder"]),
-    ...mapActions("prepaid/jobOrder", ["reset", "savePrepaidJobOrder"]),
+    ...mapActions("jobOrder", ["reset", "saveJobOrderTicketSummary"]),
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
     reset() {
-      this.job.caller_interaction_record = null;
+      this.job.ticket_summary = null;
       this.job.due_date = "";
       this.job.request_date = "";
       this.job.job_title = "";
@@ -422,45 +421,26 @@ export default {
     onSearchInput(text) {
       this.keyword = text;
     },
-    getCallerInteraction: debounce(function () {
+    getTicketSummary: debounce(function () {
       this.$axios
         .get(
-          `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.job.caller_interaction_record}`
+          `/api/v1/post-paid/ticket-summary/?search=${this.job.ticket_summary}`
         )
         .then((res) => {
-          this.callerInteractions = res.data.results;
+          this.ticketSummaries = res.data.results;
         })
         .catch((err) => {
           console.log(err);
         });
     }, 700),
-    async fetchJobOrders() {
-      if (this.interaction.client_account_type == "postpaid") {
-        this.fetchPostpaidJobOrders();
-      } else if (this.interaction.client_account_type == "prepaid") {
-        this.fetchPrepaidJobOrders();
-      }
-    },
-    async fetchPostpaidJobOrders() {
+    async fetchJobOrdersTicketSummary() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/job-order-general/?search=${this.interaction.ticket_number}`;
+      let endpoint = `/api/v1/post-paid/job-order-ticket-summary/?search=${this.summary.ticket_number}`;
       return await this.$axios
         .get(endpoint)
         .then((res) => {
           this.jobOrders = res.data.results;
-          this.isBusy = false;
-        })
-        .catch((e) => {
-          throw e;
-        });
-    },
-    async fetchPrepaidJobOrders() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/job-order-general/?search=${this.interaction.ticket_number}`;
-      return await this.$axios
-        .get(endpoint)
-        .then((res) => {
-          this.jobOrders = res.data.results;
+          this.totalRows = this.jobOrders.length;
           this.isBusy = false;
         })
         .catch((e) => {
@@ -468,17 +448,17 @@ export default {
         });
     },
     async refresh() {
-      this.fetchJobOrders();
+      this.fetchJobOrdersTicketSummary();
     },
     async fetchJobOrder(id) {
-      if (this.interaction.client_account_type == "postpaid") {
+      if (this.summary.client_account_type == "postpaid") {
         this.fetchPostpaidJobOrder(id);
-      } else if (this.interaction.client_account_type == "prepaid") {
+      } else if (this.summary.client_account_type == "prepaid") {
         this.fetchPrepaidJobOrder(id);
       }
     },
-    async fetchPostpaidJobOrder(id) {
-      let endpoint = `/api/v1/post-paid/job-order/${id}`;
+    async fetchJobOrderTicketSummary(id) {
+      let endpoint = `/api/v1/post-paid/job-order-ticket-summary/${id}`;
       return await this.$axios
         .get(endpoint)
         .then((res) => {
@@ -534,65 +514,9 @@ export default {
       if (
         this.$auth.user.designation_category == "new_client" ||
         this.$auth.user.designation_category == "current_client" ||
-        this.$auth.user.designation_category == "affiliate_partner"
+        (this.$auth.user.designation_category == "affiliate_partner" &&
+          this.$auth.user.sub_categroy == "ftm")
       ) {
-        const jobOrderPayload = {
-          client: this.clientUser.client_code,
-          caller_interaction_record: this.interaction.ticket_number,
-          request_date: this.job.request_date,
-          due_date: this.job.due_date,
-          job_title: this.job.job_title,
-          job_description: this.job.job_description,
-        };
-        try {
-          if (this.interaction.client_account_type == "postpaid") {
-            this.saving = true;
-            await this.saveJobOrder(jobOrderPayload);
-            this.saving = false;
-            this.reset();
-            this.successMessage("success");
-            this.fetchJobOrders();
-          } else if (this.interaction.client_account_type == "prepaid") {
-            this.saving = true;
-            await this.savePrepaidJobOrder(jobOrderPayload);
-            this.saving = false;
-            this.reset();
-            this.successMessage("success");
-            this.fetchJobOrders();
-          }
-        } catch (e) {
-          throw e;
-        }
-      } else if (this.$auth.user.designation_category == "staff") {
-        const jobOrderPayload = {
-          caller_interaction_record: this.interaction.ticket_number,
-          va_assigned: [this.staff.id],
-          request_date: this.job.request_date,
-          due_date: this.job.due_date,
-          job_title: this.job.job_title,
-          job_description: this.job.job_description,
-        };
-        try {
-          if (this.interaction.client_account_type == "postpaid") {
-            this.saving = true;
-            await this.saveJobOrder(jobOrderPayload).then(() => {
-              this.saving = false;
-              this.reset();
-              this.successMessage("success");
-              this.fetchJobOrders();
-            });
-          } else if (this.interaction.client_account_type == "prepaid") {
-            this.saving = true;
-            await this.savePrepaidJobOrder(jobOrderPayload).then(() => {
-              this.saving = false;
-              this.reset();
-              this.successMessage("success");
-              this.fetchJobOrders();
-            });
-          }
-        } catch (e) {
-          throw e;
-        }
         try {
           if (this.summary.client_sub_category == "ftm") {
             const jobOrderTicketSummaryPayload = {
@@ -604,15 +528,46 @@ export default {
               job_description: this.job.job_description,
             };
             this.saving = true;
-            await this.saveJobOrder(jobOrderTicketSummaryPayload).then(() => {
+            await this.saveJobOrderTicketSummary(
+              jobOrderTicketSummaryPayload
+            ).then(() => {
               this.saving = false;
               this.reset();
               this.successMessage("success");
-              this.fetchJobOrders();
+              this.fetchJobOrdersTicketSummary();
             });
           }
         } catch (e) {
           throw e;
+        }
+      } else if (this.$auth.user.designation_category == "staff") {
+        const jobOrderTicketSummaryPayload = {
+          ticket_summary_job_order: this.summary.ticket_number,
+          client: this.job.client,
+          client_email: this.clientEmail,
+          va_assigned: [this.staff.id],
+          request_date: this.job.request_date,
+          due_date: this.job.due_date,
+          total_time_consumed: this.job.total_time_consumed,
+          job_title: this.job.job_title,
+          job_description: this.job.job_description,
+        };
+        try {
+          this.saving = true;
+          await this.saveJobOrderTicketSummary(jobOrderTicketSummaryPayload)
+            .then(() => {
+              this.saving = false;
+              this.reset();
+              this.successMessage("success");
+              this.fetchJobOrdersTicketSummary();
+            })
+            .catch((e) => {
+              this.saving = false;
+              console.log(e.response.data);
+              this.errorMessage("danger", e.response.data);
+            });
+        } catch (e) {
+          this.saving = false;
         }
       }
     },
@@ -625,8 +580,8 @@ export default {
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
-        error.caller_interaction_record
-          ? "Caller interaction record: " + error.caller_interaction_record
+        error.ticket_summary
+          ? "Caller interaction record: " + error.ticket_summary
           : error.detail
           ? "Detail: " + error.detail
           : error.non_field_errors
@@ -641,15 +596,13 @@ export default {
     },
   },
   mounted() {
-    console.log(this.interaction.client_account_type);
     this.fetchMe();
-    setTimeout(() => this.fetchJobOrders(), 1000);
-    this.totalRows = this.jobOrders.length;
+    setTimeout(() => this.fetchJobOrdersTicketSummary(), 100);
   },
   watch: {
     keyword: debounce(function (oldKeyword, newKeyword) {
       if (newKeyword !== "" && newKeyword !== oldKeyword) {
-        this.getCallerInteraction();
+        this.getTicketSummary();
       } else if (!newKeyword) {
         this.jobOrders = [];
       }
@@ -657,8 +610,8 @@ export default {
   },
 };
 </script>
-
-<style scoped>
+  
+  <style scoped>
 .company-info {
   float: right;
 }
@@ -666,3 +619,4 @@ export default {
   float: right;
 }
 </style>
+  

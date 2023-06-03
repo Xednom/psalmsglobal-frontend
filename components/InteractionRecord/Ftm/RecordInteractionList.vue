@@ -138,7 +138,7 @@
       class="white-content"
     >
       <record-create
-        :interaction="interactionRecord"
+        :interaction="ticketSummary"
         :refresh="refresh"
       ></record-create>
     </modal>
@@ -148,8 +148,8 @@
 import { Table, TableColumn, Select, Option } from "element-ui";
 import swal from "sweetalert2";
 
-import RecordCreate from "@/components/InteractionRecord/RecordInteractionCreate";
-import RecordView from "@/components/InteractionRecord/RecordInfo";
+import RecordCreate from "@/components/InteractionRecord/Ftm/RecordInteractionCreate.vue";
+import RecordView from "@/components/InteractionRecord/RecordInfo.vue";
 
 import { mapGetters } from "vuex";
 
@@ -164,54 +164,11 @@ export default {
     RecordView,
   },
   props: {
-    interactionRecord: {
-      Type: Object,
-      default: {}
-    },
     ticketSummary: {
       Type: Object,
     },
     userSubcategory: {
       Type: Object,
-    },
-  },
-  computed: {
-    ...mapGetters({
-      summaryRecords: "interactionRecord/ticket_summaries",
-    }),
-    /***
-     * Returns a page from the searched data or the whole data. Search is performed in the watch section below
-     */
-    queriedData() {
-      let result = this.tableData;
-      if (this.searchedData.length > 0) {
-        result = this.searchedData;
-      }
-      return result.slice(this.from, this.to);
-    },
-    sortOptions() {
-      // Create an options list from our fields
-      return this.fields
-        .filter((f) => f.sortable)
-        .map((f) => {
-          return { text: f.label, value: f.key };
-        });
-    },
-    computedFields() {
-      if (
-        this.$auth.user.designation_category == "new_client" ||
-        this.$auth.user.designation_category == "current_client" ||
-        this.$auth.user.designation_category == "affiliate_partner"
-      ) {
-        return this.fields.filter((field) => !field.requiresStaff);
-      } else {
-        return this.fields.filter((field) => !field.requiresClient);
-      }
-    },
-    interactionRecordCount() {
-      if (this.records) {
-        return this.records.length;
-      }
     },
   },
   data() {
@@ -283,14 +240,12 @@ export default {
       this.currentPage = 1;
     },
     async fetchInteractionRecord(id) {
-      if (this.interactionRecord.client_account_type == "postpaid") {
-        this.fetchPostpaidInteractionRecord(id);
-      } else if (this.interactionRecord.client_account_type == "prepaid") {
-        this.fetchPrepaidInteractionRecord(id);
+      if (this.ticketSummary.client_sub_category == "ftm") {
+        this.fetchTicketSummaryInteractionRecord(id);
       }
     },
-    async fetchPostpaidInteractionRecord(id) {
-      let endpoint = `/api/v1/post-paid/interaction-record/${id}/`;
+    async fetchTicketSummaryInteractionRecord(id) {
+      let endpoint = `/api/v1/post-paid/ticket-summary-interaction/${id}/`;
       return await this.$axios
         .get(endpoint)
         .then((res) => {
@@ -300,67 +255,31 @@ export default {
           throw e;
         });
     },
-    async fetchPrepaidInteractionRecord(id) {
-      let endpoint = `/api/v1/prepaid/interaction-record/${id}/`;
-      return await this.$axios
-        .get(endpoint)
-        .then((res) => {
-          this.record = res.data;
-        })
-        .catch((e) => {
-          throw e;
-        });
-    },
-    fetchPostpaidInteractionRecords() {
+    fetchTicketSummaryInteractionRecords() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/interaction-record/?search=${this.interactionRecord.id}`;
+      let endpoint = `/api/v1/post-paid/ticket-summary-interaction/?search=${this.ticketSummary.ticket_number}`;
       return this.$axios
         .get(endpoint)
         .then((res) => {
           this.isBusy = false;
+          console.warn("Res ticket summary interaction records: ", res);
           this.records = res.data.results;
         })
         .catch((e) => {
           this.isBusy = false;
           console.error(e);
-        });
-    },
-    fetchPrepaidInteractionRecords() {
-      this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/interaction-record/?search=${this.interactionRecord.id}`;
-      return this.$axios
-        .get(endpoint)
-        .then((res) => {
-          this.isBusy = false;
-          this.records = res.data.results;
-          console.log(this.records);
-        })
-        .catch((e) => {
-          this.isBusy = false;
-          console.error(e);
-        });
-    },
-    fetchTicketSummaries() {
-      const vm = this;
-      vm.isBusy = true;
-      vm.$store
-        .dispatch("interactionRecord/fetchSummaryRecords")
-        .then(() => {
-          vm.isBusy = false;
-          console.warn("FTM records: ", vm.summaryRecords)
         });
     },
     fetchInteractionRecords() {
-      if (this.interactionRecord.client_account_type == "postpaid") {
-        this.fetchPostpaidInteractionRecords();
-      } else if (this.interactionRecord.client_account_type == "prepaid") {
-        this.fetchPrepaidInteractionRecords();
-      } else if (this.userSubcategory == "ftm") {
-        this.fetchTicketSummaries();
+      if (
+        this.ticketSummary.client_account_type == "postpaid" &&
+        this.userSubcategory == "ftm"
+      ) {
+        this.fetchTicketSummaryInteractionRecords();
       }
     },
     refresh() {
-      this.fetchInteractionRecords();
+      this.fetchTicketSummaryInteractionRecords();
     },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
@@ -395,8 +314,47 @@ export default {
       );
     },
   },
+  computed: {
+    ...mapGetters({
+      summaryRecords: "interactionRecord/ticket_summaries",
+    }),
+    /***
+     * Returns a page from the searched data or the whole data. Search is performed in the watch section below
+     */
+    queriedData() {
+      let result = this.tableData;
+      if (this.searchedData.length > 0) {
+        result = this.searchedData;
+      }
+      return result.slice(this.from, this.to);
+    },
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter((f) => f.sortable)
+        .map((f) => {
+          return { text: f.label, value: f.key };
+        });
+    },
+    computedFields() {
+      if (
+        this.$auth.user.designation_category == "new_client" ||
+        this.$auth.user.designation_category == "current_client" ||
+        this.$auth.user.designation_category == "affiliate_partner"
+      ) {
+        return this.fields.filter((field) => !field.requiresStaff);
+      } else {
+        return this.fields.filter((field) => !field.requiresClient);
+      }
+    },
+    interactionRecordCount() {
+      if (this.records) {
+        return this.records.length;
+      }
+    },
+  },
   mounted() {
-    this.fetchInteractionRecords();
+    this.fetchTicketSummaryInteractionRecords();
   },
 };
 </script>

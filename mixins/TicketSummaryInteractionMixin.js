@@ -3,22 +3,21 @@ import { mapGetters } from "vuex";
 export default {
   methods: {
     setBasicStoreValue(fieldName, value) {
-      this.$store.commit("interactionRecord/setBasicField", {
-        field: fieldName,
-        value: value,
-      });
-    },
-    setPrepaidBasicStoreValue(fieldName, value) {
-      this.$store.commit("prepaid/jobOrder/setBasicField", {
-        field: fieldName,
-        value: value,
-      });
+      this.$store.commit(
+        "ticketSummaryInteractionRecord/setBasicField",
+        {
+          field: fieldName,
+          value: value,
+        }
+      );
     },
   },
   computed: {
     setItem() {
       const vm = this;
-      const items = [this.$store.getters["ticketSummary/ticketSummary"]];
+      const items = [
+        this.$store.getters["ticketSummaryInteractionRecord/ticketSummary"],
+      ];
       _.forEach(items, function(item) {
         vm.id = item.id;
         vm.request_date = item.request_date;
@@ -33,7 +32,9 @@ export default {
     },
     request_date: {
       get() {
-        return this.$store.getters["interactionRecord/request_date"];
+        return this.$store.getters[
+          "ticketSummaryInteractionRecord/request_date"
+        ];
       },
       set(value) {
         this.setBasicStoreValue("request_date", value);
@@ -41,7 +42,7 @@ export default {
     },
     due_date: {
       get() {
-        return this.$store.getters["interactionRecord/due_date"];
+        return this.$store.getters["ticketSummaryInteractionRecord/due_date"];
       },
       set(value) {
         this.setBasicStoreValue("due_date", value);
@@ -49,7 +50,7 @@ export default {
     },
     status: {
       get() {
-        return this.$store.getters["interactionRecord/status"];
+        return this.$store.getters["ticketSummaryInteractionRecord/status"];
       },
       set(value) {
         this.setBasicStoreValue("status", value);
@@ -57,7 +58,7 @@ export default {
     },
     job_title: {
       get() {
-        return this.$store.getters["interactionRecord/job_title"];
+        return this.$store.getters["ticketSummaryInteractionRecord/job_title"];
       },
       set(value) {
         this.setBasicStoreValue("job_title", value);
@@ -65,7 +66,9 @@ export default {
     },
     total_time_consumed: {
       get() {
-        return this.$store.getters["interactionRecord/total_time_consumed"];
+        return this.$store.getters[
+          "ticketSummaryInteractionRecord/total_time_consumed"
+        ];
       },
       set(value) {
         this.setBasicStoreValue("total_time_consumed", value);
@@ -73,7 +76,9 @@ export default {
     },
     url_of_the_completed_jo: {
       get() {
-        return this.$store.getters["interactionRecord/url_of_the_completed_jo"];
+        return this.$store.getters[
+          "ticketSummaryInteractionRecord/url_of_the_completed_jo"
+        ];
       },
       set(value) {
         this.setBasicStoreValue("url_of_the_completed_jo", value);
@@ -81,7 +86,9 @@ export default {
     },
     job_description: {
       get() {
-        return this.$store.getters["interactionRecord/job_description"];
+        return this.$store.getters[
+          "ticketSummaryInteractionRecord/job_description"
+        ];
       },
       set(value) {
         this.setBasicStoreValue("job_description", value);
@@ -89,7 +96,9 @@ export default {
     },
     client_notes: {
       get() {
-        return this.$store.getters["interactionRecord/client_notes"];
+        return this.$store.getters[
+          "ticketSummaryInteractionRecord/client_notes"
+        ];
       },
       set(value) {
         this.setBasicStoreValue("client_notes", value);
