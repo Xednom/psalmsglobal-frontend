@@ -33,21 +33,6 @@
             v-if="this.$auth.user.designation_category == 'staff'"
           >
             <b-form-group
-              label="Select Account type"
-              label-for="initial-sort-select"
-              label-cols-sm="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-2"
-            >
-              <b-form-select
-                id="account-type-select"
-                v-model="accountType"
-                :options="['Postpaid', 'Prepaid']"
-                size="sm"
-              ></b-form-select>
-            </b-form-group>
-            <b-form-group
               label="Filter"
               label-for="filter-input"
               label-cols-sm="3"
@@ -59,7 +44,7 @@
                 <b-form-input
                   id="filter-input"
                   v-model="filter"
-                  @keyup.enter="fetchInteractions"
+                  @keyup.enter="fetchTicketSummary"
                   type="search"
                   placeholder="Type to Search"
                 ></b-form-input>
@@ -126,7 +111,7 @@
                 <b-form-input
                   id="filter-input"
                   v-model="filter"
-                  @keyup.enter="fetchPostpaidInteractions"
+                  @keyup.enter="fetchTicketSummary"
                   type="search"
                   placeholder="Type to Search"
                 ></b-form-input>
@@ -166,10 +151,9 @@
             </div>
           </template>
           <template #cell(ticket_number)="row">
-            <nuxt-link
-              :to="'/ticket-summary/' + row.item.ticket_number"
-              >{{ row.item.ticket_number }}</nuxt-link
-            >
+            <nuxt-link :to="'/ticket-summary/' + row.item.ticket_number">{{
+              row.item.ticket_number
+            }}</nuxt-link>
           </template>
           <template #cell(company)="row">
             <i class="ni ni-building"></i>
@@ -375,29 +359,21 @@ export default {
       this.isBusy = true;
       const vm = this;
 
-      vm.$store.dispatch("ticketSummary/fetchTicketSummaries").then(() =>{
-        vm.isBusy = false;
-        console.warn("Ticket Summary: ", vm.summaries)
-      })
-      // let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
-      // return await this.$axios
-      //   .get(endpoint)
-      //   .then((res) => {
-      //     this.postPaidInteractions = res.data.results;
-      //     if (this.postPaidInteractions.length == "1") {
-      //       this.postPaidInteractions.forEach((item) => {
-      //         this.interactions = res.data.results;
-      //         this.accountType = "Postpaid";
-      //       });
-      //     }
-      //     if (this.accountType == "Postpaid") {
-      //       this.interactions = res.data.results;
-      //     }
-      //     this.isBusy = false;
-      //   })
-      //   .catch((e) => {
-      //     throw e;
-      //   });
+      var options = {
+        sort: "",
+        order: "asc",
+      };
+
+      options.query = {
+        and: [["ticket_number", "eq", this.filter]],
+      };
+
+      vm.$store
+        .dispatch("ticketSummary/fetchTicketSummaries", options)
+        .then(() => {
+          vm.isBusy = false;
+          console.warn("Ticket Summary: ", vm.summaries);
+        });
     },
     async fetchPrepaidInteractions() {
       this.isBusy = true;
@@ -462,7 +438,7 @@ export default {
           throw e;
         });
     },
-    async fetchClientPrepaidInteractions() {
+    async fetchClientTicketSummary() {
       this.isBusy = true;
       let endpoint = `/api/v1/prepaid/customer-interaction/?limit=10000`;
       return await this.$axios
@@ -531,19 +507,6 @@ export default {
           throw e;
         });
     },
-    fetchInteractions() {
-      if (this.accountType == "Prepaid") {
-        this.fetchPrepaidInteractions();
-      } else if (this.accountType == "Postpaid") {
-        this.fetchPostpaidInteractions();
-      } else {
-        if (this.$auth.user.account_type == "Prepaid") {
-          this.fetchPrepaidInteractions();
-        } else if (this.$auth.user.account_type == "Postpaid") {
-          this.fetchPostpaidInteractions();
-        }
-      }
-    },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
         error.company
@@ -562,17 +525,13 @@ export default {
     },
   },
   mounted() {
-    this.fetchTicketSummary();
     if (
       this.$auth.user.designation_category == "new_client" ||
       this.$auth.user.designation_category == "current_client" ||
-      this.$auth.user.designation_category == "affiliate_partner"
+      (this.$auth.user.designation_category == "affiliate_partner" &&
+        this.$auth.user.sub_category == "ftm")
     ) {
-      if (this.$auth.user.account_type == "postpaid") {
-        this.fetchClientPostpaidInteractions();
-      } else if (this.$auth.user.account_type == "prepaid") {
-        this.fetchClientPrepaidInteractions();
-      }
+      this.fetchClientTicketSummary();
     }
   },
 };
