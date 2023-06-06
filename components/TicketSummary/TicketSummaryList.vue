@@ -233,7 +233,7 @@
 
       <b-modal id="comment-section" size="lg" centered hide-footer>
         <template #modal-title>
-          Comment section for Cust. Interaction of
+          Comment section for Ticket Summary of
           {{ interaction.ticket_number }}
         </template>
         <b-overlay :show="show" rounded="sm">
@@ -241,6 +241,7 @@
             :interaction="interaction"
             :user="$auth.user"
             :account-type="interaction.client_sub_category"
+            type-account="ticket_summary"
           ></interaction-comment>
         </b-overlay>
       </b-modal>
