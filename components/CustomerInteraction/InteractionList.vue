@@ -259,6 +259,7 @@
             :interaction="interaction"
             :user="$auth.user"
             :account-type="interaction.client_account_type"
+            type-account="customer_interaction"
           ></interaction-comment>
         </b-overlay>
       </b-modal>

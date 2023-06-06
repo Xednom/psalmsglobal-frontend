@@ -125,6 +125,9 @@ export default {
       type: String,
       description: "Company's user account type",
     },
+    typeAccount: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -132,16 +135,6 @@ export default {
       saving: false,
       error: "",
     };
-  },
-  computed: {
-    comment: {
-      get() {
-        return this.$store.getters["postPaidCustomerInteraction/comment"];
-      },
-      set(value) {
-        this.setBasicStoreValue("comment", value);
-      },
-    },
   },
   methods: {
     async refreshPostpaid(payload) {
@@ -182,10 +175,14 @@ export default {
     },
     async save() {
       this.loading = true;
+      console.warn("Type account: ", this.interaction.client_sub_category);
       try {
         if (
           this.interaction.client_sub_category == "regular" &&
-          this.user.account_type == "postpaid"
+          this.interaction.client_sub_category == "N/A" &&
+          this.user.account_type == "postpaid" &&
+          this.$auth.user.designation_category != "staff" &&
+          this.typeAccount == "customer_interaction"
         ) {
           await this.$axios.post(
             `/api/v1/customer-interaction-post-paid/${this.interaction.id}/comment/`,
@@ -198,10 +195,11 @@ export default {
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
         }
-        
         if (
           this.interaction.client_sub_category == "ftm" &&
-          this.interaction.client_account_type == "postpaid"
+          this.interaction.client_account_type == "postpaid" &&
+          this.$auth.user.designation_category == "staff" &&
+          this.typeAccount == "ticket_summary"
         ) {
           await this.$axios.post(
             `/api/v1/ticket-summary/${this.interaction.id}/comment/`,
@@ -212,7 +210,36 @@ export default {
           this.comment = "";
           this.refreshTicketSummary(this.interaction.ticket_number);
         }
-        
+        if (
+          this.interaction.client_sub_category == "ftm" &&
+          this.interaction.client_account_type == "postpaid" &&
+          this.$auth.user.designation_category != "staff" &&
+          this.typeAccount == "ticket_summary"
+        ) {
+          await this.$axios.post(
+            `/api/v1/ticket-summary/${this.interaction.id}/comment/`,
+            { comment: this.comment }
+          );
+          this.loading = false;
+          this.success = true;
+          this.comment = "";
+          this.refreshTicketSummary(this.interaction.ticket_number);
+        }
+        if (
+          this.interaction.client_sub_category == "ftm" &&
+          this.interaction.client_account_type == "postpaid" &&
+          this.$auth.user.designation_category != "staff" &&
+          this.typeAccount == "customer_interaction"
+        ) {
+          await this.$axios.post(
+            `/api/v1/customer-interaction-post-paid/${this.interaction.id}/comment/`,
+            { comment: this.comment }
+          );
+          this.loading = false;
+          this.success = true;
+          this.comment = "";
+          this.refreshPostpaid(this.interaction.ticket_number);
+        }
         if (this.user.account_type == "prepaid") {
           await this.$axios.post(
             `/api/v1/customer-interaction-prepaid/${this.interaction.id}/comment/`,
@@ -222,9 +249,8 @@ export default {
           this.success = true;
           this.refreshPrepaid(this.interaction.ticket_number);
         }
-        
         if (
-          this.user.account_type == "staff" ||
+          this.$auth.user.designation_category == "staff" &&
           this.accountType == "postpaid"
         ) {
           await this.$axios.post(
@@ -238,9 +264,8 @@ export default {
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
         }
-        
         if (
-          this.user.account_type == "staff" ||
+          this.user.account_type == "staff" &&
           this.accountType == "prepaid"
         ) {
           await this.$axios.post(
@@ -254,7 +279,11 @@ export default {
           this.comment = "";
           this.refreshPostpaid(this.interaction.ticket_number);
         }
-        if (this.user.account_type == "staff" && this.accountType == "ftm") {
+        if (
+          this.user.account_type == "staff" &&
+          this.accountType == "ftm" &&
+          this.typeAccount == "ticket_summary"
+        ) {
           await this.$axios.post(
             `/api/v1/ticket-summary/${this.interaction.id}/comment/`,
             {
@@ -293,6 +322,16 @@ export default {
           solid: true,
         }
       );
+    },
+  },
+  computed: {
+    comment: {
+      get() {
+        return this.$store.getters["postPaidCustomerInteraction/comment"];
+      },
+      set(value) {
+        this.setBasicStoreValue("comment", value);
+      },
     },
   },
 };
