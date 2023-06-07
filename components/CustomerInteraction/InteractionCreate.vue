@@ -33,7 +33,7 @@
                           v-model="company"
                           :ieCloseFix="false"
                           :data="companies"
-                          :serializer="item => item.company_name"
+                          :serializer="(item) => item.company_name"
                           @hit="getCompany"
                           @input="onSearchInput"
                           placeholder="Search a Company"
@@ -231,9 +231,7 @@
                 </div>
               </b-tab>
               <b-tab title="Caller's Type" lazy>
-                <h6 class="heading-small text-muted mb-4">
-                  Caller's Category
-                </h6>
+                <h6 class="heading-small text-muted mb-4">Caller's Category</h6>
                 <div class="row">
                   <div class="col-lg-3">
                     <base-input
@@ -253,9 +251,7 @@
                     </base-input>
                   </div>
                 </div>
-                <h6 class="heading-small text-muted mb-4">
-                  Type of Caller
-                </h6>
+                <h6 class="heading-small text-muted mb-4">Type of Caller</h6>
                 <div class="row">
                   <div class="col-lg-4">
                     <base-input
@@ -356,30 +352,30 @@ export default {
     [Option.name]: Option,
     VueTypeaheadBootstrap,
     FormViewList,
-    CallmeInfo
+    CallmeInfo,
   },
   computed: {
     ...mapGetters({
       interestedToBuys: "postPaidCustomerInteraction/interestedToBuys",
       interestedToSells: "postPaidCustomerInteraction/interestedToSells",
       generalCalls: "postPaidCustomerInteraction/generalCalls",
-      client: "user/company"
+      client: "user/company",
     }),
     async getCallMeInfo() {
       if (this.apn || this.reference) {
         let endpoint = `/api/v1/callme-info/?apn=${this.apn}`;
         await this.$axios
           .get(endpoint)
-          .then(res => {
+          .then((res) => {
             this.callMeInfo = res.data.results;
             if (this.callMeInfo.length >= 1) {
-              this.callMeInfo.forEach(item => {
+              this.callMeInfo.forEach((item) => {
                 this.callMe = item;
               });
             } else if (this.callMeInfo.length === 0) {
             }
           })
-          .catch(e => {
+          .catch((e) => {
             throw e;
           });
       }
@@ -387,7 +383,7 @@ export default {
     async fetchCounties() {
       let endpoint = `/api/v1/county/?search=${this.callMe.property_state}`;
       try {
-        await this.$axios.get(endpoint).then(res => {
+        await this.$axios.get(endpoint).then((res) => {
           this.counties = res.data;
         });
       } catch (err) {}
@@ -398,7 +394,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("ticket_number", value);
-      }
+      },
     },
     company: {
       get() {
@@ -406,7 +402,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("company", value);
-      }
+      },
     },
     apn: {
       get() {
@@ -414,7 +410,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("apn", value);
-      }
+      },
     },
     reference_number: {
       get() {
@@ -429,7 +425,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("reference_number", value);
-      }
+      },
     },
     county: {
       get() {
@@ -441,7 +437,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("county", value);
-      }
+      },
     },
     state: {
       get() {
@@ -454,7 +450,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("state", value);
-      }
+      },
     },
     address: {
       get() {
@@ -467,7 +463,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("address", value);
-      }
+      },
     },
     caller_full_name: {
       get() {
@@ -482,7 +478,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("caller_full_name", value);
-      }
+      },
     },
     caller_phone: {
       get() {
@@ -490,7 +486,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("caller_phone", value);
-      }
+      },
     },
     email: {
       get() {
@@ -498,7 +494,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("email", value);
-      }
+      },
     },
     reason_of_the_call: {
       get() {
@@ -508,7 +504,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("reason_of_the_call", value);
-      }
+      },
     },
     interested_to_sell: {
       get() {
@@ -518,7 +514,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("interested_to_sell", value);
-      }
+      },
     },
     interested_to_buy: {
       get() {
@@ -528,7 +524,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("interested_to_buy", value);
-      }
+      },
     },
     general_call: {
       get() {
@@ -536,7 +532,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("general_call", value);
-      }
+      },
     },
     total_minutes: {
       get() {
@@ -544,7 +540,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("total_minutes", value);
-      }
+      },
     },
     crm: {
       get() {
@@ -552,7 +548,7 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("crm", value);
-      }
+      },
     },
     leads_transferred_crm: {
       get() {
@@ -562,8 +558,8 @@ export default {
       },
       set(value) {
         this.setBasicStoreValue("leads_transferred_crm", value);
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -584,60 +580,64 @@ export default {
       staffUser: {},
       user: {},
       clientAccountType: {},
+      clientSubCategory: {},
       isBusy: false,
       saving: false,
       loadingCounties: false,
       loadingStates: false,
       modals: {
-        form: false
+        form: false,
       },
       crmOptions: [
         { value: "yes", label: "Yes" },
         { value: "no", label: "No" },
         { value: "needs_validation", label: "Needs validation" },
         { value: "invalid_data", label: "Invalid data" },
-        { value: "needs_follow_up", label: "Needs follow up" }
+        { value: "needs_follow_up", label: "Needs follow up" },
       ],
       leadsCrmOptions: [
         { value: "needs_transferred", label: "Needs transferred" },
         { value: "transfer_complete", label: "Transfer complete" },
-        { value: "na", label: "N/A" }
+        { value: "na", label: "N/A" },
       ],
-      editorOption: [["bold", "italic", "underline", "strike"]]
+      editorOption: [["bold", "italic", "underline", "strike"]],
     };
   },
   methods: {
     ...mapActions("postPaidCustomerInteraction", ["reset", "saveInteraction"]),
     ...mapActions("prepaid/prepaidCustomerInteraction", [
       "reset",
-      "savePrepaidInteraction"
+      "savePrepaidInteraction",
     ]),
+    ...mapActions("ticketSummary", ["reset", "saveTicketSummary"]),
     eventChild(form) {
       console.log("Event from child component emitted", (this.form = form));
     },
     onSearchInput(text) {
       this.keyword = text;
     },
-    getCompany: debounce(function() {
+    getCompany: debounce(function () {
       this.$axios
         .get(`/api/v1/company/?search=${this.company}`)
-        .then(res => {
+        .then((res) => {
           this.companies = res.data.results;
           this.$refs.formViewList.clearForm();
-          this.companies.forEach(item => {
+          this.companies.forEach((item) => {
             this.clientAccountType = item.company_client_account_type;
+            this.clientSubCategory = item.company_client_sub_category;
             console.log(this.clientAccountType);
+            console.log(this.clientSubCategory);
           });
           this.getCompanyCrm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }, 700),
     async getCompanyCrm() {
-      this.companies.forEach(item => {
+      this.companies.forEach((item) => {
         this.company_crm = item.company_crm;
-        this.crmOptions.forEach(item => {
+        this.crmOptions.forEach((item) => {
           if (this.company_crm == "true") {
             this.crm = "yes";
             this.leads_transferred_crm = "needs_transferred";
@@ -684,7 +684,7 @@ export default {
     async fetchStaff(id) {
       let endpoint = `/api/auth/staff/${id}/`;
       try {
-        await this.$axios.get(endpoint).then(res => {
+        await this.$axios.get(endpoint).then((res) => {
           this.staffUser = res.data;
         });
       } catch (err) {
@@ -694,7 +694,7 @@ export default {
     async fetchMe() {
       try {
         let endpoint = `api/auth/users/me/`;
-        await this.$axios.get(endpoint).then(res => {
+        await this.$axios.get(endpoint).then((res) => {
           this.user = res.data;
           if (this.$auth.user.designation_category == "staff") {
             this.fetchStaff(this.user.id);
@@ -712,8 +712,8 @@ export default {
           attribute_forms: this.form.attribute_forms,
           original_script: false,
           mailing_lists: this.form.mailing_lists,
-          status: true
-        }
+          status: true,
+        },
       ];
       const interactionPostpaidPayload = {
         company: this.company,
@@ -732,7 +732,7 @@ export default {
         general_call: this.general_call,
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm,
-        customer_interaction_post_paid_forms: formArray
+        customer_interaction_post_paid_forms: formArray,
       };
       const interactionPrepaidPayload = {
         company: this.company,
@@ -751,11 +751,54 @@ export default {
         general_call: this.general_call,
         crm: this.crm,
         leads_transferred_crm: this.leads_transferred_crm,
-        customer_interaction_prepaid_forms: formArray
+        customer_interaction_prepaid_forms: formArray,
+      };
+      const ticketSummaryPayload = {
+        company: this.company,
+        agent: this.staffUser.id,
+        apn: this.apn,
+        state: this.callMe.property_state,
+        county: this.callMe.property_county,
+        address: this.callMe.property_address,
+        reference_number: this.callMe.reference,
+        caller_full_name: this.callMe.full_name,
+        caller_phone: this.caller_phone,
+        email: this.email,
+        reason_of_the_call: this.reason_of_the_call,
+        interested_to_sell: this.interested_to_sell,
+        interested_to_buy: this.interested_to_buy,
+        general_call: this.general_call,
+        crm: this.crm,
+        leads_transferred_crm: this.leads_transferred_crm,
+        ticket_summary_forms: formArray,
       };
       if (
         this.$auth.user.designation_category == "staff" &&
-        this.clientAccountType == "postpaid"
+        this.clientAccountType == "postpaid" &&
+        this.clientSubCategory == "ftm"
+      ) {
+        try {
+          this.saving = true;
+          console.warn("Ticket summary: ", ticketSummaryPayload);
+          await this.saveTicketSummary(ticketSummaryPayload)
+            .then(() => {
+              this.saving = false;
+              this.reset();
+              this.$refs.formValidator.reset();
+              this.successMessage("success");
+            })
+            .catch((err) => {
+              this.saving = false;
+              console.log(err);
+              this.errorMessage("danger", err.response.data);
+            });
+        } catch (e) {
+          throw e;
+        }
+      } else if (
+        this.$auth.user.designation_category == "staff" &&
+        this.clientAccountType == "postpaid" && 
+        this.clientSubCategory != "ftm"
       ) {
         try {
           this.saving = true;
@@ -766,7 +809,7 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch(err => {
+            .catch((err) => {
               this.saving = false;
               console.log(err);
               this.errorMessage("danger", err.response.data);
@@ -788,7 +831,7 @@ export default {
               this.$refs.formValidator.reset();
               this.successMessage("success");
             })
-            .catch(err => {
+            .catch((err) => {
               this.saving = false;
               console.log(err);
               this.errorMessage("danger", err.response.data);
@@ -803,7 +846,7 @@ export default {
       this.$bvToast.toast("Successfully added a new interaction information!", {
         title: `Successful`,
         variant: variant,
-        solid: true
+        solid: true,
       });
     },
     crmMessage(variant = null, company) {
@@ -812,7 +855,7 @@ export default {
         {
           title: `Successful`,
           variant: variant,
-          solid: true
+          solid: true,
         }
       );
     },
@@ -836,7 +879,7 @@ export default {
         {
           title: `Error`,
           variant: variant,
-          solid: true
+          solid: true,
         }
       );
     },
@@ -844,14 +887,14 @@ export default {
       this.loadingStates = true;
       let endpoint = `/api/v1/state/`;
       try {
-        await this.$axios.get(endpoint).then(res => {
+        await this.$axios.get(endpoint).then((res) => {
           this.states = res.data;
           this.loadingStates = false;
         });
       } catch (err) {
         console.error(err);
       }
-    }
+    },
   },
   mounted() {
     this.fetchCompanies();
@@ -862,14 +905,14 @@ export default {
     this.fetchMe();
   },
   watch: {
-    keyword: debounce(function(oldKeyword, newKeyword) {
+    keyword: debounce(function (oldKeyword, newKeyword) {
       if (newKeyword !== "" && newKeyword !== oldKeyword) {
         this.getCompany();
       } else if (!newKeyword) {
         this.companies = [];
       }
-    }, 500)
-  }
+    }, 500),
+  },
 };
 </script>
 

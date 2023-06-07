@@ -431,6 +431,7 @@ export default {
         .dispatch("ticketSummary/fetchTicketSummaries", options)
         .then(() => {
           vm.isBusy = false;
+          vm.totalRows = this.summaries.length;
         });
     },
     // async fetchClientTicketSummary() {

@@ -479,6 +479,7 @@
         :interaction="interaction"
         :user="$auth.user"
         :accountType="interaction.client_account_type"
+        type-account="customer_interaction"
       ></interaction-comment>
     </modal>
   </div>
