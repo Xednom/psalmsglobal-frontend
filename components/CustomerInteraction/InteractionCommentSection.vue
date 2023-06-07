@@ -175,12 +175,10 @@ export default {
     },
     async save() {
       this.loading = true;
-      console.warn("Type account: ", this.interaction.client_sub_category);
       try {
         if (
           this.interaction.client_sub_category == "regular" &&
           this.interaction.client_sub_category == "N/A" &&
-          this.user.account_type == "postpaid" &&
           this.$auth.user.designation_category != "staff" &&
           this.typeAccount == "customer_interaction"
         ) {
