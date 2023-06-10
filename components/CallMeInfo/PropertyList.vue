@@ -114,8 +114,8 @@
           </template>
         </b-table>
 
-        <!-- <modal size="lg" :show.sync="modals.upload">
-          <base-input
+        <modal size="lg" :show.sync="modals.upload">
+          <!-- <base-input
             label="Excel file"
             alternative
             class="mb-3"
@@ -123,7 +123,13 @@
             prepend-icon="ni ni-briefcase-24"
             v-model="file"
           >
-          </base-input>
+          </base-input> -->
+          <b-form-file
+            v-model="file"
+            :state="Boolean(file)"
+            placeholder="Choose a file or drop it here..."
+            drop-placeholder="Drop file here..."
+          ></b-form-file>
           <div class="text-center">
             <base-button
               type="primary"
@@ -132,16 +138,18 @@
               v-if="uploading"
               >Parsing</base-button
             >
-            <base-button type="primary" native-type="submit" v-else @click="parseFile"
+            <base-button
+              type="primary"
+              native-type="submit"
+              v-else
+              @click="parseFile"
               >Parse</base-button
             >
           </div>
-        </modal> -->
+        </modal>
 
         <modal size="lg" :show.sync="modals.info">
-          <h6 slot="header" class="modal-title">
-            CallMe information
-          </h6>
+          <h6 slot="header" class="modal-title">CallMe information</h6>
           <form @submit.prevent="save">
             <div id="callme-info" class="col-lg-12">
               <b-card-text>
@@ -277,9 +285,7 @@
                     </base-input>
                   </div>
                 </div>
-                <h6 class="heading-small text-muted mb-4">
-                  Buyer offer info
-                </h6>
+                <h6 class="heading-small text-muted mb-4">Buyer offer info</h6>
                 <div class="row">
                   <div class="col-lg-6">
                     <base-input label="Buyer offer amount">
@@ -433,7 +439,7 @@ import {
   DropdownItem,
   Dropdown,
   Select,
-  Option
+  Option,
 } from "element-ui";
 import DropzoneFileUpload from "@/components/argon-core/Inputs/DropzoneFileUpload";
 
@@ -449,15 +455,15 @@ export default {
     [DropdownMenu.name]: DropdownMenu,
     [Select.name]: Select,
     [Option.name]: Option,
-    DropzoneFileUpload
+    DropzoneFileUpload,
   },
   computed: {
     ...mapGetters({
       propertyInfos: "callMeInfo/propertyInfos",
       pagination: "callMeInfo/propertyInfosPagination",
       user: "user/user",
-      client: "user/clientUser"
-    })
+      client: "user/clientUser",
+    }),
   },
   data() {
     return {
@@ -466,13 +472,13 @@ export default {
       callMeInfos: [],
       offerStatuses: [],
       inputs: {
-        fileSingle: []
+        fileSingle: [],
       },
       isBusy: false,
       saving: false,
       uploading: false,
       modals: {
-        upload: false
+        upload: false,
       },
       totalRows: 1,
       currentPage: 1,
@@ -486,7 +492,7 @@ export default {
       infoModal: {
         id: "info-modal",
         title: "",
-        content: ""
+        content: "",
       },
       fields: [
         { key: "company_name", label: "Company", sortable: true },
@@ -495,8 +501,9 @@ export default {
         { key: "full_name", sortable: true },
         { key: "property_state", sortable: true },
         { key: "property_county", sortable: true },
-        { key: "property_city", sortable: true }
-      ]
+        { key: "property_city", sortable: true },
+      ],
+      file: null,
     };
   },
   methods: {
@@ -531,7 +538,7 @@ export default {
             this.fetchPropertyInfos();
             this.successUploadMessage("success");
           })
-          .catch(e => {
+          .catch((e) => {
             this.uploading = false;
             this.errorMessage("danger", e.response.data);
           });
@@ -547,7 +554,7 @@ export default {
         other_offer_terms: this.callMeInfo.other_offer_terms,
         notes: this.callMeInfo.notes,
         offer_status: this.callMeInfo.offer_status,
-        offer_status_notes: this.callMeInfo.offer_status_notes
+        offer_status_notes: this.callMeInfo.offer_status_notes,
       };
 
       if (this.$auth.user.designation_category == "staff") {
@@ -565,10 +572,10 @@ export default {
       let endpoint = `/api/v1/offer-status/`;
       return await this.$axios
         .get(endpoint)
-        .then(res => {
+        .then((res) => {
           this.offerStatuses = res.data.results;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
@@ -576,14 +583,14 @@ export default {
       this.$bvToast.toast("Successfully updated this Property Info!", {
         title: `Successful`,
         variant: variant,
-        solid: true
+        solid: true,
       });
     },
     successUploadMessage(variant = null) {
       this.$bvToast.toast("Successfully parsed your Property Info!", {
         title: `Successful`,
         variant: variant,
-        solid: true
+        solid: true,
       });
     },
     errorMessage(variant = null, error) {
@@ -598,14 +605,14 @@ export default {
         {
           title: `Error`,
           variant: variant,
-          solid: true
+          solid: true,
         }
       );
-    }
+    },
   },
   async mounted() {
     await this.fetchPropertyInfos();
-  }
+  },
 };
 </script>
 

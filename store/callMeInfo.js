@@ -139,7 +139,7 @@ export const actions = {
   },
   async fetchPropertyInfos({ commit, dispatch }, params) {
     return await this.$axios
-      .get("/api/v1/property-info/", { params: params })
+      .get("/api/v1/callme-info/", { params: params })
       .then(res => {
         commit("setPropertyInfos", { propertyInfos: res.data.results });
         const offset = getOffset(res.data.previous);
