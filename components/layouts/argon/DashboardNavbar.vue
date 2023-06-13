@@ -46,10 +46,7 @@
         <a href="#" class="nav-link pr-0" @click.prevent slot="title-container">
           <div class="media align-items-center">
             <span class="avatar avatar-sm rounded-circle">
-              <img
-                src="~/static/pg.png"
-                alt="Logo white"
-              />
+              <img src="~/static/pg.png" alt="Logo white" />
             </span>
             <div class="media-body ml-2 d-none d-lg-block">
               <span class="mb-0 text-sm  font-weight-bold"

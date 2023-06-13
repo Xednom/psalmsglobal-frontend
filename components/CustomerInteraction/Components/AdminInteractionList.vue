@@ -2,30 +2,12 @@
   <div>
     <div class="card">
       <div class="card-header bg-transparent border-0">
-        <h3 class="mb-0">Customer Interaction list</h3>
+        <h3 class="mb-0">{{ interactionName }} Customer Interaction list</h3>
       </div>
       <b-container fluid>
         <!-- User Interface controls -->
         <b-row>
-          <b-col sm="5" md="6" class="my-1">
-            <b-form-group
-              label="Per page"
-              label-for="per-page-select"
-              label-cols-sm="6"
-              label-cols-md="4"
-              label-cols-lg="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-form-select
-                id="per-page-select"
-                v-model="perPage"
-                :options="pageOptions"
-                size="sm"
-              ></b-form-select>
-            </b-form-group>
-          </b-col>
+          <b-col sm="5" md="6" class="my-1"> </b-col>
 
           <b-col
             lg="6"
@@ -78,7 +60,7 @@
             class="my-1"
             v-if="
               this.$auth.user.designation_category != 'staff' &&
-              this.$auth.user.account_type == 'prepaid'
+                this.$auth.user.account_type == 'prepaid'
             "
           >
             <b-form-group
@@ -111,11 +93,11 @@
             class="my-1"
             v-if="
               this.$auth.user.designation_category != 'staff' &&
-              this.$auth.user.account_type == 'postpaid'
+                this.$auth.user.account_type == 'postpaid'
             "
           >
             <b-form-group
-              label="z"
+              label="Filter"
               label-for="filter-input"
               label-cols-sm="3"
               label-align-sm="right"
@@ -139,6 +121,32 @@
               </b-input-group>
             </b-form-group>
           </b-col>
+          <b-col lg="6" class="my-1" v-if="this.$auth.user.is_superuser">
+            <b-form-group
+              label="Filter"
+              label-for="filter-input"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-input-group size="sm">
+                <b-form-input
+                  id="filter-input"
+                  v-model="filter"
+                  @keyup.enter="fetchSearchPostpaidInteractionsAdmin"
+                  type="search"
+                  placeholder="Type to Search"
+                ></b-form-input>
+
+                <b-input-group-append>
+                  <b-button :disabled="!filter" @click="filter = ''"
+                    >Clear</b-button
+                  >
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
         </b-row>
 
         <!-- Main table element -->
@@ -146,12 +154,12 @@
           :items="interactions"
           :fields="fields"
           :per-page="perPage"
-          :filter="filter"
           :busy="isBusy"
           :filter-included-fields="filterOn"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           :sort-direction="sortDirection"
+          @filtered="onFiltered"
           stacked="md"
           show-empty
           small
@@ -255,12 +263,7 @@
           {{ interaction.ticket_number }}
         </template>
         <b-overlay :show="show" rounded="sm">
-          <interaction-comment
-            :interaction="interaction"
-            :user="$auth.user"
-            :account-type="interaction.client_account_type"
-            type-account="customer_interaction"
-          ></interaction-comment>
+          <job-order-comment :interaction="interaction"></job-order-comment>
         </b-overlay>
       </b-modal>
 
@@ -280,16 +283,16 @@ import {
   TableColumn,
   DropdownMenu,
   DropdownItem,
-  Dropdown,
+  Dropdown
 } from "element-ui";
 import { mapGetters } from "vuex";
 
 import FormView from "@/components/Form/FormView";
 import JobOrderList from "@/components/JobOrder/JobOrderInteractionList";
-import InteractionComment from "@/components/CustomerInteraction/InteractionCommentSection";
+import JobOrderComment from "@/components/CustomerInteraction/InteractionCommentSection";
 
 export default {
-  name: "interaction_list",
+  name: "AdminInteractionList",
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
@@ -298,23 +301,27 @@ export default {
     [DropdownMenu.name]: DropdownMenu,
     FormView,
     JobOrderList,
-    InteractionComment,
+    JobOrderComment
+  },
+  props: {
+    prepaid: { type: Boolean, default: false },
+    postPaid: { type: Boolean, default: false }
   },
   computed: {
     ...mapGetters({
       // interactions: "postPaidCustomerInteraction/interactions",
       pagination: "postPaidCustomerInteraction/interactionsPagination",
       user: "user/user",
-      client: "user/clientUser",
+      client: "user/clientUser"
     }),
-    // userDesignationAndAccountType() {
-    //   const vm = this;
-    //   if (vm.$auth.user.designation_category == 'staff') {
-    //     return vm.$auth.user.designation_category;
-    //   } else if (vm.$auth.user.designation_category == 'new_client' || vm.$auth.user.designation_category == 'current_client' || vm.$auth.user.designation_category == 'affiliate_partner') {
-    //     return vm.$auth.
-    //   }
-    // }
+    interactionName() {
+      const vm = this;
+      if (vm.postPaid) {
+        return "Postpaid";
+      } else if (vm.prepaid) {
+        return "Prepaid";
+      }
+    }
   },
   data() {
     return {
@@ -331,7 +338,7 @@ export default {
       showJobOrder: false,
       modals: {
         update: false,
-        jobOrder: false,
+        jobOrder: false
       },
       totalRows: 1,
       currentPage: 1,
@@ -345,7 +352,7 @@ export default {
       infoModal: {
         id: "info-modal",
         title: "",
-        content: "",
+        content: ""
       },
       fields: [
         { key: "ticket_number", sortable: true },
@@ -362,25 +369,42 @@ export default {
         { key: "reason_of_the_call", sortable: true },
         { key: "interested_to_sell", sortable: true },
         { key: "interested_to_buy", sortable: true },
-        { key: "general_call", sortable: true },
-      ],
+        { key: "general_call", sortable: true }
+      ]
     };
+  },
+  watch: {
+    currentPage: {
+      handler: function(value) {
+        if (this.postPaid) {
+          this.fetchClientPostpaidInteractions().catch(error => {
+            console.error(error);
+          });
+        } else if (this.prepaid) {
+          this.fetchClientPrepaidInteractions().catch(error => {
+            console.error(error);
+          });
+        }
+      }
+    }
   },
   methods: {
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
+      this.fetchSearchPostpaidInteractionsAdmin();
+      console.warn(filteredItems);
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
     async fetchPostpaidInteractions() {
       this.isBusy = true;
-      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?limit=${this.perPage}&offset=${this.perPage}search=${this.filter}`;
       return await this.$axios
         .get(endpoint)
-        .then((res) => {
+        .then(res => {
           this.postPaidInteractions = res.data.results;
           if (this.postPaidInteractions.length == "1") {
-            this.postPaidInteractions.forEach((item) => {
+            this.postPaidInteractions.forEach(item => {
               this.interactions = res.data.results;
               this.accountType = "Postpaid";
             });
@@ -390,7 +414,29 @@ export default {
           }
           this.isBusy = false;
         })
-        .catch((e) => {
+        .catch(e => {
+          throw e;
+        });
+    },
+    async fetchSearchPostpaidInteractionsAdmin() {
+      this.isBusy = true;
+      let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?search=${this.filter}`;
+      return await this.$axios
+        .get(endpoint)
+        .then(res => {
+          this.interactions = res.data.results;
+          if (this.postPaidInteractions.length == "1") {
+            this.postPaidInteractions.forEach(item => {
+              this.interactions = res.data.results;
+              this.accountType = "Postpaid";
+            });
+          }
+          if (this.accountType == "Postpaid") {
+            this.interactions = res.data.results;
+          }
+          this.isBusy = false;
+        })
+        .catch(e => {
           throw e;
         });
     },
@@ -399,10 +445,10 @@ export default {
       let endpoint = `/api/v1/prepaid/customer-interaction/?search=${this.filter}`;
       return await this.$axios
         .get(endpoint)
-        .then((res) => {
+        .then(res => {
           this.interactions = res.data.results;
           if (this.prepaidInteractions.length == "1") {
-            this.prepaidInteractions.forEach((item) => {
+            this.prepaidInteractions.forEach(item => {
               this.interactions = res.data.results;
               this.accountType = "Postpaid";
             });
@@ -412,7 +458,7 @@ export default {
           }
           this.isBusy = false;
         })
-        .catch((e) => {
+        .catch(e => {
           throw e;
         });
     },
@@ -421,18 +467,18 @@ export default {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/?page=${this.currentPage}`;
       return await this.$axios
         .get(endpoint)
-        .then((res) => {
+        .then(res => {
           this.interactions = res.data.results;
           this.totalRows = res.data.count;
           this.isBusy = false;
-          this.interactions.forEach((item) => {
+          this.interactions.forEach(item => {
             if (
               item.interested_to_sell == "yes" &&
               item.interested_to_buy == "yes"
             ) {
               item._cellVariants = {
                 interested_to_sell: "success",
-                interested_to_buy: "info",
+                interested_to_buy: "info"
               };
             } else if (
               item.interested_to_buy == "yes" &&
@@ -440,7 +486,7 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_buy: "success",
-                interested_to_sell: "danger",
+                interested_to_sell: "danger"
               };
             } else if (
               item.interested_to_sell == "no" &&
@@ -448,32 +494,32 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_sell: "danger",
-                interested_to_buy: "info",
+                interested_to_buy: "info"
               };
             }
           });
         })
-        .catch((e) => {
+        .catch(e => {
           throw e;
         });
     },
     async fetchClientPrepaidInteractions() {
       this.isBusy = true;
-      let endpoint = `/api/v1/prepaid/customer-interaction/?limit=10000`;
+      let endpoint = `/api/v1/prepaid/customer-interaction/?page=${this.currentPage}`;
       return await this.$axios
         .get(endpoint)
-        .then((res) => {
+        .then(res => {
           this.interactions = res.data.results;
-          this.totalRows = this.interactions.length;
+          this.totalRows = res.data.count;
           this.isBusy = false;
-          this.interactions.forEach((item) => {
+          this.interactions.forEach(item => {
             if (
               item.interested_to_sell == "yes" &&
               item.interested_to_buy == "yes"
             ) {
               item._cellVariants = {
                 interested_to_sell: "success",
-                interested_to_buy: "info",
+                interested_to_buy: "info"
               };
             } else if (
               item.interested_to_buy == "yes" &&
@@ -481,7 +527,7 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_buy: "success",
-                interested_to_sell: "danger",
+                interested_to_sell: "danger"
               };
             } else if (
               item.interested_to_sell == "no" &&
@@ -489,12 +535,12 @@ export default {
             ) {
               item._cellVariants = {
                 interested_to_sell: "danger",
-                interested_to_buy: "info",
+                interested_to_buy: "info"
               };
             }
           });
         })
-        .catch((e) => {
+        .catch(e => {
           throw e;
         });
     },
@@ -503,11 +549,11 @@ export default {
       let endpoint = `/api/v1/post-paid/customer-interaction-post-paid/${id}`;
       return await this.$axios
         .get(endpoint)
-        .then((res) => {
+        .then(res => {
           this.show = false;
           this.interaction = res.data;
         })
-        .catch((e) => {
+        .catch(e => {
           this.show = false;
           throw e;
         });
@@ -517,11 +563,11 @@ export default {
       let endpoint = `/api/v1/interaction-form/${id}/`;
       return await this.$axios
         .get(endpoint)
-        .then((res) => {
+        .then(res => {
           this.show = false;
           this.form = res.data;
         })
-        .catch((e) => {
+        .catch(e => {
           this.show = false;
           throw e;
         });
@@ -539,6 +585,11 @@ export default {
         }
       }
     },
+    adminInteractions() {
+      if (this.auth.user.is_superuser) {
+        this.fetchPostpaidInteractions();
+      }
+    },
     errorMessage(variant = null, error) {
       this.$bvToast.toast(
         error.company
@@ -551,24 +602,20 @@ export default {
         {
           title: `Error`,
           variant: variant,
-          solid: true,
+          solid: true
         }
       );
-    },
+    }
   },
   mounted() {
-    if (
-      this.$auth.user.designation_category == "new_client" ||
-      this.$auth.user.designation_category == "current_client" ||
-      this.$auth.user.designation_category == "affiliate_partner"
-    ) {
-      if (this.$auth.user.account_type == "postpaid") {
+    if (this.$auth.user.is_superuser) {
+      if (this.postPaid) {
         this.fetchClientPostpaidInteractions();
-      } else if (this.$auth.user.account_type == "prepaid") {
+      } else if (this.prepaid) {
         this.fetchClientPrepaidInteractions();
       }
     }
-  },
+  }
 };
 </script>
 

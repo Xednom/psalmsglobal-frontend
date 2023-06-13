@@ -223,6 +223,20 @@
             path: '/forum'
           }"
         />
+        <sidebar-item
+          :link="{
+            name: 'Admin - Customer Interaction Board',
+            icon: 'ni ni-single-copy-04 text-pink'
+          }"
+          v-if="$auth.user.is_superuser"
+        >
+          <sidebar-item
+            :link="{
+              name: 'List of Interaction',
+              path: '/admin-interaction'
+            }"
+          />
+        </sidebar-item>
       </template>
     </side-bar>
     <div class="main-content">
