@@ -524,6 +524,7 @@ export default {
     },
     async parseFile() {
       var data = new FormData();
+      data.append("username", this.$auth.user.username);
       data.append("file", this.file);
       if (
         this.$auth.user.designation_category == "new_client" ||
