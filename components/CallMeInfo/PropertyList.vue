@@ -74,7 +74,7 @@
               <strong>Loading...</strong>
             </div>
           </template>
-          <template #cell(company_name)="row">
+          <!-- <template #cell(company_name)="row">
             <b-button
               size="sm"
               @click="
@@ -87,6 +87,12 @@
               <i class="ni ni-building"></i>
               {{ row.item.company_name }}
             </b-button>
+          </template> -->
+          <template #cell(company_name)="row">
+            <i class="ni ni-building"></i>
+            <nuxt-link :to="'/property-info/' + row.item.id">{{
+              row.item.company_name
+            }}</nuxt-link>
           </template>
         </b-table>
 
