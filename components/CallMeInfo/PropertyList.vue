@@ -23,23 +23,6 @@
         </b-row>
         <b-row>
           <b-col sm="5" md="6" class="my-1">
-            <b-form-group
-              label="Per page"
-              label-for="per-page-select"
-              label-cols-sm="6"
-              label-cols-md="4"
-              label-cols-lg="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-form-select
-                id="per-page-select"
-                v-model="perPage"
-                :options="pageOptions"
-                size="sm"
-              ></b-form-select>
-            </b-form-group>
           </b-col>
 
           <b-col lg="6" class="my-1">
@@ -71,11 +54,9 @@
 
         <!-- Main table element -->
         <b-table
-          :items="propertyInfos"
+          :items="callMeInfos"
           :fields="fields"
-          :current-page="currentPage"
           :per-page="perPage"
-          :filter="filter"
           :busy="isBusy"
           :filter-included-fields="filterOn"
           :sort-by.sync="sortBy"
@@ -420,7 +401,9 @@
           <b-pagination
             v-model="currentPage"
             :total-rows="totalRows"
-            :per-page="perPage"
+            :per-page="100"
+            first-number
+            last-number
             align="fill"
             size="sm"
             class="my-0 mb-3"
@@ -459,7 +442,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      propertyInfos: "callMeInfo/propertyInfos",
+      // propertyInfos: "callMeInfo/propertyInfos",
       pagination: "callMeInfo/propertyInfosPagination",
       user: "user/user",
       client: "user/clientUser",
@@ -482,7 +465,7 @@ export default {
       },
       totalRows: 1,
       currentPage: 1,
-      perPage: 5,
+      perPage: 100,
       pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
       sortBy: "",
       sortDesc: false,
@@ -497,11 +480,10 @@ export default {
       fields: [
         { key: "company_name", label: "Company", sortable: true },
         { key: "apn", sortable: true },
-        { key: "reference", sortable: true },
+        { key: "reference_number", sortable: true },
         { key: "full_name", sortable: true },
-        { key: "property_state", sortable: true },
-        { key: "property_county", sortable: true },
-        { key: "property_city", sortable: true },
+        { key: "state", sortable: true },
+        { key: "county", sortable: true },
       ],
       file: null,
     };
@@ -510,16 +492,26 @@ export default {
     ...mapActions("callMeInfo", ["reset", "updateCallMeInfo", "upload"]),
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
+      this.fetchPropertyInfos();
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
     async fetchPropertyInfos() {
       this.isBusy = true;
-      await this.$store
-        .dispatch("callMeInfo/fetchPropertyInfos", this.pagination)
-        .then(() => {
-          this.totalRows = this.propertyInfos.length;
+      var options = {
+        sort: "-created_date",
+        order: "asc",
+      };
+      let endpoint = `/api/v1/callme-info/?page=${this.currentPage}`;
+      return await this.$axios
+        .get(endpoint)
+        .then((res) => {
+          this.callMeInfos = res.data.results;
+          this.totalRows = res.data.count;
           this.isBusy = false;
+        })
+        .catch((e) => {
+          throw e;
         });
     },
     async parseFile() {
@@ -611,8 +603,17 @@ export default {
       );
     },
   },
-  async mounted() {
-    await this.fetchPropertyInfos();
+  watch: {
+    currentPage: {
+      handler: function (value) {
+        this.fetchPropertyInfos().catch((error) => {
+          console.error(error);
+        });
+      },
+    },
+  },
+  mounted() {
+    this.fetchPropertyInfos();
   },
 };
 </script>
