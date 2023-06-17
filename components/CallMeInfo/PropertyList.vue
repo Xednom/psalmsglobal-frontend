@@ -74,11 +74,6 @@
               <strong>Loading...</strong>
             </div>
           </template>
-          <template #cell(apn)="row">
-            <nuxt-link :to="'/callme-info/' + row.item.apn">{{
-              row.item.ticket_number
-            }}</nuxt-link>
-          </template>
           <template #cell(company_name)="row">
             <b-button
               size="sm"
