@@ -19,158 +19,30 @@
                 <div class="row">
                   <div class="col-lg-12">
                     <base-input
-                      v-if="property"
                       type="text"
                       label="Apn"
                       placeholder="Apn"
                       name="Apn"
-                      v-model="property.apn"
+                      v-model="apn"
                       rules="required"
+                      @input="setProperty"
                     >
                     </base-input>
                   </div>
-                  <!-- <div class="col-lg-12">
+                  <div class="col-lg-12">
                     <base-input
-                      v-if="property.client"
                       type="text"
-                      label="Client code"
-                      placeholder="Client code"
-                      name="Client code"
-                      v-model="property.client"
+                      label="Full name"
+                      placeholder="Full name"
+                      name="Full name"
+                      v-model="full_name"
                       rules="required"
-                      disabled
+                      @input="setProperty"
                     >
                     </base-input>
                   </div>
-                  <div class="col-lg-4">
-                    <base-input
-                      type="text"
-                      label="Request date"
-                      placeholder="Request date"
-                      name="Request date"
-                      v-model="property.request_date"
-                      :rules="{ required: true }"
-                      disabled
-                    >
-                    </base-input>
-                  </div>
-                  <div class="col-lg-4">
-                    <base-input
-                      type="text"
-                      label="Due date"
-                      placeholder="Due date"
-                      name="Due date"
-                      v-model="property.due_date"
-                      :rules="{ required: true }"
-                      disabled
-                    >
-                    </base-input>
-                  </div>
-                  <div class="col-lg-4">
-                    <base-input
-                      type="text"
-                      label="Total time consumed"
-                      placeholder="Total time consumed"
-                      name="Total time consumed"
-                      v-model="property.total_time_consumed"
-                      :rules="{ required: true }"
-                      :disabled="
-                        property.status == 'complete' ||
-                        $auth.user.designation_category != 'staff'
-                      "
-                    >
-                    </base-input>
-                  </div>
-                  <div class="col-lg-12">
-                    <base-input label="Status">
-                      <el-select
-                        v-model="property.status"
-                        filterable
-                        placeholder="Choose a Ticket"
-                        rules="required"
-                        :disabled="property.status == 'complete'"
-                      >
-                        <el-option
-                          v-for="option in StatusChoices.status"
-                          :key="option.id"
-                          :label="option.label"
-                          :value="option.value"
-                        >
-                        </el-option>
-                      </el-select>
-                    </base-input>
-                  </div>
-                  <div class="col-lg-12">
-                    <base-input
-                      type="text"
-                      label="Job title"
-                      placeholder="Job title"
-                      name="Job title"
-                      v-model="property.job_title"
-                      :rules="{ required: true }"
-                      disabled
-                    >
-                    </base-input>
-                  </div>
-                  <div class="col-lg-12">
-                    <base-input label="Job description">
-                      <textarea
-                        class="form-control"
-                        id="job-description"
-                        rows="3"
-                        v-model="property.job_description"
-                        :rules="{ required: true }"
-                        disabled
-                      ></textarea>
-                    </base-input>
-                  </div>
-                  <div class="col-lg-12">
-                    <base-input
-                      type="text"
-                      label="URL of the completed JO"
-                      placeholder="URL"
-                      name="URL of the completed JO"
-                      v-model="property.url_of_the_completed_jo"
-                      :disabled="$auth.user.designation_category != 'staff'"
-                    >
-                    </base-input>
-                  </div>
-                  <div class="col-lg-12">
-                    <base-input label="Client notes">
-                      <textarea
-                        class="form-control"
-                        id="client-notes"
-                        rows="3"
-                        v-model="property.client_notes"
-                        :rules="{ required: true }"
-                        :disabled="$auth.user.designation_category == 'staff'"
-                      ></textarea>
-                    </base-input>
-                  </div>
-                  <div class="col-lg-12">
-                    <base-input label="VA notes">
-                      <textarea
-                        class="form-control"
-                        id="va-notes"
-                        rows="3"
-                        v-model="property.va_notes"
-                        disabled
-                      ></textarea>
-                    </base-input>
-                  </div>
-                  <div class="col-lg-12">
-                    <base-input label="Management notes">
-                      <textarea
-                        class="form-control"
-                        id="management-notes"
-                        rows="3"
-                        v-model="property.management_notes"
-                        disabled
-                      ></textarea>
-                    </base-input>
-                  </div> -->
                 </div>
-                <base-button
+                <!-- <base-button
                   type="info"
                   native-type="submit"
                   loading
@@ -179,6 +51,9 @@
                 >
                 <base-button type="info" native-type="submit" v-else
                   >Update</base-button
+                > -->
+                <base-button type="info" native-type="submit"
+                  >Update</base-button
                 >
               </div>
             </form>
@@ -186,11 +61,11 @@
         </b-tab>
 
         <b-tab title="Comment section" lazy>
-          <job-order-comment
+          <!-- <job-order-comment
             :job="jobOrder"
             :fetch="refresh"
             :accountType="accountType"
-          ></job-order-comment>
+          ></job-order-comment> -->
         </b-tab>
       </b-tabs>
     </div>
@@ -199,15 +74,15 @@
   
   <script>
 import { Select, Option } from "element-ui";
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
-import CreateInteractionRecordMixin from "@/mixins/CreateInteractionRecordMixin.js";
+import PropertyInfoMixin from "@/mixins/PropertyInfoMixin.js";
 
 import JobOrderComment from "@/components/JobOrder/JobOrderComment";
 
 export default {
   name: "PropertyInfoUpdate",
-  mixins: [CreateInteractionRecordMixin],
+  mixins: [PropertyInfoMixin],
   components: {
     [Select.name]: Select,
     [Option.name]: Option,
@@ -265,6 +140,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations("callMeInfo", ["updateObject", "setBasicField", "setApn"]),
     ...mapActions("callMeInfo", ["saveCallMeInfo", "fetchCallMeInfo"]),
     onlyNumbers: function () {
       this.property.total_time_consumed = this.job.total_time_consumed.replace(
@@ -299,8 +175,9 @@ export default {
     async save() {
       this.saving = true;
       const payload = {
-        id: this.property.id,
-        apn: this.property.apn,
+        id: this.id,
+        apn: this.apn,
+        full_name: this.full_name,
       };
       try {
         this.saving = true;
@@ -342,6 +219,9 @@ export default {
         }
       );
     },
+    async fetchProperty() {
+      this.$store.dispatch("callMeInfo/fetchCallMeInfo", this.$route.params);
+    },
   },
   computed: {
     ...mapGetters({
@@ -349,15 +229,8 @@ export default {
     }),
   },
   mounted() {
-    console.warn("Item: ", this.property);
-    this.fetchCallMeInfo(this.$route.params);
+    this.fetchProperty();
   },
-//   watch: {
-//     property: {
-//       handler: "fetchPropertyInfo",
-//       deep: true,
-//     },
-//   },
 };
 </script>
   
