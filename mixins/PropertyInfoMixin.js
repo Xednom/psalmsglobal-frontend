@@ -7,6 +7,7 @@ export default {
       id: "",
       apn: "",
       full_name: "",
+      item: {}
     };
   },
   methods: {
@@ -20,12 +21,30 @@ export default {
   computed: {
     setProperty() {
       const vm = this;
-      const item = this.$store.getters["callMeInfo/callMeInfo"];
-      // let item = JSON.parse(items);
-      console.warn("Parsed callMeInfo: ", item.apn);
-      vm.id = item.id;
-      vm.apn = item.apn;
-      vm.full_name = item.full_name;
+      vm.item = this.$store.getters["callMeInfo/callMeInfo"];
+      vm.id = vm.item.id;
+      vm.apn = vm.item.apn;
+      vm.full_name = vm.item.full_name;
+      vm.company_name = vm.item.company_name;
+      vm.reference_number = vm.item.reference_number;
+      vm.county = vm.item.county;
+      vm.state = vm.item.state;
+      vm.size = vm.item.size;
+      vm.address = vm.item.address;
+      vm.price = vm.item.price;
+      vm.due_diligence = vm.item.due_diligence;
+      vm.ad_content = vm.item.ad_content;
+      vm.images = vm.item.images;
+      vm.website = vm.item.website;
+      vm.facebook = vm.item.facebook;
+      vm.fb_groups = vm.item.fb_groups;
+      vm.landmodo = vm.item.landmodo;
+      vm.fsbo = vm.item.fsbo;
+      vm.instagram = vm.item.instagram;
+      vm.land_listing = vm.item.land_listing;
+      vm.land_flip = vm.item.land_flip;
+      vm.land_hub = vm.item.land_hub;
+      vm.land_century = vm.item.land_century;
     },
     apn: {
       get() {

@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-xl-12 col-md-12 col-sm-12">
-      <div slot="header" class="row align-items-center mb-3">
+      <div slot="header" class="row align-items-center mt-7 mb-3">
         <div class="col-8">
           <h3 class="mb-0">
             Property Info - {{ property.apn }} with Reference #{{
@@ -17,7 +17,7 @@
             <form @submit.prevent="handleSubmit(save)">
               <div class="pl-lg-12">
                 <div class="row">
-                  <div class="col-lg-12">
+                  <div class="col-lg-6">
                     <base-input
                       type="text"
                       label="Apn"
@@ -29,7 +29,7 @@
                     >
                     </base-input>
                   </div>
-                  <div class="col-lg-12">
+                  <div class="col-lg-6">
                     <base-input
                       type="text"
                       label="Full name"
@@ -42,19 +42,252 @@
                     </base-input>
                   </div>
                 </div>
-                <!-- <base-button
-                  type="info"
-                  native-type="submit"
-                  loading
-                  v-if="saving"
-                  >Updating</base-button
-                >
-                <base-button type="info" native-type="submit" v-else
-                  >Update</base-button
-                > -->
-                <base-button type="info" native-type="submit"
-                  >Update</base-button
-                >
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Company Name"
+                      name="Company Name"
+                      v-model="company_name"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Reference number"
+                      name="Reference number"
+                      v-model="reference_number"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="County"
+                      name="County"
+                      v-model="county"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="State"
+                      name="State"
+                      v-model="state"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Size"
+                      name="Size"
+                      v-model="size"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <base-input label="Address">
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        rows="3"
+                        v-model="address"
+                      ></textarea>
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Price"
+                      name="Price"
+                      v-model="price"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Due diligence"
+                      name="Due diligence"
+                      v-model="due_diligence"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Ad Content"
+                      name="Ad Content"
+                      v-model="ad_content"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Images"
+                      name="Images"
+                      v-model="images"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Website"
+                      name="Website"
+                      v-model="website"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Facebook"
+                      name="Facebook"
+                      v-model="facebook"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="FB groups"
+                      name="FB groups"
+                      v-model="fb_groups"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Landmodo"
+                      name="Landmodo"
+                      v-model="landmodo"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="FSBO"
+                      name="FSBO"
+                      v-model="fsbo"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Instagram"
+                      name="Instagram"
+                      v-model="instagram"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Land Listing"
+                      name="Land Listing"
+                      v-model="land_listing"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Land Flip"
+                      name="Land Flip"
+                      v-model="land_flip"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Land hub"
+                      name="Land hub"
+                      v-model="land_hub"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                  <div class="col-lg-6">
+                    <base-input
+                      type="text"
+                      label="Land Century"
+                      name="Land Century"
+                      v-model="land_century"
+                      rules="required"
+                      @input="setProperty"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <action-buttons
+                  :item="item"
+                  :saving="saving"
+                  @save="save"
+                ></action-buttons>
               </div>
             </form>
           </validation-observer>
@@ -80,6 +313,8 @@ import PropertyInfoMixin from "@/mixins/PropertyInfoMixin.js";
 
 import JobOrderComment from "@/components/JobOrder/JobOrderComment";
 
+import ActionButtons from "@/components/FormPage/ActionButtons.vue";
+
 export default {
   name: "PropertyInfoUpdate",
   mixins: [PropertyInfoMixin],
@@ -87,6 +322,7 @@ export default {
     [Select.name]: Select,
     [Option.name]: Option,
     JobOrderComment,
+    ActionButtons,
   },
   props: {
     refresh: {
@@ -178,6 +414,26 @@ export default {
         id: this.id,
         apn: this.apn,
         full_name: this.full_name,
+        company_name: this.company_name,
+        reference_number: this.reference_number,
+        county: this.county,
+        state: this.state,
+        size: this.size,
+        address: this.address,
+        price: this.price,
+        due_diligence: this.due_diligence,
+        ad_content: this.ad_content,
+        images: this.images,
+        website: this.website,
+        facebook: this.facebook,
+        fb_groups: this.fb_groups,
+        landmodo: this.landmodo,
+        fsbo: this.fsbo,
+        instagram: this.instagram,
+        land_listing: this.land_listing,
+        land_flip: this.land_flip,
+        land_hub: this.land_hub,
+        land_century: this.land_century,
       };
       try {
         this.saving = true;
