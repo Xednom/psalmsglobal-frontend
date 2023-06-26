@@ -7,7 +7,7 @@ export default {
       id: "",
       apn: "",
       full_name: "",
-      item: {}
+      item: {},
     };
   },
   methods: {
@@ -55,60 +55,172 @@ export default {
         this.setBasicStoreValue("apn", value);
       },
     },
-    due_date: {
+    full_name: {
       get() {
-        return this.$store.getters["callMeInfo/due_date"];
+        return this.$store.getters["callMeInfo/full_name"];
       },
       set(value) {
-        this.setBasicStoreValue("due_date", value);
+        this.setBasicStoreValue("full_name", value);
       },
     },
-    status: {
+    reference_number: {
       get() {
-        return this.$store.getters["callMeInfo/status"];
+        return this.$store.getters["callMeInfo/reference_number"];
       },
       set(value) {
-        this.setBasicStoreValue("status", value);
+        this.setBasicStoreValue("reference_number", value);
       },
     },
-    job_title: {
+    company_name: {
       get() {
-        return this.$store.getters["callMeInfo/job_title"];
+        return this.$store.getters["callMeInfo/company_name"];
       },
       set(value) {
-        this.setBasicStoreValue("job_title", value);
+        this.setBasicStoreValue("company_name", value);
       },
     },
-    total_time_consumed: {
+    county: {
       get() {
-        return this.$store.getters["callMeInfo/total_time_consumed"];
+        return this.$store.getters["callMeInfo/county"];
       },
       set(value) {
-        this.setBasicStoreValue("total_time_consumed", value);
+        this.setBasicStoreValue("county", value);
       },
     },
-    url_of_the_completed_jo: {
+    state: {
       get() {
-        return this.$store.getters["callMeInfo/url_of_the_completed_jo"];
+        return this.$store.getters["callMeInfo/state"];
       },
       set(value) {
-        this.setBasicStoreValue("url_of_the_completed_jo", value);
+        this.setBasicStoreValue("state", value);
       },
     },
-    job_description: {
+    size: {
       get() {
-        return this.$store.getters["callMeInfo/job_description"];
+        return this.$store.getters["callMeInfo/size"];
       },
       set(value) {
-        this.setBasicStoreValue("job_description", value);
+        this.setBasicStoreValue("size", value);
       },
     },
-    client_notes: {
+    address: {
       get() {
-        return this.$store.getters["callMeInfo/client_notes"];
+        return this.$store.getters["callMeInfo/address"];
       },
       set(value) {
-        this.setBasicStoreValue("client_notes", value);
+        this.setBasicStoreValue("address", value);
+      },
+    },
+    price: {
+      get() {
+        return this.$store.getters["callMeInfo/price"];
+      },
+      set(value) {
+        this.setBasicStoreValue("price", value);
+      },
+    },
+    due_diligence: {
+      get() {
+        return this.$store.getters["callMeInfo/due_diligence"];
+      },
+      set(value) {
+        this.setBasicStoreValue("due_diligence", value);
+      },
+    },
+    ad_content: {
+      get() {
+        return this.$store.getters["callMeInfo/ad_content"];
+      },
+      set(value) {
+        this.setBasicStoreValue("ad_content", value);
+      },
+    },
+    images: {
+      get() {
+        return this.$store.getters["callMeInfo/images"];
+      },
+      set(value) {
+        this.setBasicStoreValue("images", value);
+      },
+    },
+    website: {
+      get() {
+        return this.$store.getters["callMeInfo/website"];
+      },
+      set(value) {
+        this.setBasicStoreValue("website", value);
+      },
+    },
+    facebook: {
+      get() {
+        return this.$store.getters["callMeInfo/facebook"];
+      },
+      set(value) {
+        this.setBasicStoreValue("facebook", value);
+      },
+    },
+    fb_groups: {
+      get() {
+        return this.$store.getters["callMeInfo/fb_groups"];
+      },
+      set(value) {
+        this.setBasicStoreValue("fb_groups", value);
+      },
+    },
+    landmodo: {
+      get() {
+        return this.$store.getters["callMeInfo/landmodo"];
+      },
+      set(value) {
+        this.setBasicStoreValue("landmodo", value);
+      },
+    },
+    fsbo: {
+      get() {
+        return this.$store.getters["callMeInfo/fsbo"];
+      },
+      set(value) {
+        this.setBasicStoreValue("fsbo", value);
+      },
+    },
+    instagram: {
+      get() {
+        return this.$store.getters["callMeInfo/instagram"];
+      },
+      set(value) {
+        this.setBasicStoreValue("instagram", value);
+      },
+    },
+    land_listing: {
+      get() {
+        return this.$store.getters["callMeInfo/land_listing"];
+      },
+      set(value) {
+        this.setBasicStoreValue("land_listing", value);
+      },
+    },
+    land_flip: {
+      get() {
+        return this.$store.getters["callMeInfo/land_flip"];
+      },
+      set(value) {
+        this.setBasicStoreValue("land_flip", value);
+      },
+    },
+    land_hub: {
+      get() {
+        return this.$store.getters["callMeInfo/land_hub"];
+      },
+      set(value) {
+        this.setBasicStoreValue("land_hub", value);
+      },
+    },
+    land_century: {
+      get() {
+        return this.$store.getters["callMeInfo/land_century"];
+      },
+      set(value) {
+        this.setBasicStoreValue("land_century", value);
       },
     },
   },
