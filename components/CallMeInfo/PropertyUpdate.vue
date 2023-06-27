@@ -419,7 +419,6 @@ export default {
       }
     },
     async fetchPropertyInfo(param) {
-      console.warn("Param: ", param);
       this.fetchCallMeInfo(param);
     },
     async save() {
