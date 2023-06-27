@@ -293,12 +293,26 @@
           </validation-observer>
         </b-tab>
 
-        <b-tab title="Comment section" lazy>
-          <!-- <job-order-comment
-            :job="jobOrder"
+        <b-tab title="Agent Comment section">
+          <comment-section
+            :item="item"
             :fetch="refresh"
-            :accountType="accountType"
-          ></job-order-comment> -->
+            type-of-comment="agent"
+          ></comment-section>
+        </b-tab>
+        <b-tab title="Client Comment section">
+          <comment-section
+            :item="item"
+            :fetch="refresh"
+            type-of-comment="client"
+          ></comment-section>
+        </b-tab>
+        <b-tab title="Customer Comment section">
+          <comment-section
+            :item="item"
+            :fetch="refresh"
+            type-of-comment="customer"
+          ></comment-section>
         </b-tab>
       </b-tabs>
     </div>
@@ -311,7 +325,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
 import PropertyInfoMixin from "@/mixins/PropertyInfoMixin.js";
 
-import JobOrderComment from "@/components/JobOrder/JobOrderComment";
+import CommentSection from "@/components/CallMeInfo/CallMeInfoCommentSection.vue";
 
 import ActionButtons from "@/components/FormPage/ActionButtons.vue";
 
@@ -321,7 +335,7 @@ export default {
   components: {
     [Select.name]: Select,
     [Option.name]: Option,
-    JobOrderComment,
+    CommentSection,
     ActionButtons,
   },
   props: {
