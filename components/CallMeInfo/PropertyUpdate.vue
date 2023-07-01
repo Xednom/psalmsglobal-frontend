@@ -9,6 +9,13 @@
             }}
           </h3>
         </div>
+        <div class="col-4 text-right">
+          <nuxt-link to="/property-info/">
+            <base-button type="danger"
+              >Return to Property info list</base-button
+            ></nuxt-link
+          >
+        </div>
       </div>
       <b-tabs content-class="mt-3">
         <!-- This tabs content will always be mounted -->
